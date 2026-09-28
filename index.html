@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>体重 & 饮食日记</title>
+<script src="data.js"></script>
+<style>
+:root {
+  --bg: #F0F2F5;
+  --card: #FFFFFF;
+  --ink: #1a1a2e;
+  --ink2: #4a4a68;
+  --ink3: #9ca3af;
+  --accent: #6366f1;
+  --accent-light: #eef2ff;
+  --good: #10b981;
+  --good-light: #ecfdf5;
+  --warn: #f59e0b;
+  --warn-light: #fffbeb;
+  --bad: #ef4444;
+  --bad-light: #fef2f2;
+  --radius: 18px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+html { font-size: 16px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Text", "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  color: var(--ink);
+}
+
+/* Layout */
+.app { max-width: 430px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; padding: 12px 14px 8px; }
+
+/* Header */
+.header { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 4px 14px; flex-shrink: 0; }
+.header .brand { display: flex; align-items: center; gap: 10px; }
+.header .logo {
+  width: 38px; height: 38px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: #fff;
+  box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+}
+.header .title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+.header .sub { font-size: 11px; color: var(--ink3); margin-top: 1px; }
+.header .today-btn {
+  font-size: 11px; font-weight: 600; color: var(--accent);
+  background: var(--accent-light);
+  border: none; border-radius: 20px; padding: 6px 14px;
+  cursor: pointer; transition: transform .15s;
+}
+.header .today-btn:active { transform: scale(0.95); }
+
+/* Hero stats */
+.hero {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  background: var(--card); border-radius: var(--radius);
+  padding: 14px 8px; margin-bottom: 12px;
+  box-shadow: var(--shadow); flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+}
+.hero-item { text-align: center; position: relative; }
+.hero-item:not(:last-child)::after {
+  content: ""; position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: #f0f0f0;
+}
+.hero-item .h-label { font-size: 10px; color: var(--ink3); margin-bottom: 3px; }
+.hero-item .h-val { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+.hero-item .h-val .u { font-size: 10px; font-weight: 500; color: var(--ink3); margin-left: 1px; }
+.hero-item .h-val.bad { color: var(--bad); }
+.hero-item .h-val.good { color: var(--good); }
+.hero-item .h-sub { font-size: 9px; color: var(--ink3); margin-top: 2px; }
+
+/* Mini chart */
+.chart-card {
+  background: var(--card); border-radius: var(--radius);
+  padding: 14px 16px 10px; margin-bottom: 12px;
+  box-shadow: var(--shadow); flex-shrink: 0;
+}
+.chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.chart-title { font-size: 12px; font-weight: 700; color: var(--ink); }
+.chart-range { font-size: 10px; color: var(--ink3); }
+
+/* Book area */
+.book-area { flex: 1; position: relative; min-height: 0; }
+
+/* Page card */
+.page {
+  position: absolute; inset: 0;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  transform-style: preserve-3d;
+  transition: transform .45s cubic-bezier(.32,.72,.32,1), opacity .35s ease;
+  scrollbar-width: none;
+}
+.page::-webkit-scrollbar { display: none; }
+.page.active { transform: translateY(0) scale(1); opacity: 1; z-index: 2; }
+.page.prev { transform: translateY(-14px) scale(0.97); opacity: 0; z-index: 1; pointer-events: none; }
+.page.next { transform: translateY(14px) scale(0.97); opacity: 0; z-index: 1; pointer-events: none; }
+
+/* Date header */
+.date-bar {
+  position: sticky; top: 0; z-index: 5;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 12px 18px 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid #f3f4f6;
+}
+.date-bar .d-left .d-date { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+.date-bar .d-left .d-week { font-size: 10px; color: var(--ink3); }
+.date-bar .d-right {
+  display: flex; align-items: baseline; gap: 4px;
+}
+.date-bar .d-weight { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.date-bar .d-unit { font-size: 11px; color: var(--ink3); font-weight: 500; }
+.date-bar .d-change {
+  font-size: 10px; font-weight: 700;
+  border-radius: 10px; padding: 3px 8px; margin-left: 4px;
+}
+.d-change.up { color: var(--bad); background: var(--bad-light); }
+.d-change.down { color: var(--good); background: var(--good-light); }
+.d-change.same { color: var(--ink3); background: #f3f4f6; }
+
+/* Body sections */
+.p-body { padding: 4px 18px 20px; }
+.section { margin-top: 14px; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.sec-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.sec-icon {
+  width: 22px; height: 22px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center; font-size: 11px;
+}
+.sec-icon.w { background: #eff6ff; }
+.sec-icon.d { background: #fffbeb; }
+.sec-icon.a { background: #ecfdf5; }
+.sec-badge { font-size: 10px; color: var(--ink3); font-weight: 500; }
+
+/* Weight section */
+.w-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.w-tile {
+  background: #fafafa; border-radius: 12px; padding: 12px;
+  text-align: center; border: 1px solid #f0f0f0;
+  transition: transform .2s;
+}
+.w-tile:active { transform: scale(0.97); }
+.w-tile .w-icon { font-size: 14px; margin-bottom: 4px; }
+.w-tile .w-label { font-size: 10px; color: var(--ink3); margin-bottom: 2px; }
+.w-tile .w-val { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.w-tile .w-val .u { font-size: 11px; font-weight: 400; color: var(--ink3); }
+.w-note {
+  font-size: 10px; color: var(--ink3); text-align: center;
+  margin-top: 8px; padding: 6px 12px; background: #fafafa; border-radius: 8px;
+}
+
+/* Calorie ring */
+.cal-ring-wrap { display: flex; align-items: center; gap: 16px; background: #fafafa; border-radius: 14px; padding: 12px; border: 1px solid #f0f0f0; }
+.ring { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
+.ring svg { transform: rotate(-90deg); }
+.ring .ring-bg { fill: none; stroke: #eee; stroke-width: 7; }
+.ring .ring-val { fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 213.6; stroke-dashoffset: 213.6; transition: stroke-dashoffset 1s cubic-bezier(.32,.72,.32,1); }
+.ring .ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring .ring-num { font-size: 16px; font-weight: 800; letter-spacing: -0.5px; }
+.ring .ring-unit { font-size: 8px; color: var(--ink3); }
+.ring-labels { flex: 1; }
+.ring-labels .rl-title { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+.macro-row { display: flex; gap: 6px; }
+.macro {
+  flex: 1; background: #fff; border-radius: 8px; padding: 6px 4px;
+  text-align: center; border: 1px solid #f0f0f0;
+}
+.macro .m-val { font-size: 12px; font-weight: 700; }
+.macro .m-label { font-size: 8px; color: var(--ink3); }
+.macro.p .m-val { color: #3b82f6; }
+.macro.c .m-val { color: #f59e0b; }
+.macro.f .m-val { color: #ec4899; }
+
+/* Diet timeline */
+.meal-block { display: flex; gap: 10px; margin-bottom: 12px; }
+.meal-time {
+  display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 44px;
+}
+.meal-dot {
+  width: 30px; height: 30px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; margin-bottom: 4px;
+}
+.meal-dot.b { background: #fef3c7; }
+.meal-dot.l { background: #dbeafe; }
+.meal-dot.s { background: #fce7f3; }
+.meal-dot.x { background: #ede9fe; }
+.meal-line { flex: 1; width: 2px; background: #f0f0f0; border-radius: 1px; }
+.meal-content { flex: 1; min-width: 0; }
+.meal-name { font-size: 12px; font-weight: 700; margin-bottom: 5px; }
+.meal-name .m-time { font-size: 9px; color: var(--ink3); font-weight: 400; margin-left: 5px; }
+.food-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; padding: 4px 8px; border-radius: 8px;
+  background: #fafafa; border: 1px solid #f0f0f0;
+  margin: 0 4px 4px 0; color: var(--ink2);
+}
+.food-chip .fc-kcal { font-weight: 700; color: var(--warn); }
+.meal-total {
+  font-size: 10px; color: var(--ink3); margin-top: 3px;
+}
+.meal-total b { color: var(--accent); }
+
+/* Advice */
+.advice-card { background: linear-gradient(135deg, #fafcfe 0%, #f0fdf4 100%); border-radius: 14px; padding: 14px; border: 1px solid #d1fae5; }
+.adv-good { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.adv-good .tag {
+  font-size: 10px; font-weight: 600;
+  background: var(--good-light); color: #065f46;
+  border-radius: 8px; padding: 4px 9px;
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.adv-tips { margin-bottom: 8px; }
+.adv-tip { display: flex; align-items: flex-start; gap: 7px; padding: 4px 0; }
+.adv-tip .tip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--good); margin-top: 5px; flex-shrink: 0; }
+.adv-tip .tip-text { font-size: 11px; color: var(--ink2); line-height: 1.5; }
+.adv-overall {
+  font-size: 11px; font-weight: 600; color: #065f46;
+  background: rgba(255,255,255,0.7);
+  border-radius: 10px; padding: 8px 12px;
+  display: flex; align-items: flex-start; gap: 6px;
+}
+
+/* Bottom nav */
+.bottom-nav {
+  flex-shrink: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 20px 6px;
+}
+.nav-arrow {
+  width: 42px; height: 42px; border-radius: 14px;
+  background: var(--card); border: 1px solid #e5e7eb;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--ink2); cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform .15s, opacity .2s;
+}
+.nav-arrow:active { transform: scale(0.9); }
+.nav-arrow:disabled { opacity: 0.25; }
+.page-indicator { text-align: center; }
+.page-indicator .p-dots { display: flex; gap: 5px; justify-content: center; margin-bottom: 3px; }
+.p-dot { width: 6px; height: 6px; border-radius: 3px; background: #d1d5db; transition: all .3s cubic-bezier(.32,.72,.32,1); }
+.p-dot.on { width: 20px; background: var(--accent); }
+.page-indicator .p-num { font-size: 10px; color: var(--ink3); font-weight: 600; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--ink); color: #fff;
+  font-size: 12px; padding: 8px 16px; border-radius: 20px;
+  opacity: 0; pointer-events: none;
+  transition: all .3s cubic-bezier(.32,.72,.32,1);
+  z-index: 100;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Swipe hint */
+.swipe-fade {
+  position: absolute; bottom: 8px; left: 0; right: 0;
+  text-align: center; font-size: 9px; color: var(--ink3);
+  pointer-events: none; opacity: 0.6;
+  animation: fadePulse 2.5s ease-in-out infinite;
+}
+@keyframes fadePulse { 0%,100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand">
+      <div class="logo">⚖️</div>
+      <div>
+        <div class="title">体重 & 饮食日记</div>
+        <div class="sub" id="subTitle"></div>
+      </div>
+    </div>
+    <button class="today-btn" onclick="goToday()">今天</button>
+  </div>
+
+  <div class="hero" id="heroStats"></div>
+
+  <div class="chart-card">
+    <div class="chart-header">
+      <div class="chart-title">📈 体重趋势</div>
+      <div class="chart-range" id="chartRange"></div>
+    </div>
+    <div id="trendChart"></div>
+  </div>
+
+  <div class="book-area" id="bookArea"></div>
+
+  <div class="bottom-nav">
+    <button class="nav-arrow" id="btnPrev" onclick="goPage(-1)">‹</button>
+    <div class="page-indicator">
+      <div class="p-dots" id="pageDots"></div>
+      <div class="p-num" id="pageNum"></div>
+    </div>
+    <button class="nav-arrow" id="btnNext" onclick="goPage(1)">›</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const D = TRACKER_DATA;
+let cur = 0;
+const pages = [];
+
+// Subtitle
+document.getElementById("subTitle").textContent =
+  `基线 ${D.baseline.weight}kg · 目标 ${D.target}kg · 已记录 ${D.days.length} 天`;
+
+// Hero stats
+const L = D.days[0]; // newest
+const lw = L.weight;
+const curW = lw.morning || lw.evening || "--";
+const chg = lw.change || 0;
+document.getElementById("heroStats").innerHTML = `
+  <div class="hero-item">
+    <div class="h-label">当前体重</div>
+    <div class="h-val">${curW}<span class="u">kg</span></div>
+    <div class="h-sub">${L.date.slice(5)}</div>
+  </div>
+  <div class="hero-item">
+    <div class="h-label">较基线</div>
+    <div class="h-val ${chg > 0 ? 'bad' : 'good'}">${chg > 0 ? '+' : ''}${chg}<span class="u">kg</span></div>
+    <div class="h-sub">${chg > 0 ? '+' : ''}${(chg * 2).toFixed(1)} 斤</div>
+  </div>
+  <div class="hero-item">
+    <div class="h-label">距目标</div>
+    <div class="h-val">${(curW - D.target).toFixed(1)}<span class="u">kg</span></div>
+    <div class="h-sub">还需努力</div>
+  </div>
+`;
+
+// Trend chart (simple SVG polyline)
+function buildChart() {
+  const sorted = [...D.days].sort((a, b) => a.date.localeCompare(b.date));
+  const weights = sorted.map(d => d.weight.morning || d.weight.evening).filter(Boolean);
+  if (weights.length < 2) {
+    document.getElementById("trendChart").innerHTML = '<div style="font-size:10px;color:var(--ink3);text-align:center;padding:10px;">数据不足，继续记录...</div>';
+    return;
+  }
+  const min = Math.min(...weights) - 0.5;
+  const max = Math.max(...weights) + 0.5;
+  const range = max - min || 1;
+  const W = 380, H = 80, P = 8;
+  const pts = weights.map((w, i) => {
+    const x = P + (i / (weights.length - 1)) * (W - 2 * P);
+    const y = P + (1 - (w - min) / range) * (H - 2 * P);
+    return [x, y];
+  });
+  const line = pts.map(p => p.join(",")).join(" ");
+  const area = `${P},${H - P} ${line} ${W - P},${H - P}`;
+  const lastPt = pts[pts.length - 1];
+  document.getElementById("chartRange").textContent = `${sorted[0].date.slice(5)} → ${sorted[sorted.length - 1].date.slice(5)}`;
+  document.getElementById("trendChart").innerHTML = `
+    <svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="display:block;">
+      <defs>
+        <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#6366f1" stop-opacity="0.2"/>
+          <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <polygon points="${area}" fill="url(#cg)"/>
+      <polyline points="${line}" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${lastPt[0]}" cy="${lastPt[1]}" r="4" fill="#6366f1" stroke="#fff" stroke-width="2"/>
+    </svg>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--ink3);margin-top:4px;padding:0 4px;">
+      <span>${Math.round(min * 10) / 10}kg</span><span>${Math.round(max * 10) / 10}kg</span>
+    </div>`;
+}
+buildChart();
+
+// Meal icons and colors
+const mealMeta = {
+  "早餐": { icon: "🌅", cls: "b" },
+  "午餐": { icon: "☀️", cls: "l" },
+  "晚餐": { icon: "🌙", cls: "x" },
+  "加餐": { icon: "🍰", cls: "s" }
+};
+
+// Build pages
+const book = document.getElementById("bookArea");
+D.days.forEach((day, idx) => {
+  const dw = day.weight;
+  const wNum = dw.morning || dw.evening || "--";
+  const cCls = dw.change > 0 ? "up" : (dw.change < 0 ? "down" : "same");
+  const cTxt = dw.change > 0 ? `▲+${dw.change}` : (dw.change < 0 ? `▼${dw.change}` : "—");
+
+  // Diet timeline
+  let dietHtml = "";
+  day.diet.forEach(meal => {
+    const meta = mealMeta[meal.meal] || { icon: "🍽️", cls: "s" };
+    let mealKcal = 0;
+    let chips = "";
+    meal.items.forEach(item => {
+      mealKcal += item.kcal;
+      chips += `<span class="food-chip">${item.name} <span style="color:var(--ink3);font-size:9px;">${item.portion}</span> <b class="fc-kcal">${item.kcal}</b></span>`;
+    });
+    dietHtml += `
+      <div class="meal-block">
+        <div class="meal-time">
+          <div class="meal-dot ${meta.cls}">${meta.icon}</div>
+          <div class="meal-line"></div>
+        </div>
+        <div class="meal-content">
+          <div class="meal-name">${meal.meal}<span class="m-time">${meal.time}</span></div>
+          <div>${chips}</div>
+          <div class="meal-total">小计 <b>${mealKcal}</b> kcal</div>
+        </div>
+      </div>`;
+  });
+
+  // Calorie ring
+  const s = day.summary;
+  const ringPct = Math.min((s.totalKcal / 2000) * 100, 100);
+  const ringOffset = 213.6 * (1 - ringPct / 100);
+
+  // Advice
+  const a = day.advice;
+  const advHtml = `
+    <div class="advice-card">
+      <div class="adv-good">${a.good.map(g => `<span class="tag">✓ ${g}</span>`).join("")}</div>
+      <div class="adv-tips">${a.tips.map(t => `<div class="adv-tip"><div class="tip-dot"></div><div class="tip-text">${t}</div></div>`).join("")}</div>
+      <div class="adv-overall">📌 ${a.overall}</div>
+    </div>`;
+
+  const pageEl = document.createElement("div");
+  pageEl.className = "page";
+  pageEl.dataset.date = day.date;
+  pageEl.innerHTML = `
+    <div class="date-bar">
+      <div class="d-left">
+        <div class="d-date">${day.date}</div>
+        <div class="d-week">${day.weekday}</div>
+      </div>
+      <div class="d-right">
+        <span class="d-weight">${wNum}</span><span class="d-unit">kg</span>
+        <span class="d-change ${cCls}">${cTxt}</span>
+      </div>
+    </div>
+    <div class="p-body">
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title"><span class="sec-icon w">⚖️</span> 体重记录</div>
+          <span class="sec-badge">较基线 ${dw.change > 0 ? '+' : ''}${dw.change}kg</span>
+        </div>
+        <div class="w-grid">
+          <div class="w-tile"><div class="w-icon">🌅</div><div class="w-label">早上</div><div class="w-val">${dw.morning || "--"}<span class="u">kg</span></div></div>
+          <div class="w-tile"><div class="w-icon">🌙</div><div class="w-label">晚上</div><div class="w-val">${dw.evening || "--"}<span class="u">kg</span></div></div>
+        </div>
+        ${dw.note ? `<div class="w-note">💬 ${dw.note}</div>` : ""}
+      </div>
+
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title"><span class="sec-icon d">🍽️</span> 饮食记录</div>
+          <span class="sec-badge">${s.veggieServings ? `蔬菜 ${s.veggieServings} 份` : ""}</span>
+        </div>
+        <div class="cal-ring-wrap">
+          <div class="ring">
+            <svg width="76" height="76">
+              <circle class="ring-bg" cx="38" cy="38" r="34"/>
+              <circle class="ring-val" cx="38" cy="38" r="34" style="stroke-dashoffset:${ringOffset}"/>
+            </svg>
+            <div class="ring-text"><div class="ring-num">${s.totalKcal}</div><div class="ring-unit">kcal</div></div>
+          </div>
+          <div class="ring-labels">
+            <div class="rl-title">营养摄入</div>
+            <div class="macro-row">
+              <div class="macro p"><div class="m-val">${s.protein}</div><div class="m-label">蛋白</div></div>
+              <div class="macro c"><div class="m-val">${s.carbs}</div><div class="m-label">碳水</div></div>
+              <div class="macro f"><div class="m-val">${s.fat}</div><div class="m-label">脂肪</div></div>
+            </div>
+          </div>
+        </div>
+        ${dietHtml}
+      </div>
+
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title"><span class="sec-icon a">💡</span> 今日建议</div>
+        </div>
+        ${advHtml}
+      </div>
+    </div>
+    <div class="swipe-fade">← 左右滑动翻页 →</div>`;
+  book.appendChild(pageEl);
+  pages.push(pageEl);
+});
+
+// Dots
+const dotsEl = document.getElementById("pageDots");
+pages.forEach(() => {
+  const dot = document.createElement("span");
+  dot.className = "p-dot";
+  dotsEl.appendChild(dot);
+});
+
+function updatePage() {
+  pages.forEach((p, i) => {
+    p.classList.remove("active", "prev", "next");
+    if (i === cur) p.classList.add("active");
+    else if (i < cur) p.classList.add("prev");
+    else p.classList.add("next");
+  });
+  document.querySelectorAll(".p-dot").forEach((d, i) => d.classList.toggle("on", i === cur));
+  document.getElementById("btnPrev").disabled = cur === 0;
+  document.getElementById("btnNext").disabled = cur === pages.length - 1;
+  document.getElementById("pageNum").textContent = `${cur + 1} / ${pages.length}`;
+}
+
+function goPage(dir) {
+  const n = cur + dir;
+  if (n < 0 || n >= pages.length) {
+    if (n < 0) showToast("已经是第一页了");
+    else showToast("已经是最新一页");
+    return;
+  }
+  cur = n;
+  updatePage();
+}
+
+function goToday() {
+  cur = 0;
+  updatePage();
+  showToast("已回到今天 📅");
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 1600);
+}
+
+// Swipe
+let sx = 0, sy = 0;
+book.addEventListener("touchstart", e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+book.addEventListener("touchend", e => {
+  const dx = e.changedTouches[0].clientX - sx;
+  const dy = e.changedTouches[0].clientY - sy;
+  if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+    goPage(dx < 0 ? 1 : -1);
+  }
+}, { passive: true });
+
+// Keyboard
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft") goPage(-1);
+  if (e.key === "ArrowRight") goPage(1);
+});
+
+updatePage();
+</script>
+</body>
+</html>
