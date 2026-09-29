@@ -486,15 +486,22 @@ animation:flowGradient 40s ease infinite;}
 <div class="pu" onclick="document.getElementById('pi').click()">
 <div class="pu-icon" style="color:var(--peach);"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div>
 <div class="pu-text">拍照或从相册选择（可多张）</div>
-<div class="pu-sub">识别食物并估算热量</div>
+<div class="pu-sub">选照片后填入API Key 即可AI识别</div>
 </div>
 <input type="file" id="pi" accept="image/*" multiple style="display:none" onchange="previewPhoto(this)">
 <img class="pp" id="pp">
 </div>
 <div class="m-sec" id="apiKeySec" style="display:none;">
-<div class="m-label">🔑 API Key（AI识图用，仅存手机本地）</div>
+<div class="m-label">🔑 AI 服务商</div>
+<div class="meal-picker" id="providerPicker">
+<button class="mp active" data-provider="zai">智谱AI</button>
+<button class="mp" data-provider="deepseek">DeepSeek</button>
+<button class="mp" data-provider="openai">OpenAI</button>
+<button class="mp" data-provider="qwen">通义千问</button>
+</div>
+<div class="m-label" style="margin-top:12px;">🔑 API Key（仅存手机本地）</div>
 <input type="password" class="m-input" id="apiKeyInput" placeholder="sk-..." style="font-size:13px;">
-<div style="font-size:10px;color:var(--ink3);margin-top:6px;line-height:1.5;">不填也可用文字分析。获取：platform.openai.com/api-keys</div>
+<div style="font-size:10px;color:var(--ink3);margin-top:6px;line-height:1.5;">Key 只保存在你的手机上，不会上传到任何服务器</div>
 </div>
 <button class="an-btn" id="ab" onclick="analyze()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>分析热量</button>
 <div class="loading" id="ld"><div class="ld-icon">🌀</div><div class="ld-text">AI 正在分析...</div></div>
@@ -664,14 +671,17 @@ document.getElementById("content").scrollTo({top:0,behavior:"smooth"});
 
 // Modal
 let selMeal="早餐",photoB64=null,lastRes=null;
-document.querySelectorAll(".mp").forEach(b=>{b.addEventListener("click",function(){document.querySelectorAll(".mp").forEach(x=>x.classList.remove("active"));this.classList.add("active");selMeal=this.dataset.meal;});});
+document.querySelectorAll("#mp .mp").forEach(b=>{b.addEventListener("click",function(){document.querySelectorAll("#mp .mp").forEach(x=>x.classList.remove("active"));this.classList.add("active");selMeal=this.dataset.meal;});});
+document.querySelectorAll("#providerPicker .mp").forEach(b=>{b.addEventListener("click",function(){document.querySelectorAll("#providerPicker .mp").forEach(x=>x.classList.remove("active"));this.classList.add("active");localStorage.setItem("ai_provider",this.dataset.provider);});});
+// Load saved provider
+(function(){const p=localStorage.getItem("ai_provider");if(p){document.querySelectorAll("#providerPicker .mp").forEach(b=>{b.classList.toggle("active",b.dataset.provider===p);});}})();
 function openModal(){document.getElementById("mo").classList.add("show");checkApiKeySection();document.getElementById("result").classList.remove("show");document.getElementById("ld").classList.remove("show");document.getElementById("ab").disabled=false;document.body.style.overflow="hidden";}
 function closeModal(){document.getElementById("mo").classList.remove("show");document.body.style.overflow="";}
 document.getElementById("mo").addEventListener("click",e=>{if(e.target===e.currentTarget)closeModal();});
 let photos=[];
 
 function checkApiKeySection(){
-const hasKey=!!localStorage.getItem("openai_api_key");
+const hasKey=!!(localStorage.getItem("ai_key")||localStorage.getItem("openai_api_key"));
 document.getElementById("apiKeySec").style.display=(!hasKey)?"block":"none";
 }
 
