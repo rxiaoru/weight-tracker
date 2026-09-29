@@ -42,7 +42,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 /* ===== Header ===== */
 .header{flex-shrink:0;padding:calc(var(--safe-t) + 12px) 20px 10px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2;}
 .h-left{display:flex;align-items:center;gap:11px;}
-.h-logo{width:42px;height:42px;border-radius:16px;background:linear-gradient(135deg,var(--peach),var(--coral));display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 4px 14px rgba(255,159,124,0.35);transition:transform .3s var(--ease-spring);}
+.h-logo{width:54px;height:42px;border-radius:16px;background:linear-gradient(135deg,var(--peach),var(--coral));display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;box-shadow:0 4px 14px rgba(255,159,124,0.35);transition:transform .3s var(--ease-spring);}
 .h-logo:active{transform:scale(0.9) rotate(-10deg);}
 .h-greeting{font-size:16px;font-weight:800;letter-spacing:-0.3px;}
 .h-date{font-size:11px;color:var(--ink2);margin-top:1px;font-weight:500;}
@@ -106,7 +106,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 
 /* ===== Weight ===== */
 .weight-card{background:var(--bg2);border-radius:var(--r-lg);padding:22px;margin-bottom:18px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
-.weight-card::after{content:"⚖️";position:absolute;top:14px;right:16px;font-size:40px;opacity:0.06;transform:rotate(-10deg);}
+.weight-card::after{content:"(=^·ω·^=)";position:absolute;top:14px;right:16px;font-size:40px;opacity:0.06;transform:rotate(-10deg);}
 .wc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .wc-title{font-size:14px;font-weight:700;color:var(--ink2);}
 .wc-badge{font-size:11px;font-weight:800;padding:5px 12px;border-radius:20px;transition:all .3s var(--ease-spring);}
@@ -135,7 +135,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 .meal-card{background:var(--bg2);border-radius:var(--r-md);margin-bottom:10px;box-shadow:var(--sh-sm);overflow:hidden;transition:all .3s var(--ease-spring);animation:popUp .5s var(--ease-out) both;}
 .meal-card:active{transform:scale(0.97);box-shadow:var(--sh-md);}
 .meal-row{display:flex;align-items:center;padding:15px 18px;gap:14px;}
-.meal-icon{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;transition:transform .3s var(--ease-spring);}
+.meal-icon{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:transform .3s var(--ease-spring);font-weight:700;white-space:nowrap;overflow:hidden;}
 .meal-card:active .meal-icon{transform:scale(1.1) rotate(-5deg);}
 .meal-icon.breakfast{background:var(--lemon-l);}
 .meal-icon.lunch{background:var(--peach-l);}
@@ -157,7 +157,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 .advice-card{background:linear-gradient(135deg,var(--sage-l),var(--bg2) 60%);border-radius:var(--r-lg);padding:20px;margin-bottom:16px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
 .advice-card::before{content:"💡";position:absolute;top:12px;right:16px;font-size:50px;opacity:0.06;}
 .adv-head{display:flex;align-items:center;gap:9px;margin-bottom:14px;position:relative;z-index:1;}
-.adv-icon{width:36px;height:36px;border-radius:12px;background:var(--sage);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 3px 10px rgba(127,182,158,0.3);}
+.adv-icon{padding:0 10px;height:30px;border-radius:12px;background:var(--sage);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;box-shadow:0 3px 10px rgba(127,182,158,0.3);}
 .adv-title{font-size:15px;font-weight:800;color:var(--sage);}
 .adv-good{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;position:relative;z-index:1;}
 .g-tag{font-size:11px;font-weight:700;color:var(--sage);background:#fff;border-radius:16px;padding:5px 13px;box-shadow:var(--sh-sm);transition:all .25s var(--ease-spring);animation:popUp .4s var(--ease-out) both;}
@@ -178,7 +178,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 /* ===== FAB ===== */
 .fab{position:fixed;right:calc(50% - 215px + 20px);bottom:calc(var(--safe-b) + 76px);width:58px;height:58px;border-radius:22px;background:linear-gradient(135deg,var(--peach),var(--coral));color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 8px 24px rgba(255,138,128,0.4);z-index:99;transition:all .3s var(--ease-spring);}
 @media(max-width:430px){.fab{right:20px;}}
-.fab:active{transform:scale(0.85) rotate(135deg);}
+.fab:active{transform:scale(0.88);}
 .fab svg{width:26px;height:26px;}
 .fab::after{content:"";position:absolute;inset:-4px;border-radius:26px;border:2px solid var(--peach);opacity:0.3;animation:fabPulse 2.5s ease-in-out infinite;}
 @keyframes fabPulse{0%,100%{transform:scale(1);opacity:0.3;}50%{transform:scale(1.08);opacity:0;}}
@@ -200,7 +200,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 .m-label .ml-e{font-size:15px;}
 .meal-picker{display:flex;gap:10px;}
 .mp{flex:1;padding:14px 4px;border-radius:var(--r-md);border:2px solid transparent;background:var(--bg2);font-size:12px;font-weight:700;color:var(--ink2);cursor:pointer;transition:all .3s var(--ease-spring);font-family:inherit;text-align:center;box-shadow:var(--sh-sm);}
-.mp .mp-i{display:block;font-size:20px;margin-bottom:5px;transition:transform .3s var(--ease-spring);}
+.mp .mp-i{display:block;font-size:9px;margin-bottom:4px;font-weight:700;transition:transform .3s var(--ease-spring);}
 .mp:active{transform:scale(0.93);}
 .mp.active{border-color:var(--peach);color:var(--peach);background:var(--peach-l);box-shadow:0 4px 14px rgba(255,159,124,0.2);}
 .mp.active .mp-i{transform:scale(1.15);}
@@ -253,11 +253,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 
 <div class="header">
 <div class="h-left">
-<div class="h-logo">🥗</div>
+<div class="h-logo">&gt;^ω^&lt;</div>
 <div><div class="h-greeting" id="greeting">Hi</div><div class="h-date" id="todayDate"></div></div>
 </div>
 <div class="h-right">
-<button class="h-btn" onclick="showToast('🔔 提醒功能开发中')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+<button class="h-btn" onclick="showToast('(=^･ω･^=) 提醒开发中')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
 </div>
 </div>
 
@@ -266,7 +266,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 <div class="hero pop">
 <div class="hero-card">
 <div class="hero-top">
-<div class="hero-label"><span class="hl-dot"></span><span id="heroLabel">今日热量</span></div>
+<div class="hero-label"><span style="font-size:12px;">(=✧ω✧=)</span><span id="heroLabel">今日热量</span></div>
 <div class="hero-nav">
 <button class="date-nav" onclick="navDay(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
 <div class="hero-date-chip" id="heroDate"></div>
@@ -305,12 +305,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 </div>
 
 <div class="section pop" style="animation-delay:.2s;">
-<div class="sec-head"><div class="sec-title">🍽️ <span id="mealsTitle">今日饮食</span></div><div class="sec-more" onclick="openModal()">+ 记录</div></div>
+<div class="sec-head"><div class="sec-title"><span style="font-size:13px;">(=^·ω·^=)</span> <span id="mealsTitle">今日饮食</span></div><div class="sec-more" onclick="openModal()">+ 记录</div></div>
 <div id="mealList"></div>
 </div>
 
 <div class="advice-card pop" style="animation-delay:.25s;">
-<div class="adv-head"><div class="adv-icon">💡</div><div class="adv-title">AI 小助手</div></div>
+<div class="adv-head"><div class="adv-icon">=^･ω･^=</div><div class="adv-title">AI 小助手</div></div>
 <div class="adv-good" id="advGood"></div>
 <div id="advTips"></div>
 <div class="adv-final" id="advFinal"></div>
@@ -318,29 +318,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 
 </div>
 
-<button class="fab" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+<button class="fab" onclick="openModal()" style="font-size:13px;font-weight:800;">( =^ω^=)</button>
 
 <div class="tabbar">
 <button class="tab-item active" onclick="switchTab(0,this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>首页</span></button>
-<button class="tab-item" onclick="showToast('📊 统计开发中')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>统计</span></button>
+<button class="tab-item" onclick="showToast('(=^·ᆺ·^=) 统计开发中')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>统计</span></button>
 <button class="tab-item" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>记录</span></button>
-<button class="tab-item" onclick="showToast('👤 我的开发中')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>我的</span></button>
+<button class="tab-item" onclick="showToast('(ฅ^•ﻌ•^ฅ) 我的开发中')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>我的</span></button>
 </div>
 
 <div class="mo" id="mo">
 <div class="modal">
 <div class="modal-grab"></div>
-<div class="m-head"><div class="m-title">📝 记录一下</div><button class="m-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+<div class="m-head"><div class="m-title">(=^ω^=) 记录一下</div><button class="m-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
 <div class="m-sec"><div class="m-label"><span class="ml-e">🍽️</span>这一餐是？</div><div class="meal-picker" id="mp">
-<button class="mp active" data-meal="早餐"><span class="mp-i">🌅</span>早餐</button>
-<button class="mp" data-meal="午餐"><span class="mp-i">☀️</span>午餐</button>
-<button class="mp" data-meal="晚餐"><span class="mp-i">🌙</span>晚餐</button>
-<button class="mp" data-meal="加餐"><span class="mp-i">🍰</span>加餐</button>
+<button class="mp active" data-meal="早餐"><span class="mp-i">ฅ^•ﻌ•^ฅ</span>早餐</button>
+<button class="mp" data-meal="午餐"><span class="mp-i">( =^･ω･^=)</span>午餐</button>
+<button class="mp" data-meal="晚餐"><span class="mp-i">(ฅ´ω`ฅ)</span>晚餐</button>
+<button class="mp" data-meal="加餐"><span class="mp-i">(^=･ᆺ･=)</span>加餐</button>
 </div></div>
 <div class="m-sec"><div class="m-label"><span class="ml-e">📝</span>吃了什么</div><textarea class="m-input" id="fi" rows="3" placeholder="用逗号分隔，例如：&#10;米饭半碗，西兰花炒虾仁，一个苹果"></textarea></div>
 <div class="m-sec"><div class="m-label"><span class="ml-e">📸</span>拍照识别 <span style="font-weight:400;color:var(--ink3);font-size:11px;">可选</span></div>
 <div class="pu" onclick="document.getElementById('pi').click()">
-<div class="pu-icon">📷</div>
+<div class="pu-icon" style="font-size:14px;">(=^･ω･^=) 📷</div>
 <div class="pu-text">拍照或从相册选择</div>
 <div class="pu-sub">AI 帮你识别食物和估算热量</div>
 </div>
@@ -348,7 +348,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 <img class="pp" id="pp">
 </div>
 <button class="an-btn" id="ab" onclick="analyze()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>分析一下</button>
-<div class="loading" id="ld"><div class="ld-icon">🌀</div><div class="ld-text">AI 正在分析...</div></div>
+<div class="loading" id="ld"><div class="ld-icon" style="font-size:13px;">(=^･ω･^=) 分析中</div><div class="ld-text">AI 正在分析...</div></div>
 <div class="result" id="result">
 <div class="ar-head"><div class="ar-title">📊 分析结果</div><div class="ar-badge" id="arBadge">AI 识别</div></div>
 <div id="ri"></div>
@@ -383,19 +383,19 @@ advice:{good:["蔬菜6份很棒","碳水控制合理","美式咖啡好"],tips:["
 ];
 const TODAY="2026-09-29";
 let dayIdx=0;
-const mealIcons={"早餐":{icon:"🌅",cls:"breakfast"},"午餐":{icon:"☀️",cls:"lunch"},"晚餐":{icon:"🌙",cls:"dinner"},"加餐":{icon:"🍰",cls:"snack"}};
+const mealIcons={"早餐":{icon:"ฅ^•ﻌ•^ฅ",cls:"breakfast"},"午餐":{icon:"( =^･ω･^=)",cls:"lunch"},"晚餐":{icon:"(ฅ´ω`ฅ)",cls:"dinner"},"加餐":{icon:"(^=･ᆺ･=)",cls:"snack"}};
 const dayEn={"周一":"MON","周二":"TUE","周三":"WED","周四":"THU","周五":"FRI","周六":"SAT","周日":"SUN"};
 
 // Header
 const now=new Date();
 const hour=now.getHours();
-document.getElementById("greeting").textContent=hour<5?"夜深了 🌙":hour<12?"早上好 ☀️":hour<14?"中午好 🌤":hour<18?"下午好 ☁️":"晚上好 🌙";
+document.getElementById("greeting").textContent=hour<5?"夜深了 (=^･ω･^=)":hour<12?"早上好 (=^ω^=)":hour<14?"中午好 (=✧ω✧=)":hour<18?"下午好 (ฅ^•ﻌ•^ฅ)":"晚上好 (=^･ω･^=)";
 document.getElementById("todayDate").textContent=`${TODAY} ${DATA_DAYS[0].weekday}`;
 
 function navDay(dir){
 const n=dayIdx-dir; // dir -1 (left) = older = higher index
-if(n<0){showToast("已经是今天啦 ✨");return;}
-if(n>=DATA_DAYS.length){showToast("已经是第一天了");return;}
+if(n<0){showToast("已经是今天啦 (=^･ω･^=)");return;}
+if(n>=DATA_DAYS.length){showToast("已经是第一天 (=^ω^=)");return;}
 dayIdx=n;
 renderDay(true);
 showToast(dayIdx===0?"回到今天 📅":`查看 ${DATA_DAYS[dayIdx].date}`);
@@ -481,7 +481,7 @@ mealsHtml+=`<div class="meal-card" style="animation-delay:${i*0.08}s"><div class
 <div class="meal-right"><div class="meal-kcal">${safeNum(meal.kcal,0)}<span class="u"> kcal</span></div><div class="meal-time">${meal.time||""}</div></div>
 </div></div>`;
 });
-if(isToday)mealsHtml+=`<button class="add-meal" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>添加饮食记录</button>`;
+if(isToday)mealsHtml+=`<button class="add-meal" onclick="openModal()"><span style="font-size:12px;margin-right:5px;">(=^･ω･^=)</span> 添加饮食记录</button>`;
 document.getElementById("mealList").innerHTML=mealsHtml;
 
 // Advice
@@ -561,14 +561,14 @@ function copyRes(){if(!lastRes)return;
 const curDate=DATA_DAYS[dayIdx].date;
 const t=`帮我记录(${curDate})的饮食：\n${lastRes.items.map(i=>`• ${i.name}（${i.detail}）≈ ${i.kcal} kcal`).join("\n")}\n总计约 ${lastRes.total} kcal`;
 if(navigator.share){navigator.share({text:t}).catch(()=>{navigator.clipboard.writeText(t).then(()=>showToast("已复制 💬"));});}
-else{navigator.clipboard.writeText(t).then(()=>showToast("已复制，去粘贴给AI 💬"));}}
+else{navigator.clipboard.writeText(t).then(()=>showToast("已复制 (=^ω^=)💬"));}}
 function saveLocal(){if(!lastRes)return;
 const curDate=DATA_DAYS[dayIdx].date;
 const entries=loadEntriesSafe();
 if(!entries[curDate])entries[curDate]=[];
 entries[curDate].push({type:selMeal,time:new Date().getHours()<12?"早上":(new Date().getHours()<18?"下午":"晚上"),kcal:lastRes.total,items:lastRes.items.map(i=>({name:i.name,portion:i.detail,kcal:i.kcal}))});
 localStorage.setItem("health_entries",JSON.stringify(entries));
-closeModal();showToast("已保存到今天 ✅");setTimeout(()=>location.reload(),800);}
+closeModal();showToast("已保存 (=^ω^=)✅");setTimeout(()=>location.reload(),800);}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1800);}
 
 renderDay();
