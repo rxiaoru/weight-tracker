@@ -2,255 +2,302 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>我的健康手账</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>CalTrack · 热量管家</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
---bg:#FAFAF7;--card:#FFFFFF;--ink:#1A1D26;--ink2:#5A5F6E;--ink3:#9BA0AC;
---line:#EDEDF0;--line2:#F5F5F7;
---accent:#FF6B4A;--accent-soft:#FFF3EF;
---mint:#00C896;--mint-soft:#E8FAF4;
---blue:#4A9EFF;--blue-soft:#EFF6FF;
---amber:#FFA500;--amber-soft:#FFF8EC;
---rose:#FF5C7A;--rose-soft:#FFF0F3;
---r-lg:20px;--r-md:14px;--r-sm:10px;
---sh:0 2px 12px rgba(26,29,38,0.06),0 1px 2px rgba(26,29,38,0.04);
---ease:cubic-bezier(.32,.72,.28,1);
+--bg:#0A0E1A;--bg2:#111827;--card:#1A2232;--card2:#212B3E;
+--border:#2A3548;
+--text:#F1F5F9;--text2:#94A3B8;--text3:#64748B;
+--primary:#8B5CF6;--primary2:#A78BFA;
+--green:#10B981;--green-bg:rgba(16,185,129,0.12);
+--orange:#F97316;--orange-bg:rgba(249,115,22,0.12);
+--blue:#3B82F6;--blue-bg:rgba(59,130,246,0.12);
+--pink:#EC4899;--pink-bg:rgba(236,72,121,0.12);
+--red:#EF4444;
+--yellow:#EAB308;
+--r:16px;--r-sm:12px;
+--safe-t:env(safe-area-inset-top,0px);
+--safe-b:env(safe-area-inset-bottom,0px);
 }
-html,body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;}
-body{background:var(--bg);color:var(--ink);height:100vh;height:100dvh;overflow:hidden;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;max-width:480px;margin:0 auto;-webkit-font-smoothing:antialiased;}
+html,body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--text);height:100vh;height:100dvh;overflow:hidden;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;max-width:430px;margin:0 auto;}
+::-webkit-scrollbar{display:none;}
 
-/* Head */
-.head{flex-shrink:0;padding:calc(env(safe-area-inset-top,14px) + 8px) 20px 10px;display:flex;justify-content:space-between;align-items:center;}
-.h-brand{display:flex;align-items:center;gap:10px;}
-.h-logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#FF8A65,#FF6B4A);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 4px 12px rgba(255,107,74,0.3);}
-.h-title{font-size:16px;font-weight:800;letter-spacing:-0.3px;}
-.h-sub{font-size:9px;color:var(--ink3);margin-top:1px;}
-.h-badge{font-size:10px;color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:5px 12px;border-radius:20px;font-weight:600;}
+/* ===== Header ===== */
+.header{flex-shrink:0;padding:calc(var(--safe-t) + 12px) 20px 12px;display:flex;justify-content:space-between;align-items:center;}
+.h-left{display:flex;align-items:center;gap:10px;}
+.h-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--pink));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;}
+.h-greeting{font-size:15px;font-weight:700;}
+.h-date{font-size:11px;color:var(--text3);margin-top:1px;}
+.h-btn{width:36px;height:36px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
+.h-btn:active{transform:scale(0.9);background:var(--card2);}
+.h-btn svg{width:18px;height:18px;color:var(--text2);}
 
-/* Stats */
-.stats{flex-shrink:0;display:flex;margin:0 20px 10px;background:var(--card);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh);position:relative;}
-.stat{flex:1;text-align:center;padding:12px 4px;position:relative;}
-.stat:not(:last-child)::after{content:"";position:absolute;right:0;top:28%;height:44%;width:1px;background:var(--line2);}
-.sa-num{font-size:18px;font-weight:800;letter-spacing:-0.4px;font-variant-numeric:tabular-nums;}
-.sa-num .u{font-size:9px;font-weight:500;color:var(--ink3);margin-left:1px;}
-.sa-num.warn{color:var(--accent);} .sa-num.ok{color:var(--mint);}
-.sa-label{font-size:8px;color:var(--ink3);margin-top:3px;letter-spacing:1.5px;font-weight:600;}
+/* ===== Content ===== */
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 20px calc(var(--safe-b) + 90px);scrollbar-width:none;}
+.content::-webkit-scrollbar{display:none;}
 
-/* Carousel */
-.carousel{flex:1;min-height:0;position:relative;overflow:hidden;padding:0 20px;}
-.track{display:flex;height:100%;transition:transform .5s var(--ease);will-change:transform;}
-.slide{min-width:100%;padding:0 2px;display:flex;flex-direction:column;min-height:0;}
-.page-card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh);overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative;flex:1;min-height:0;scrollbar-width:none;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 8px,#000 calc(100% - 8px),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 8px,#000 calc(100% - 8px),transparent 100%);}
-.page-card::-webkit-scrollbar{display:none;}
-.pc-head{position:sticky;top:0;z-index:5;background:rgba(255,255,255,0.88);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--line2);}
-.pc-date{font-size:17px;font-weight:800;letter-spacing:-0.4px;}
-.pc-week{font-size:10px;color:var(--ink3);margin-top:2px;font-weight:500;}
-.pc-right{display:flex;align-items:baseline;gap:3px;}
-.pc-w{font-size:26px;font-weight:800;letter-spacing:-0.8px;font-variant-numeric:tabular-nums;}
-.pc-u{font-size:10px;color:var(--ink3);font-weight:600;}
-.pc-chg{font-size:10px;font-weight:700;border-radius:20px;padding:3px 9px;margin-left:6px;align-self:center;display:inline-flex;align-items:center;gap:2px;}
-.pc-chg.up{color:var(--accent);background:var(--accent-soft);}
-.pc-chg.down{color:var(--mint);background:var(--mint-soft);}
-.pc-chg.same{color:var(--ink3);background:var(--line2);}
-.pc-body{padding:14px 18px 24px;}
-.sec{margin-bottom:18px;}.sec:last-child{margin-bottom:0;}
-.sec-tag{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:0.3px;margin-bottom:11px;color:var(--ink);}
-.sec-tag .st-ico{width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
-.sec-tag.t-w .st-ico{background:var(--blue-soft);}
-.sec-tag.t-d .st-ico{background:var(--amber-soft);}
-.sec-tag.t-a .st-ico{background:var(--mint-soft);}
-.sec-tag .st-badge{margin-left:auto;font-size:10px;font-weight:600;color:var(--ink3);background:var(--line2);padding:2px 8px;border-radius:10px;}
+/* ===== Calorie Hero ===== */
+.hero-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:24px;padding:24px;margin-bottom:14px;position:relative;overflow:hidden;}
+.hero-card::before{content:"";position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.15),transparent 70%);}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;position:relative;z-index:1;}
+.hero-label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:0.5px;}
+.hero-date{font-size:11px;color:var(--text2);background:var(--bg2);padding:4px 10px;border-radius:12px;border:1px solid var(--border);}
+.hero-main{display:flex;align-items:center;gap:24px;position:relative;z-index:1;}
+.ring-wrap{position:relative;width:130px;height:130px;flex-shrink:0;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:var(--bg2);stroke-width:10;}
+.ring-val{fill:none;stroke:url(#grad);stroke-width:10;stroke-linecap:round;stroke-dasharray:377;stroke-dashoffset:377;transition:stroke-dashoffset 1.2s cubic-bezier(.32,.72,.28,1);}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring-num{font-size:30px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums;}
+.ring-unit{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:1px;margin-top:2px;}
+.hero-info{flex:1;}
+.hero-info .hi-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;}
+.hero-info .hi-row + .hi-row{border-top:1px solid var(--border);}
+.hi-label{font-size:12px;color:var(--text2);font-weight:500;}
+.hi-val{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;}
+.hi-val.c1{color:var(--primary2);} .hi-val.c2{color:var(--orange);} .hi-val.c3{color:var(--pink);}
 
-/* Weight */
-.w-row{display:flex;gap:10px;}
-.w-box{flex:1;background:var(--bg);border-radius:var(--r-md);padding:12px 8px;text-align:center;transition:transform .2s var(--ease);}
-.w-box:active{transform:scale(0.97);}
-.wb-i{font-size:15px;margin-bottom:3px;}
-.wb-l{font-size:9px;color:var(--ink3);font-weight:600;letter-spacing:0.5px;}
-.wb-v{font-size:21px;font-weight:800;letter-spacing:-0.4px;margin-top:3px;font-variant-numeric:tabular-nums;}
-.wb-v .u{font-size:10px;font-weight:400;color:var(--ink3);}
-.w-note{margin-top:10px;font-size:10.5px;color:var(--ink2);background:var(--blue-soft);border-radius:var(--r-sm);padding:8px 14px;text-align:center;font-weight:500;line-height:1.5;}
+/* Macros */
+.macros{display:flex;gap:10px;margin-bottom:14px;}
+.macro-card{flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;text-align:center;transition:transform .2s;}
+.macro-card:active{transform:scale(0.96);}
+.mc-icon{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:15px;}
+.mc-icon.p{background:var(--blue-bg);} .mc-icon.c{background:var(--orange-bg);} .mc-icon.f{background:var(--pink-bg);}
+.mc-val{font-size:17px;font-weight:800;letter-spacing:-0.3px;font-variant-numeric:tabular-nums;}
+.mc-val.p{color:var(--blue);} .mc-val.c{color:var(--orange);} .mc-val.f{color:var(--pink);}
+.mc-label{font-size:10px;color:var(--text3);margin-top:3px;font-weight:600;}
 
-/* Nutrition */
-.nutri{display:flex;background:var(--bg);border-radius:var(--r-md);overflow:hidden;margin-bottom:14px;}
-.nc{flex:1;text-align:center;padding:11px 4px;position:relative;}
-.nc:not(:last-child)::after{content:"";position:absolute;right:0;top:28%;height:44%;width:1px;background:var(--line);}
-.n-v{font-size:15px;font-weight:800;letter-spacing:-0.3px;font-variant-numeric:tabular-nums;}
-.n-v.total{color:var(--accent);font-size:18px;}
-.n-v.p{color:var(--blue);} .n-v.c{color:var(--amber);} .n-v.f{color:var(--rose);}
-.n-l{font-size:8px;color:var(--ink3);margin-top:3px;letter-spacing:1px;font-weight:600;}
+/* Section */
+.section{margin-bottom:18px;}
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 2px;}
+.sec-title{font-size:16px;font-weight:800;letter-spacing:-0.2px;display:flex;align-items:center;gap:7px;}
+.sec-more{font-size:12px;color:var(--primary2);font-weight:600;cursor:pointer;}
+.sec-more:active{opacity:0.6;}
 
-/* Meals timeline */
-.meal{display:flex;gap:12px;margin-bottom:14px;}
-.meal:last-child{margin-bottom:0;}
-.m-rail{display:flex;flex-direction:column;align-items:center;width:36px;flex-shrink:0;}
-.m-dot{width:32px;height:32px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:transform .2s var(--ease);}
-.m-dot:active{transform:scale(0.9);}
-.m-rail .m-ln{flex:1;width:2px;background:var(--line2);margin-top:4px;border-radius:1px;}
-.m-dot.morning{background:var(--amber-soft);}
-.m-dot.noon{background:var(--blue-soft);}
-.m-dot.snack{background:var(--rose-soft);}
-.m-dot.night{background:#F0EBFF;}
-.m-info{flex:1;min-width:0;padding-top:2px;}
-.m-name{font-size:13px;font-weight:700;margin-bottom:7px;display:flex;align-items:baseline;gap:6px;}
-.m-name .m-t{font-size:9px;color:var(--ink3);font-weight:500;}
-.m-name .m-s{font-size:10px;color:var(--accent);font-weight:700;margin-left:auto;background:var(--accent-soft);padding:2px 8px;border-radius:8px;}
-.food{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--ink2);padding:6px 0;position:relative;}
-.food::before{content:"";position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:3px;border-radius:50%;background:var(--line);}
-.f-line:last-child .food{border:none;}
-.f-p{font-size:9px;color:var(--ink3);margin-left:5px;font-weight:400;}
-.f-k{font-size:11px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+/* Weight card */
+.weight-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:14px;}
+.wc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.wc-title{font-size:14px;font-weight:700;color:var(--text2);}
+.wc-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:10px;}
+.wc-badge.up{color:var(--orange);background:var(--orange-bg);}
+.wc-badge.down{color:var(--green);background:var(--green-bg);}
+.wc-big{display:flex;align-items:baseline;gap:4px;margin-bottom:6px;}
+.wc-num{font-size:42px;font-weight:800;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;background:linear-gradient(135deg,#fff,#cbd5e1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.wc-unit{font-size:15px;color:var(--text3);font-weight:600;}
+.wc-sub{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;}
+.wc-sub .dot{width:5px;height:5px;border-radius:50%;background:var(--green);}
+/* Mini chart */
+.mini-chart{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.mini-chart .mc-label{margin-bottom:8px;}
+.chart-svg{width:100%;height:60px;display:block;}
 
-/* Advice */
-.adv{background:linear-gradient(135deg,var(--mint-soft),#F0FBF7 100%);border-radius:var(--r-md);padding:14px;border:1px solid rgba(0,200,150,0.12);}
-.a-good{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
-.g-tag{font-size:10px;font-weight:600;color:var(--mint);background:#fff;border-radius:8px;padding:4px 10px;box-shadow:0 1px 3px rgba(0,200,150,0.08);}
-.a-tip{display:flex;gap:8px;padding:4px 0;}
-.at-d{width:5px;height:5px;border-radius:50%;background:var(--mint);margin-top:6px;flex-shrink:0;opacity:0.7;}
-.at-t{font-size:11px;color:var(--ink2);line-height:1.6;}
-.a-final{margin-top:12px;font-size:11px;font-weight:600;color:var(--ink);background:#fff;border-radius:var(--r-sm);padding:10px 14px;box-shadow:0 1px 4px rgba(0,200,150,0.08);display:flex;align-items:flex-start;gap:6px;line-height:1.5;}
+/* Meals */
+.meal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:transform .2s;}
+.meal-card:active{transform:scale(0.98);}
+.meal-row{display:flex;align-items:center;padding:14px 16px;gap:14px;}
+.meal-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.meal-icon.breakfast{background:rgba(234,179,8,0.15);}
+.meal-icon.lunch{background:var(--blue-bg);}
+.meal-icon.dinner{background:rgba(139,92,246,0.15);}
+.meal-icon.snack{background:var(--pink-bg);}
+.meal-info{flex:1;min-width:0;}
+.meal-name{font-size:14px;font-weight:700;margin-bottom:2px;}
+.meal-detail{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.meal-right{text-align:right;flex-shrink:0;}
+.meal-kcal{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;}
+.meal-kcal .u{font-size:10px;color:var(--text3);font-weight:500;}
+.meal-time{font-size:10px;color:var(--text3);margin-top:2px;}
+.add-meal-btn{width:100%;padding:14px;border-radius:var(--r);border:1.5px dashed var(--border);background:transparent;color:var(--text3);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;}
+.add-meal-btn:active{border-color:var(--primary);color:var(--primary2);background:rgba(139,92,246,0.05);transform:scale(0.98);}
+.add-meal-btn svg{width:16px;height:16px;}
 
-/* Quick add */
-.quick-sec{margin-top:14px;}
-.qa-box{background:var(--card);border:2px dashed var(--line);border-radius:var(--r-md);padding:16px;text-align:center;transition:border-color .2s;}
-.qa-box:active{border-color:var(--accent);}
-.qa-title{font-size:13px;font-weight:700;margin-bottom:4px;}
-.qa-sub{font-size:10px;color:var(--ink3);margin-bottom:12px;line-height:1.6;}
-.qa-btns{display:flex;gap:8px;}
-.qa-btn{flex:1;padding:11px;border-radius:var(--r-sm);border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s var(--ease);display:flex;align-items:center;justify-content:center;gap:5px;}
-.qa-btn:active{transform:scale(0.96);}
-.qa-btn.primary{background:var(--accent);color:#fff;box-shadow:0 3px 10px rgba(255,107,74,0.3);}
-.qa-btn.secondary{background:var(--bg);color:var(--ink2);border:1.5px solid var(--line);}
+/* Advice card */
+.advice-card{background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.03));border:1px solid rgba(16,185,129,0.15);border-radius:20px;padding:18px;margin-bottom:14px;}
+.adv-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.adv-head .ah-icon{width:32px;height:32px;border-radius:10px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.adv-head .ah-title{font-size:14px;font-weight:800;color:var(--green);}
+.adv-good{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.g-tag{font-size:11px;font-weight:600;color:var(--green);background:rgba(16,185,129,0.1);border-radius:16px;padding:5px 12px;border:1px solid rgba(16,185,129,0.2);}
+.adv-tip{display:flex;gap:8px;padding:5px 0;font-size:12px;color:var(--text2);line-height:1.6;}
+.adv-tip .at-d{width:4px;height:4px;border-radius:50%;background:var(--green);margin-top:7px;flex-shrink:0;opacity:0.6;}
+.adv-final{margin-top:12px;font-size:12px;font-weight:600;color:var(--text);background:rgba(255,255,255,0.04);border-radius:12px;padding:10px 14px;line-height:1.6;border:1px solid var(--border);}
 
-/* Bottom nav */
-.bnav{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:8px 24px calc(env(safe-area-inset-bottom,12px) + 8px);}
-.bn-btn{width:42px;height:42px;border-radius:14px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink2);cursor:pointer;box-shadow:var(--sh);transition:all .2s var(--ease);}
-.bn-btn svg{width:16px;height:16px;}
-.bn-btn:active{transform:scale(0.88);background:var(--line2);}
-.bn-btn:disabled{opacity:0.2;pointer-events:none;}
-.bn-mid{text-align:center;}
-.bn-dots{display:flex;gap:6px;justify-content:center;margin-bottom:5px;}
-.bn-dot{width:6px;height:6px;border-radius:3px;background:var(--line);transition:all .4s var(--ease);cursor:pointer;}
-.bn-dot.on{width:22px;background:var(--accent);}
-.bn-num{font-size:11px;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;}
-.bn-date{font-size:9px;color:var(--ink3);margin-top:2px;font-weight:500;}
+/* Bottom Tab Bar */
+.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(17,24,39,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 calc(var(--safe-b) + 8px);z-index:100;}
+.tab-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 16px;cursor:pointer;color:var(--text3);transition:all .2s;border:none;background:none;font-family:inherit;position:relative;}
+.tab-item svg{width:22px;height:22px;}
+.tab-item span{font-size:9px;font-weight:600;letter-spacing:0.3px;}
+.tab-item.active{color:var(--primary2);}
+.tab-item:active{transform:scale(0.9);}
+.tab-item .ti-dot{position:absolute;top:-2px;width:4px;height:4px;border-radius:50%;background:var(--primary);opacity:0;transition:opacity .2s;}
+.tab-item.active .ti-dot{opacity:1;}
 
 /* FAB */
-.fab{position:fixed;right:calc(50% - 240px + 16px);bottom:72px;width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,#FF8A65,#FF6B4A);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 6px 20px rgba(255,107,74,0.35);z-index:50;transition:all .25s var(--ease);}
-@media(max-width:480px){.fab{right:16px;}}
-.fab:active{transform:scale(0.88) rotate(45deg);}
+.fab{position:fixed;right:calc(50% - 215px + 20px);bottom:calc(var(--safe-b) + 74px);width:56px;height:56px;border-radius:20px;background:linear-gradient(135deg,var(--primary),var(--pink));color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 8px 24px rgba(139,92,246,0.4);z-index:99;transition:all .25s cubic-bezier(.32,.72,.28,1);}
+@media(max-width:430px){.fab{right:20px;}}
+.fab:active{transform:scale(0.85) rotate(90deg);}
 .fab svg{width:24px;height:24px;}
 
 /* Modal */
-.mo{position:fixed;inset:0;background:rgba(26,29,38,0.45);z-index:200;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;transition:opacity .3s ease;}
-.mo.show{display:flex;opacity:1;}
-.modal{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:20px 20px calc(env(safe-area-inset-bottom,20px) + 24px);transform:translateY(100%);transition:transform .35s var(--ease);scrollbar-width:none;}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+.mo.show{opacity:1;pointer-events:auto;}
+.modal{background:var(--bg2);border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:92vh;overflow-y:auto;padding:8px 20px calc(var(--safe-b) + 24px);transform:translateY(100%);transition:transform .4s cubic-bezier(.32,.72,.28,1);scrollbar-width:none;border:1px solid var(--border);border-bottom:none;}
 .modal::-webkit-scrollbar{display:none;}
 .mo.show .modal{transform:translateY(0);}
-.modal::before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:36px;height:4px;border-radius:2px;background:var(--line);}
-.modal-head{display:flex;justify-content:space-between;align-items:center;margin:8px 0 18px;}
-.modal-title{font-size:19px;font-weight:800;letter-spacing:-0.3px;}
-.modal-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;font-size:14px;color:var(--ink2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.modal-close:active{transform:scale(0.9);background:var(--line2);}
-.ms{margin-bottom:16px;}
-.ms-label{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
-.ms-input{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:var(--r-md);font-size:14px;font-family:inherit;background:var(--bg);color:var(--ink);outline:none;transition:border .2s;line-height:1.5;resize:vertical;}
-.ms-input:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-soft);}
-.ms-input::placeholder{color:var(--ink3);}
+.modal::before{content:"";position:sticky;top:8px;display:block;width:40px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 16px;}
+.m-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.m-title{font-size:20px;font-weight:800;letter-spacing:-0.3px;}
+.m-close{width:34px;height:34px;border-radius:50%;background:var(--card);border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
+.m-close:active{transform:scale(0.9);background:var(--card2);}
+.m-close svg{width:14px;height:14px;}
+.m-sec{margin-bottom:20px;}
+.m-label{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.m-label .ml-ico{font-size:14px;}
 .meal-picker{display:flex;gap:8px;}
-.mp{flex:1;padding:10px 4px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer;transition:all .2s var(--ease);font-family:inherit;text-align:center;}
+.mp{flex:1;padding:12px 4px;border-radius:14px;border:1.5px solid var(--border);background:var(--card);font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s;font-family:inherit;text-align:center;}
 .mp:active{transform:scale(0.95);}
-.mp.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 8px rgba(255,107,74,0.25);}
-.pu{border:2px dashed var(--line);border-radius:var(--r-md);padding:22px;text-align:center;cursor:pointer;transition:all .2s var(--ease);}
-.pu:active{border-color:var(--accent);background:var(--accent-soft);transform:scale(0.98);}
-.pu-icon{font-size:30px;margin-bottom:6px;}
-.pu-text{font-size:13px;color:var(--ink);font-weight:700;}
-.pu-sub{font-size:10px;color:var(--ink3);margin-top:4px;}
-.pp{max-width:100%;border-radius:var(--r-md);margin-top:10px;display:none;box-shadow:var(--sh);}
-.pp.show{display:block;}
-.an-btn{width:100%;padding:15px;border-radius:var(--r-md);border:none;background:linear-gradient(135deg,#FF8A65,#FF6B4A);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(255,107,74,0.3);transition:all .2s var(--ease);display:flex;align-items:center;justify-content:center;gap:6px;}
-.an-btn:active{transform:scale(0.97);}
-.an-btn:disabled{opacity:0.5;pointer-events:none;}
-.result{margin-top:14px;padding:16px;background:var(--bg);border-radius:var(--r-md);display:none;animation:popIn .35s var(--ease);}
-@keyframes popIn{from{opacity:0;transform:translateY(8px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
-.result.show{display:block;}
-.ar-title{font-size:13px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
-.ar-item{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:8px 0;border-bottom:1px solid var(--line2);}
-.ar-item:last-of-type{border:none;}
-.ar-item .k{color:var(--ink2);flex:1;}
-.ar-item .k .kd{font-size:10px;color:var(--ink3);display:block;margin-top:2px;}
-.ar-item .v{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;font-size:14px;}
-.ar-total{display:flex;justify-content:space-between;padding:10px 0 4px;border-top:2px solid var(--line);margin-top:4px;font-size:14px;font-weight:800;}
-.ar-total .v{color:var(--accent);font-size:17px;}
-.ar-sum{font-size:11px;color:var(--ink2);margin-top:8px;line-height:1.6;padding:10px;background:var(--mint-soft);border-radius:var(--r-sm);}
-.ar-actions{display:flex;gap:8px;margin-top:14px;}
-.ar-actions button{flex:1;padding:13px;border-radius:var(--r-sm);border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s var(--ease);display:flex;align-items:center;justify-content:center;gap:5px;}
-.ar-actions button:active{transform:scale(0.96);}
-.ar-save{background:var(--accent);color:#fff;box-shadow:0 3px 8px rgba(255,107,74,0.25);}
-.ar-copy{background:var(--bg);color:var(--ink2);border:1.5px solid var(--line);}
-.loading{text-align:center;padding:24px;display:none;}
+.mp.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 12px rgba(139,92,246,0.3);}
+.m-input{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:var(--r);font-size:15px;font-family:inherit;background:var(--card);color:var(--text);outline:none;transition:border .2s;line-height:1.6;resize:vertical;}
+.m-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(139,92,246,0.1);}
+.m-input::placeholder{color:var(--text3);}
+.m-btn{width:100%;padding:16px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--primary),var(--pink));color:#fff;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 6px 20px rgba(139,92,246,0.35);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.m-btn:active{transform:scale(0.97);}
+.m-btn:disabled{opacity:0.5;pointer-events:none;}
+.m-btn svg{width:18px;height:18px;}
+.loading{text-align:center;padding:30px;display:none;}
 .loading.show{display:block;}
-.ld-icon{font-size:32px;animation:spin 1.2s linear infinite;display:inline-block;}
+.ld-icon{font-size:36px;animation:spin 1s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.ld-text{font-size:12px;color:var(--ink3);margin-top:10px;font-weight:500;}
-.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:10px 20px;border-radius:24px;opacity:0;pointer-events:none;transition:all .35s var(--ease);z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(26,29,38,0.2);max-width:90vw;text-align:center;}
+.ld-text{font-size:13px;color:var(--text3);margin-top:12px;font-weight:500;}
+.result{margin-top:16px;padding:18px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);display:none;animation:popIn .4s cubic-bezier(.32,.72,.28,1);}
+@keyframes popIn{from{opacity:0;transform:translateY(12px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+.result.show{display:block;}
+.ar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.ar-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px;}
+.ar-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px;background:var(--green-bg);color:var(--green);}
+.ar-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+.ar-item .k{font-size:14px;color:var(--text);font-weight:600;}
+.ar-item .kd{font-size:11px;color:var(--text3);display:block;margin-top:2px;font-weight:400;}
+.ar-item .v{font-weight:700;color:var(--orange);font-variant-numeric:tabular-nums;font-size:15px;}
+.ar-total{display:flex;justify-content:space-between;align-items:center;padding:14px 0 4px;font-size:15px;font-weight:800;}
+.ar-total .v{color:var(--orange);font-size:20px;font-variant-numeric:tabular-nums;}
+.ar-sum{font-size:12px;color:var(--text2);margin-top:12px;line-height:1.7;padding:12px;background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--border);}
+.ar-actions{display:flex;gap:10px;margin-top:16px;}
+.ar-actions button{flex:1;padding:14px;border-radius:var(--r);border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.ar-actions button:active{transform:scale(0.96);}
+.ar-save{background:linear-gradient(135deg,var(--primary),var(--pink));color:#fff;box-shadow:0 4px 12px rgba(139,92,246,0.3);}
+.ar-copy{background:var(--card);color:var(--text2);border:1.5px solid var(--border);}
+
+/* Toast */
+.toast{position:fixed;bottom:calc(var(--safe-b) + 90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--card2);color:var(--text);font-size:13px;font-weight:600;padding:12px 22px;border-radius:28px;opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.32,.72,.28,1);z-index:300;white-space:nowrap;border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,0.3);max-width:85vw;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-/* Slide fade in */
-.slide{opacity:0.6;transition:opacity .5s ease;}
-.slide.active{opacity:1;}
+
+/* Entry animation */
+.fade-up{animation:fadeUp .5s cubic-bezier(.32,.72,.28,1) both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
 
-<div class="head">
-<div class="h-brand">
-<div class="h-logo">🥗</div>
-<div><div class="h-title">健康手账</div><div class="h-sub">WEIGHT · MEALS · DAILY</div></div>
+<div class="header">
+<div class="h-left">
+<div class="h-avatar">💪</div>
+<div><div class="h-greeting" id="greeting">Hi, 今天也要加油</div><div class="h-date" id="todayDate"></div></div>
 </div>
-<div class="h-badge" id="countBadge"></div>
-</div>
-
-<div class="stats" id="stats"></div>
-
-<div class="carousel" id="carousel"><div class="track" id="track"></div></div>
-
-<div class="bnav">
-<button class="bn-btn" id="btnPrev" onclick="go(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-<div class="bn-mid">
-<div class="bn-dots" id="dots"></div>
-<div class="bn-num" id="pageNum"></div>
-<div class="bn-date" id="pageDate"></div>
-</div>
-<button class="bn-btn" id="btnNext" onclick="go(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+<button class="h-btn" onclick="showToast('设置功能开发中')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 </div>
 
+<div class="content" id="content">
+
+<!-- Calorie Ring -->
+<div class="hero-card fade-up">
+<div class="hero-top"><div class="hero-label">今日热量</div><div class="hero-date" id="heroDate"></div></div>
+<div class="hero-main">
+<div class="ring-wrap">
+<svg width="130" height="130" viewBox="0 0 130 130">
+<defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#EC4899"/></linearGradient></defs>
+<circle class="ring-bg" cx="65" cy="65" r="60"/>
+<circle class="ring-val" id="ringVal" cx="65" cy="65" r="60"/>
+</svg>
+<div class="ring-center"><div class="ring-num" id="ringNum">0</div><div class="ring-unit">/ 2000 KCAL</div></div>
+</div>
+<div class="hero-info">
+<div class="hi-row"><span class="hi-label">已摄入</span><span class="hi-val c1" id="hiEaten">0 kcal</span></div>
+<div class="hi-row"><span class="hi-label">还能吃</span><span class="hi-val c2" id="hiLeft">2000 kcal</span></div>
+<div class="hi-row"><span class="hi-label">蛋白质</span><span class="hi-val c3" id="hiProtein">0g</span></div>
+</div>
+</div>
+</div>
+
+<!-- Macros -->
+<div class="macros fade-up" style="animation-delay:.1s;">
+<div class="macro-card"><div class="mc-icon p">🥩</div><div class="mc-val p" id="macroP">0g</div><div class="mc-label">蛋白质</div></div>
+<div class="macro-card"><div class="mc-icon c">🍚</div><div class="mc-val c" id="macroC">0g</div><div class="mc-label">碳水</div></div>
+<div class="macro-card"><div class="mc-icon f">🥑</div><div class="mc-val f" id="macroF">0g</div><div class="mc-label">脂肪</div></div>
+</div>
+
+<!-- Weight -->
+<div class="weight-card fade-up" style="animation-delay:.15s;">
+<div class="wc-top"><div class="wc-title">体重记录</div><div class="wc-badge up" id="wcBadge">▲ 较基线 +2.0</div></div>
+<div class="wc-big"><span class="wc-num" id="wcNum">72.0</span><span class="wc-unit">kg</span></div>
+<div class="wc-sub"><span class="dot"></span><span id="wcSub">第一阶段目标 70kg · 还差 2.0kg</span></div>
+<div class="mini-chart"><div class="mc-label" style="font-size:11px;color:var(--text3);font-weight:600;">体重趋势</div><div id="chartArea"></div></div>
+</div>
+
+<!-- Today's meals -->
+<div class="section fade-up" style="animation-delay:.2s;">
+<div class="sec-head"><div class="sec-title">🍽️ 今日饮食</div><div class="sec-more" onclick="openModal()">+ 记录</div></div>
+<div id="mealList"></div>
+</div>
+
+<!-- Advice -->
+<div class="advice-card fade-up" style="animation-delay:.25s;">
+<div class="adv-head"><div class="ah-icon">💡</div><div class="ah-title">AI 建议</div></div>
+<div class="adv-good" id="advGood"></div>
+<div id="advTips"></div>
+<div class="adv-final" id="advFinal"></div>
+</div>
+
+</div>
+
+<!-- FAB -->
 <button class="fab" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
 
+<!-- Tab bar -->
+<div class="tabbar">
+<button class="tab-item active" onclick="switchTab(0,this)"><div class="ti-dot"></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>首页</span></button>
+<button class="tab-item" onclick="showToast('统计功能开发中')"><div class="ti-dot"></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>统计</span></button>
+<button class="tab-item" onclick="openModal()"><div class="ti-dot"></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>记录</span></button>
+<button class="tab-item" onclick="showToast('我的功能开发中')"><div class="ti-dot"></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>我的</span></button>
+</div>
+
+<!-- Modal -->
 <div class="mo" id="mo">
 <div class="modal">
-<div class="modal-head"><div class="modal-title">📝 快速记录</div><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-<div class="ms"><div class="ms-label">🍽️ 餐次</div><div class="meal-picker" id="mp">
+<div class="m-head"><div class="m-title">📝 记录饮食</div><button class="m-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+<div class="m-sec"><div class="m-label"><span class="ml-ico">🍽️</span>餐次</div><div class="meal-picker" id="mp">
 <button class="mp active" data-meal="早餐">🌅 早餐</button>
 <button class="mp" data-meal="午餐">☀️ 午餐</button>
 <button class="mp" data-meal="晚餐">🌙 晚餐</button>
 <button class="mp" data-meal="加餐">🍰 加餐</button>
 </div></div>
-<div class="ms"><div class="ms-label">📝 吃了什么</div><textarea class="ms-input" id="foodInput" rows="3" placeholder="用逗号分隔，例如：&#10;米饭半碗，西兰花炒虾仁，一个苹果"></textarea></div>
-<div class="ms"><div class="ms-label">📸 拍照识别 <span style="font-weight:400;color:var(--ink3);font-size:10px;">（可选）</span></div>
-<div class="pu" onclick="document.getElementById('pi').click()">
-<div class="pu-icon">📷</div>
-<div class="pu-text">拍照或从相册选择</div>
-<div class="pu-sub">AI 帮你识别食物和估算热量</div>
+<div class="m-sec"><div class="m-label"><span class="ml-ico">📝</span>吃了什么</div><textarea class="m-input" id="fi" rows="3" placeholder="用逗号分隔，例如：&#10;米饭半碗，西兰花炒虾仁，一个苹果"></textarea></div>
+<div class="m-sec"><div class="m-label"><span class="ml-ico">📸</span>拍照识别 <span style="font-size:10px;font-weight:400;color:var(--text3);">可选</span></div>
+<div class="pu" onclick="document.getElementById('pi').click()" style="border:2px dashed var(--border);border-radius:16px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;">
+<div style="font-size:32px;margin-bottom:8px;">📷</div>
+<div style="font-size:14px;font-weight:700;">拍照或从相册选择</div>
+<div style="font-size:11px;color:var(--text3);margin-top:4px;">AI 帮你识别食物和估算热量</div>
 </div>
 <input type="file" id="pi" accept="image/*" style="display:none" onchange="previewPhoto(this)">
-<img class="pp" id="pp">
+<img class="pp" id="pp" style="max-width:100%;border-radius:12px;margin-top:10px;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
 </div>
-<button class="an-btn" id="ab" onclick="analyze()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>分析热量</button>
-<div class="loading" id="ld"><div class="ld-icon">🔄</div><div class="ld-text">正在分析...</div></div>
+<button class="m-btn" id="ab" onclick="analyze()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>AI 分析热量</button>
+<div class="loading" id="ld"><div class="ld-icon">🔄</div><div class="ld-text">AI 正在分析...</div></div>
 <div class="result" id="result">
-<div class="ar-title">📊 分析结果</div>
+<div class="ar-head"><div class="ar-title">📊 分析结果</div><div class="ar-badge" id="arBadge">AI 识别</div></div>
 <div id="ri"></div>
 <div id="rs"></div>
 <div class="ar-actions">
@@ -263,108 +310,104 @@ body{background:var(--bg);color:var(--ink);height:100vh;height:100dvh;overflow:h
 <div class="toast" id="toast"></div>
 
 <script>
-const D={
-baseline:{weight:70.0,target:70.0},
-days:[
-{
-date:"2026-09-29",weekday:"周二",
-weight:{morning:72.0,evening:null,change:2.0,changeJin:4.0,note:"比昨天下降1.4kg，水分回落中"},
-diet:[
-{meal:"早餐",time:"早上",items:[{name:"美式咖啡+纯牛奶",portion:"自制拿铁",kcal:70},{name:"全麦面包",portion:"1片",kcal:75}]}
-],
-summary:{totalKcal:145,protein:"~8g",carbs:"~20g",fat:"~4g",veggieServings:0},
-advice:{good:["体重回落(↓1.4kg)","拿铁代替含糖咖啡","早餐清淡"],tips:["早餐可加个鸡蛋补蛋白","午餐晚餐正常吃","蔬菜今天还没吃","多喝水帮助代谢"],overall:"水分在消退，继续保持清淡饮食"}
-},
-{
-date:"2026-09-28",weekday:"周一",
-weight:{morning:73.4,evening:null,change:3.4,changeJin:6.8,note:"景德镇回来第一天，正在恢复"},
-diet:[
-{meal:"早餐",time:"早上",items:[{name:"自制美式咖啡",portion:"1杯",kcal:5}]},
-{meal:"午餐",time:"中午",items:[{name:"蒜苗芦笋炒肉",portion:"~100g",kcal:80},{name:"芹菜黄瓜凉拌",portion:"~80g",kcal:25},{name:"小白菜香菇",portion:"~100g",kcal:60},{name:"青椒香菇肉片",portion:"~80g",kcal:110},{name:"豌豆虾仁蛋",portion:"~80g",kcal:100},{name:"凉拌豆芽",portion:"~80g",kcal:20},{name:"蒸玉米",portion:"~1/2根",kcal:60},{name:"米饭",portion:"半拳头",kcal:75}]},
-{meal:"加餐",time:"下午",items:[{name:"全麦面包",portion:"1片",kcal:75},{name:"菱角",portion:"2个",kcal:40},{name:"西红柿",portion:"1个",kcal:25}]}
-],
-summary:{totalKcal:675,protein:"~35g",carbs:"~70g",fat:"~18g",veggieServings:6},
-advice:{good:["蔬菜6份很棒","碳水控制合理","美式咖啡好"],tips:["蛋白质偏少","菱角计入碳水","热量偏低正常吃","避免含糖饮料","多喝水2000ml+"],overall:"适合减重期，补足蛋白质和水分"}
-}
-]};
-
 const FOOD_DB={"米饭":{kcal:130,def:195},"面条":{kcal:110,def:330},"馒头":{kcal:220,def:110},"包子":{kcal:230,def:230},"饺子":{kcal:230,def:23},"面包":{kcal:280,def:80},"全麦面包":{kcal:250,def:75},"玉米":{kcal:110,def:120},"红薯":{kcal:100,def:150},"土豆":{kcal:80,def:130},"燕麦":{kcal:370,def:150},"鸡蛋":{kcal:145,def:75},"鸡胸肉":{kcal:133,def:133},"牛肉":{kcal:250,def:250},"猪肉":{kcal:400,def:200},"鱼肉":{kcal:150,def:150},"虾":{kcal:90,def:90},"虾仁":{kcal:90,def:90},"豆腐":{kcal:80,def:80},"牛奶":{kcal:65,def:130},"酸奶":{kcal:70,def:100},"豆浆":{kcal:30,def:60},"美式":{kcal:2,def:5},"咖啡":{kcal:2,def:5},"拿铁":{kcal:40,def:60},"苹果":{kcal:52,def:80},"香蕉":{kcal:90,def:90},"橙子":{kcal:47,def:70},"西红柿":{kcal:20,def:25},"黄瓜":{kcal:15,def:25},"西兰花":{kcal:35,def:35},"菠菜":{kcal:25,def:25},"白菜":{kcal:15,def:20},"生菜":{kcal:15,def:15},"萝卜":{kcal:20,def:25},"青椒":{kcal:20,def:25},"豆芽":{kcal:20,def:20},"芹菜":{kcal:15,def:20},"韭菜":{kcal:25,def:30},"茄子":{kcal:25,def:40},"冬瓜":{kcal:12,def:15},"南瓜":{kcal:25,def:40},"香菇":{kcal:30,def:30},"蘑菇":{kcal:25,def:25},"花生":{kcal:570,def:60},"核桃":{kcal:650,def:45},"饼干":{kcal:450,def:50},"蛋糕":{kcal:350,def:250},"巧克力":{kcal:550,def:150},"可乐":{kcal:45,def:100},"奶茶":{kcal:250,def:350},"果汁":{kcal:50,def:120},"披萨":{kcal:270,def:280},"汉堡":{kcal:250,def:500},"薯条":{kcal:310,def:300},"炒饭":{kcal:180,def:360},"炒面":{kcal:160,def:320},"粥":{kcal:45,def:90},"沙拉":{kcal:80,def:150},"山药":{kcal:55,def:80},"芋头":{kcal:80,def:100},"菱角":{kcal:100,def:50},"毛豆":{kcal:130,def:65},"豌豆":{kcal:110,def:55},"芦笋":{kcal:20,def:20},"西瓜":{kcal:30,def:60},"葡萄":{kcal:70,def:70},"草莓":{kcal:30,def:35},"蓝莓":{kcal:55,def:55},"桃子":{kcal:40,def:70},"梨":{kcal:50,def:80},"柚子":{kcal:40,def:100},"火龙果":{kcal:55,def:110},"猕猴桃":{kcal:60,def:40},"芒果":{kcal:60,def:100},"菠萝":{kcal:45,def:60},"辣条":{kcal:400,def:200},"冰淇淋":{kcal:200,def:200}};
 
-let cur=0;const slides=[];
-const mealMeta={"早餐":{i:"🌅",c:"morning"},"午餐":{i:"☀️",c:"noon"},"晚餐":{i:"🌙",c:"night"},"加餐":{i:"🍓",c:"snack"}};
-const dayEn={"周一":"MON","周二":"TUE","周三":"WED","周四":"THU","周五":"FRI","周六":"SAT","周日":"SUN"};
-const today="2026-09-29";
-function loadEntries(){try{return JSON.parse(localStorage.getItem("health_entries")||"{}");}catch{return{};}}
-function saveEntries(d){localStorage.setItem("health_entries",JSON.stringify(d));}
+const DATA={
+date:"2026-09-29",weekday:"周二",
+weight:{morning:72.0,evening:null,baseline:70.0,target:70.0,note:"比昨天下降1.4kg，水分回落中"},
+meals:[
+{type:"早餐",icon:"🌅",cls:"breakfast",time:"早上",kcal:145,items:[{name:"美式咖啡+纯牛奶",portion:"自制拿铁",kcal:70},{name:"全麦面包",portion:"1片",kcal:75}]}
+],
+summary:{totalKcal:145,protein:8,carbs:20,fat:4},
+advice:{good:["体重回落(↓1.4kg)","拿铁代替含糖咖啡","早餐清淡"],tips:["早餐可加个鸡蛋补蛋白","午餐晚餐正常吃","蔬菜今天还没吃","多喝水帮助代谢"],overall:"水分在消退，继续保持清淡饮食"}
+};
 
-document.getElementById("countBadge").textContent=`${D.days.length} 天记录`;
-const L=D.days[0],lw=L.weight,chg=lw.change||0,curW=lw.morning||lw.evening;
-document.getElementById("stats").innerHTML=`
-<div class="stat"><div class="sa-num">${curW}<span class="u">kg</span></div><div class="sa-label">当前体重</div></div>
-<div class="stat"><div class="sa-num ${chg>0?'warn':'ok'}">${chg>0?'+':''}${chg}<span class="u">kg</span></div><div class="sa-label">较基线</div></div>
-<div class="stat"><div class="sa-num ok">${(curW-D.target).toFixed(1)}<span class="u">kg</span></div><div class="sa-label">距目标</div></div>
-<div class="stat"><div class="sa-num">${D.target}<span class="u">kg</span></div><div class="sa-label">第一阶段</div></div>`;
+// Init
+const now=new Date();
+document.getElementById("todayDate").textContent=`${DATA.date} ${DATA.weekday}`;
+document.getElementById("heroDate").textContent=`${DATA.date.slice(5)} ${DATA.weekday}`;
+const hour=now.getHours();
+document.getElementById("greeting").textContent=hour<12?"早上好 ☀️":hour<18?"下午好 🌤":"晚上好 🌙";
 
-const track=document.getElementById("track");
-D.days.forEach((day,idx)=>{
-const userEntries=loadEntries()[day.date]||[];
-const dw=day.weight,wNum=dw.morning||dw.evening||"--";
-const cCls=dw.change>0?"up":(dw.change<0?"down":"same");
-const cTxt=dw.change>0?`↑ +${dw.change}`:(dw.change<0?`↓ ${Math.abs(dw.change)}`:"—");
-let dietHtml="";
-const allMeals=[...day.diet,...userEntries];
-allMeals.forEach(meal=>{
-const meta=mealMeta[meal.meal]||{i:"📝",c:"snack"};
-let sum=0,foods="";
-meal.items.forEach(item=>{sum+=item.kcal;foods+=`<div class="food"><span>${item.name}<span class="f-p">${item.portion||""}</span></span><span class="f-k">${item.kcal}</span></div>`;});
-dietHtml+=`<div class="meal"><div class="m-rail"><div class="m-dot ${meta.c}">${meta.i}</div><div class="m-ln"></div></div><div class="m-info"><div class="m-name">${meal.meal}<span class="m-t">${meal.time||""}</span><span class="m-s">${sum} kcal</span></div>${foods}</div></div>`;
+// Ring
+const total=DATA.summary.totalKcal,goal=2000;
+const pct=Math.min(total/goal,1);
+const offset=377*(1-pct);
+setTimeout(()=>{document.getElementById("ringVal").style.strokeDashoffset=offset;},200);
+// Animate number
+let num=0;
+const anim=setInterval(()=>{
+num+=Math.ceil(total/30);
+if(num>=total){num=total;clearInterval(anim);}
+document.getElementById("ringNum").textContent=num;
+},40);
+document.getElementById("hiEaten").textContent=total+" kcal";
+document.getElementById("hiLeft").textContent=Math.max(goal-total,0)+" kcal";
+document.getElementById("hiProtein").textContent=DATA.summary.protein+"g";
+document.getElementById("macroP").textContent=DATA.summary.protein+"g";
+document.getElementById("macroC").textContent=DATA.summary.carbs+"g";
+document.getElementById("macroF").textContent=DATA.summary.fat+"g";
+
+// Weight
+const w=DATA.weight;
+document.getElementById("wcNum").textContent=w.morning;
+const chg=w.morning-w.baseline;
+const badge=document.getElementById("wcBadge");
+if(chg>0){badge.textContent=`▲ 较基线 +${chg.toFixed(1)}`;badge.className="wc-badge up";}
+else{badge.textContent=`▼ 较基线 ${chg.toFixed(1)}`;badge.className="wc-badge down";}
+const diff=w.morning-w.target;
+document.getElementById("wcSub").textContent=diff>0?`第一阶段目标 ${w.target}kg · 还差 ${diff.toFixed(1)}kg`:`🎉 已达成第一阶段目标！`;
+
+// Mini chart
+const weights=[73.8,73.4,72.0];
+const wMin=71.5,wMax=74.5,wRange=wMax-wMin;
+const CW=320,CH=50,CP=6;
+const pts=weights.map((v,i)=>{
+const x=CP+(i/(weights.length-1))*(CW-2*CP);
+const y=CP+(1-(v-wMin)/wRange)*(CH-2*CP);
+return[x,y];
 });
-const s=day.summary,a=day.advice;
-const slide=document.createElement("div");
-slide.className="slide";
-slide.innerHTML=`
-<div class="page-card">
-<div class="pc-head"><div><div class="pc-date">${day.date}</div><div class="pc-week">${day.weekday} · ${dayEn[day.weekday]||""}</div></div><div class="pc-right"><span class="pc-w">${wNum}</span><span class="pc-u">kg</span><span class="pc-chg ${cCls}">${cTxt}</span></div></div>
-<div class="pc-body">
-<div class="sec"><div class="sec-tag t-w"><span class="st-ico">⚖️</span>体重记录<span class="st-badge">较基线 ${dw.change>0?'+':''}${dw.change}kg</span></div>
-<div class="w-row"><div class="w-box"><div class="wb-i">🌅</div><div class="wb-l">早上</div><div class="wb-v">${dw.morning||"--"}<span class="u">kg</span></div></div><div class="w-box"><div class="wb-i">🌙</div><div class="wb-l">晚上</div><div class="wb-v">${dw.evening||"--"}<span class="u">kg</span></div></div></div>
-${dw.note?`<div class="w-note">💬 ${dw.note}</div>`:""}</div>
-<div class="sec"><div class="sec-tag t-d"><span class="st-ico">🍽️</span>饮食记录<span class="st-badge">${s.veggieServings?s.veggieServings+" 份蔬菜":""}</span></div>
-<div class="nutri"><div class="nc"><div class="n-v total">${s.totalKcal}</div><div class="n-l">KCAL</div></div><div class="nc"><div class="n-v p">${s.protein}</div><div class="n-l">蛋白</div></div><div class="nc"><div class="n-v c">${s.carbs}</div><div class="n-l">碳水</div></div><div class="nc"><div class="n-v f">${s.fat}</div><div class="n-l">脂肪</div></div></div>
-${dietHtml}</div>
-<div class="sec"><div class="sec-tag t-a"><span class="st-ico">💡</span>今日建议</div>
-<div class="adv"><div class="a-good">${a.good.map(g=>`<span class="g-tag">✓ ${g}</span>`).join("")}</div>${a.tips.map(t=>`<div class="a-tip"><div class="at-d"></div><div class="at-t">${t}</div></div>`).join("")}<div class="a-final">📌 ${a.overall}</div></div></div>
-${day.date===today?`<div class="sec quick-sec"><div class="qa-box"><div class="qa-title">📝 今天还吃更多了？</div><div class="qa-sub">输入文字或拍照，快速估算热量<br>保存后直接加到上面</div><div class="qa-btns"><button class="qa-btn primary" onclick="openModal()">快速记录</button><button class="qa-btn secondary" onclick="tellAIDirect()">💬 告诉AI</button></div></div></div>`:""}
+const line=pts.map(p=>p.join(",")).join(" ");
+const area=`${CP},${CH-CP} ${line} ${CW-CP},${CH-CP}`;
+document.getElementById("chartArea").innerHTML=`
+<svg class="chart-svg" viewBox="0 0 ${CW} ${CH}" preserveAspectRatio="none">
+<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.2"/><stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/></linearGradient></defs>
+<polygon points="${area}" fill="url(#cg)"/>
+<polyline points="${line}" fill="none" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${i===pts.length-1?'#8B5CF6':'#475569'}" stroke="#1A2232" stroke-width="2"/>`).join("")}
+</svg>
+<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:6px;">
+<span>09-27</span><span>09-28</span><span style="color:var(--primary2);font-weight:600;">09-29</span>
+</div>`;
+
+// Meals
+const mealIcons={"早餐":{icon:"🌅",cls:"breakfast"},"午餐":{icon:"☀️",cls:"lunch"},"晚餐":{icon:"🌙",cls:"dinner"},"加餐":{icon:"🍰",cls:"snack"}};
+let mealsHtml="";
+DATA.meals.forEach(meal=>{
+const mi=mealIcons[meal.type]||{icon:"🍽️",cls:"snack"};
+const detail=meal.items.map(i=>i.name).join("、");
+mealsHtml+=`
+<div class="meal-card"><div class="meal-row">
+<div class="meal-icon ${mi.cls}">${mi.icon}</div>
+<div class="meal-info"><div class="meal-name">${meal.type}</div><div class="meal-detail">${detail}</div></div>
+<div class="meal-right"><div class="meal-kcal">${meal.kcal}<span class="u"> kcal</span></div><div class="meal-time">${meal.time}</div></div>
 </div></div>`;
-track.appendChild(slide);
-slides.push(slide);
 });
+mealsHtml+=`<button class="add-meal-btn" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>添加饮食记录</button>`;
+document.getElementById("mealList").innerHTML=mealsHtml;
 
-const dotsEl=document.getElementById("dots");
-slides.forEach(()=>{const d=document.createElement("span");d.className="bn-dot";d.onclick=()=>{cur=slides.indexOf(d);update();};dotsEl.appendChild(d);});
-function update(){
-track.style.transform=`translateX(-${cur*100}%)`;
-slides.forEach((s,i)=>s.classList.toggle("active",i===cur));
-document.querySelectorAll(".bn-dot").forEach((d,i)=>d.classList.toggle("on",i===cur));
-document.getElementById("btnPrev").disabled=cur===0;
-document.getElementById("btnNext").disabled=cur===slides.length-1;
-document.getElementById("pageNum").textContent=`${cur+1} / ${slides.length}`;
-document.getElementById("pageDate").textContent=D.days[cur].date;
-const card=slides[cur].querySelector(".page-card");if(card)card.scrollTop=0;
+// Advice
+const a=DATA.advice;
+document.getElementById("advGood").innerHTML=a.good.map(g=>`<span class="g-tag">✓ ${g}</span>`).join("");
+document.getElementById("advTips").innerHTML=a.tips.map(t=>`<div class="adv-tip"><div class="at-d"></div><div>${t}</div></div>`).join("");
+document.getElementById("advFinal").innerHTML=`📌 ${a.overall}`;
+
+// Tab
+function switchTab(idx,el){
+document.querySelectorAll(".tab-item").forEach(t=>t.classList.remove("active"));
+el.classList.add("active");
+if(idx===0)document.getElementById("content").scrollTo({top:0,behavior:"smooth"});
 }
-function go(dir){const n=cur+dir;if(n<0||n>=slides.length){showToast(n<0?"已经是第一天":"已经是今天");return;}cur=n;update();}
-const car=document.getElementById("carousel");
-let sx=0,sy=0,moved=false;
-car.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;moved=false;},{passive:true});
-car.addEventListener("touchmove",e=>{if(Math.abs(e.touches[0].clientX-sx)>10)moved=true;},{passive:true});
-car.addEventListener("touchend",e=>{
-if(!moved)return;
-const dx=e.changedTouches[0].clientX-sx;
-const dy=e.changedTouches[0].clientY-sy;
-if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.5)go(dx<0?1:-1);
-},{passive:true});
-document.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")go(-1);if(e.key==="ArrowRight")go(1);});
-function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1800);}
 
 // Modal
 let selMeal="早餐",photoB64=null,lastRes=null;
@@ -372,7 +415,7 @@ document.querySelectorAll(".mp").forEach(b=>{b.addEventListener("click",function
 function openModal(){document.getElementById("mo").classList.add("show");document.getElementById("result").classList.remove("show");document.getElementById("ld").classList.remove("show");document.getElementById("ab").disabled=false;document.body.style.overflow="hidden";}
 function closeModal(){document.getElementById("mo").classList.remove("show");document.body.style.overflow="";}
 document.getElementById("mo").addEventListener("click",e=>{if(e.target===e.currentTarget)closeModal();});
-function previewPhoto(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{document.getElementById("pp").src=e.target.result;document.getElementById("pp").classList.add("show");photoB64=e.target.result;};r.readAsDataURL(f);}
+function previewPhoto(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const pp=document.getElementById("pp");pp.src=e.target.result;pp.style.display="block";photoB64=e.target.result;};r.readAsDataURL(f);}
 
 function analyzeText(text){
 const lines=text.split(/[，,、;；\n]/).map(s=>s.trim()).filter(Boolean);
@@ -393,7 +436,7 @@ return{items,total};
 }
 
 async function analyze(){
-const text=document.getElementById("foodInput").value.trim();
+const text=document.getElementById("fi").value.trim();
 const btn=document.getElementById("ab");
 if(!text&&!photoB64){showToast("请输入食物或拍照 📷");return;}
 btn.disabled=true;document.getElementById("ld").classList.add("show");
@@ -402,7 +445,7 @@ await new Promise(r=>setTimeout(r,600));
 let res;
 if(photoB64){
 try{
-const resp=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+(localStorage.getItem("openai_api_key")||"demo")},body:JSON.stringify({model:"gpt-4o-mini",messages:[{role:"user",content:[{type:"text",text:"识别图片中的所有食物，用中文回复，格式：食物名(分量) 热量kcal，每行一个。只列食物，不要其他说明。"},{type:"image_url",image_url:{url:photoB64}}]}]}),max_tokens:500});
+const resp=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+(localStorage.getItem("openai_api_key")||"demo")},body:JSON.stringify({model:"gpt-4o-mini",messages:[{role:"user",content:[{type:"text",text:"识别图片中的所有食物，用中文回复，格式：食物名(分量) 热量kcal，每行一个。只列食物。"},{type:"image_url",image_url:{url:photoB64}}]}]}),max_tokens:500});
 const data=await resp.json();
 const aiText=data.choices?.[0]?.message?.content||"";
 res=analyzeText(aiText||text||"食物");res.aiUsed=true;
@@ -410,8 +453,12 @@ res=analyzeText(aiText||text||"食物");res.aiUsed=true;
 }else{res=analyzeText(text);}
 document.getElementById("ld").classList.remove("show");
 btn.disabled=false;lastRes=res;
+const badge=document.getElementById("arBadge");
+if(res.aiUsed){badge.textContent="AI 识图";badge.style.display="";}
+else if(res.aiError){badge.textContent="本地估算";badge.style.background="rgba(249,115,22,0.12)";badge.style.color="var(--orange)";badge.style.display="";}
+else badge.style.display="none";
 document.getElementById("ri").innerHTML=res.items.map(it=>`<div class="ar-item"><span class="k">${it.name}<span class="kd">${it.detail!==it.name?it.detail:""}</span></span><span class="v">${it.kcal} kcal</span></div>`).join("")+`<div class="ar-total"><span>总计</span><span class="v">${res.total} kcal</span></div>`;
-document.getElementById("rs").innerHTML=`<div class="ar-sum">${res.aiUsed?"🤖 AI识图结果<br>":""}${res.aiError?"⚠️ AI调用失败，使用本地估算<br>":""}${getSummary(res.total)}</div>`;
+document.getElementById("rs").innerHTML=`<div class="ar-sum">${getSummary(res.total)}</div>`;
 document.getElementById("result").classList.add("show");
 }
 function getSummary(k){
@@ -420,14 +467,17 @@ if(k<300)return"热量适中，一顿不错的餐食";
 if(k<600)return"热量偏高，注意主食和油脂的量";
 return"热量较高，建议减少主食或增加运动";
 }
-function copyRes(){if(!lastRes)return;const t=`帮我记录今天(${today})的饮食：\n${lastRes.items.map(i=>`• ${i.name}（${i.detail}）≈ ${i.kcal} kcal`).join("\n")}\n总计约 ${lastRes.total} kcal\n请帮我分析一下，给出建议`;
+function copyRes(){if(!lastRes)return;const t=`帮我记录今天(${DATA.date})的饮食：\n${lastRes.items.map(i=>`• ${i.name}（${i.detail}）≈ ${i.kcal} kcal`).join("\n")}\n总计约 ${lastRes.total} kcal`;
 if(navigator.share){navigator.share({text:t}).catch(()=>{navigator.clipboard.writeText(t).then(()=>showToast("已复制 💬"));});}
 else{navigator.clipboard.writeText(t).then(()=>showToast("已复制，去粘贴给AI 💬"));}}
-function saveLocal(){if(!lastRes)return;const e=loadEntries();if(!e[today])e[today]=[];e[today].push({meal:selMeal,time:new Date().getHours()<12?"早上":(new Date().getHours()<18?"下午":"晚上"),items:lastRes.items.map(i=>({name:i.name,portion:i.detail,kcal:i.kcal}))});saveEntries(e);closeModal();showToast("已保存到今天 ✅");setTimeout(()=>location.reload(),800);}
-function tellAIDirect(){const t=`请帮我记录今天(${today})的饮食：`;
-if(navigator.share){navigator.share({text:t}).then(()=>showToast("告诉AI你吃了什么吧 💬")).catch(()=>{navigator.clipboard.writeText(t).then(()=>showToast("已复制 💬"));});}
-else{navigator.clipboard.writeText(t).then(()=>showToast("已复制，去粘贴给AI 💬"));}}
-update();
+function saveLocal(){if(!lastRes)return;
+const entries=JSON.parse(localStorage.getItem("health_entries")||"{}");
+if(!entries[DATA.date])entries[DATA.date]=[];
+entries[DATA.date].push({type:selMeal,icon:mealIcons[selMeal]?.icon||"📝",cls:mealIcons[selMeal]?.cls||"snack",time:new Date().getHours()<12?"早上":(new Date().getHours()<18?"下午":"晚上"),kcal:lastRes.total,items:lastRes.items.map(i=>({name:i.name,portion:i.detail,kcal:i.kcal}))});
+localStorage.setItem("health_entries",JSON.stringify(entries));
+closeModal();showToast("已保存到今天 ✅");
+setTimeout(()=>location.reload(),800);}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1800);}
 </script>
 </body>
 </html>
