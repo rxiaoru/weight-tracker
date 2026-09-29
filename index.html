@@ -260,6 +260,45 @@ animation:flowGradient 40s ease infinite;}
 /* Toast */
 .toast{position:fixed;bottom:calc(var(--safe-b) + 92px);left:50%;transform:translateX(-50%) translateY(20px) scale(0.9);background:var(--ink);color:#fff;font-size:13px;font-weight:700;padding:12px 24px;border-radius:28px;opacity:0;pointer-events:none;transition:all .4s var(--ease-spring);z-index:300;white-space:nowrap;box-shadow:var(--sh-lg);max-width:85vw;text-align:center;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
+
+/* Views */
+.view{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;scrollbar-width:none;}
+.view.active{display:block;}
+.view .content::-webkit-scrollbar{display:none;}
+.view .content{padding:0 20px calc(var(--safe-b) + 100px);}
+
+/* Body Analysis */
+.body-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;margin-bottom:16px;}
+.bc-head{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;margin-bottom:16px;color:var(--ink);}
+.bc-icon{width:32px;height:32px;border-radius:10px;background:var(--orange-bg);display:flex;align-items:center;justify-content:center;font-size:15px;}
+.bc-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);}
+.bc-row:last-child{border:none;}
+.bc-l{font-size:13px;color:var(--ink2);font-weight:600;width:40px;flex-shrink:0;}
+.bc-input{flex:1;padding:8px 12px;border:1.5px solid var(--line);border-radius:var(--r-sm);font-size:15px;font-family:inherit;background:var(--bg);color:var(--ink);outline:none;transition:all .25s;font-variant-numeric:tabular-nums;-moz-appearance:textfield;}
+.bc-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.bc-input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(232,115,74,0.08);}
+.bc-u{font-size:12px;color:var(--ink3);font-weight:600;width:24px;flex-shrink:0;}
+.bc-gender{display:flex;gap:8px;flex:1;}
+.g-btn{flex:1;padding:9px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--bg);font-size:13px;font-weight:700;color:var(--ink2);cursor:pointer;transition:all .25s var(--ease-spring);font-family:inherit;}
+.g-btn.active{border-color:var(--primary);color:var(--primary);background:#FDF1EA;}
+.g-btn:active{transform:scale(0.95);}
+
+/* Journal */
+.journal-entry{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:16px;margin-bottom:12px;position:relative;animation:popUp .45s var(--ease-out) both;transition:all .25s;}
+.journal-entry:active{transform:scale(0.98);}
+.je-date{font-size:10px;font-weight:700;color:var(--ink3);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.je-type{font-size:9px;font-weight:800;padding:2px 8px;border-radius:8px;}
+.je-type.travel{background:rgba(123,163,204,0.12);color:var(--blue);}
+.je-type.feast{background:rgba(232,115,74,0.1);color:var(--primary);}
+.je-type.milestone{background:var(--green-bg);color:var(--green);}
+.je-type.other{background:var(--line);color:var(--ink2);}
+.je-title{font-size:14px;font-weight:800;margin-bottom:5px;color:var(--ink);}
+.je-desc{font-size:12px;color:var(--ink2);line-height:1.7;}
+.je-impact{margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r-sm);font-size:11px;color:var(--ink2);line-height:1.6;border-left:3px solid var(--primary);}
+.je-impact b{color:var(--primary);}
+.add-event-card{background:var(--card);border:2px dashed var(--line);border-radius:var(--r-md);padding:24px;text-align:center;cursor:pointer;transition:all .25s var(--ease-spring);margin-top:8px;}
+.add-event-card:active{border-color:var(--primary);background:#FDF1EA;transform:scale(0.97);}
+
 </style>
 </head>
 <body>
@@ -276,7 +315,7 @@ animation:flowGradient 40s ease infinite;}
 </div>
 </div>
 
-<div class="content" id="content">
+<div class="view" id="viewHome"><div class="content" id="content">
 
 <div class="hero pop">
 <div class="hero-card">
@@ -330,7 +369,63 @@ animation:flowGradient 40s ease infinite;}
 <div id="advTips"></div>
 <div class="adv-final" id="advFinal"></div>
 </div>
+</div></div>
 
+<!-- ===== Body Analysis View ===== -->
+<div class="view" id="viewBody" style="display:none;">
+<div class="content">
+<div class="sec-head" style="padding-top:8px;"><div class="sec-title">📷 体型分析</div></div>
+<div class="body-card">
+<div class="bc-head"><div class="bc-icon">📏</div><div>基本信息</div></div>
+<div class="bc-row"><span class="bc-l">身高</span><input class="bc-input" id="inpHeight" type="number" placeholder="170" oninput="saveProfile()"><span class="bc-u">cm</span></div>
+<div class="bc-row"><span class="bc-l">体重</span><input class="bc-input" id="inpWeight" type="number" step="0.1" placeholder="72.0" oninput="saveProfile()"><span class="bc-u">kg</span></div>
+<div class="bc-row"><span class="bc-l">年龄</span><input class="bc-input" id="inpAge" type="number" placeholder="25" oninput="saveProfile()"><span class="bc-u">岁</span></div>
+<div class="bc-row"><span class="bc-l">性别</span><div class="bc-gender"><button class="g-btn active" onclick="setGender(0,this)">男</button><button class="g-btn" onclick="setGender(1,this)">女</button></div></div>
+</div>
+<div class="body-card">
+<div class="bc-head"><div class="bc-icon">📷</div><div>全身照分析</div></div>
+<div class="pu" onclick="document.getElementById('bodyPhoto').click()" style="border:1.5px dashed var(--line);border-radius:var(--r-md);padding:28px;text-align:center;cursor:pointer;">
+<div style="font-size:32px;margin-bottom:8px;color:var(--ink3);">📷</div>
+<div style="font-size:14px;font-weight:700;">拍一张全身照</div>
+<div style="font-size:11px;color:var(--ink3);margin-top:4px;">正面站立，穿贴身衣物效果最好</div>
+</div>
+<input type="file" id="bodyPhoto" accept="image/*" style="display:none" onchange="previewBody(this)">
+<img class="pp" id="bodyPreview" style="max-width:100%;border-radius:16px;margin-top:12px;display:none;">
+<div id="bodyResult" class="result" style="margin-top:16px;"></div>
+</div>
+<button class="an-btn" onclick="analyzeBody()">🔍 分析体型 + 给出建议</button>
+</div>
+</div>
+
+<!-- ===== Journal View ===== -->
+<div class="view" id="viewJournal" style="display:none;">
+<div class="content">
+<div class="sec-head" style="padding-top:8px;"><div class="sec-title">📖 我的日记</div><div class="sec-more" onclick="addEvent()">+ 记录</div></div>
+<div id="journalTimeline"></div>
+<div class="add-event-card" onclick="addEvent()" id="addEventBtn">
+<div style="font-size:24px;margin-bottom:6px;">✍️</div>
+<div style="font-size:13px;font-weight:700;">记录一个事件</div>
+<div style="font-size:10px;color:var(--ink3);margin-top:3px;">旅行、聚餐、减肥里程碑...</div>
+</div>
+</div>
+</div>
+
+<!-- Add Event Modal -->
+<div class="mo" id="eventMo">
+<div class="modal">
+<div class="modal-grab"></div>
+<div class="m-head"><div class="m-title">✍️ 记录事件</div><button class="m-close" onclick="closeEvent()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+<div class="m-sec"><div class="m-label">📅 日期</div><input type="date" class="m-input" id="evtDate" style="min-height:auto;padding:12px 14px;"></div>
+<div class="m-sec"><div class="m-label">📝 标题</div><input class="m-input" id="evtTitle" placeholder="例：去了景德镇玩了3天"></div>
+<div class="m-sec"><div class="m-label">📄 详细描述</div><textarea class="m-input" id="evtDesc" rows="3" placeholder="发生了什么？吃了什么？对体重有什么影响？"></textarea></div>
+<div class="m-sec"><div class="m-label">🏷️ 类型</div><div class="meal-picker" id="evtType">
+<button class="mp" data-type="travel">✈️ 旅行</button>
+<button class="mp" data-type="feast">🎉 聚餐</button>
+<button class="mp active" data-type="milestone">🎯 里程碑</button>
+<button class="mp" data-type="other">📝 其他</button>
+</div></div>
+<button class="m-btn" onclick="saveEvent()">💾 保存到日记</button>
+</div>
 </div>
 
 <button class="fab" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
@@ -339,7 +434,7 @@ animation:flowGradient 40s ease infinite;}
 <button class="tab-item active" onclick="switchTab(0,this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>首页</span></button>
 <button class="tab-item" onclick="showToast('统计功能开发中')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>统计</span></button>
 <button class="tab-item" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>记录</span></button>
-<button class="tab-item" onclick="showToast('我的功能开发中')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>我的</span></button>
+<button class="tab-item" onclick="switchTab(3,this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>日记</span></button>
 </div>
 
 <div class="mo" id="mo">
@@ -608,6 +703,138 @@ function showToast(msg){const t=document.getElementById("toast");t.textContent=m
 function toggleMeal(card){card.classList.toggle("open");}
 
 renderDay();
+
+// ===== Tab switching =====
+function switchTab(idx,el){
+document.querySelectorAll(".tab-item").forEach(t=>t.classList.remove("active"));
+el.classList.add("active");
+document.getElementById("viewHome").classList.toggle("active",idx===0);
+document.getElementById("viewBody").classList.toggle("active",idx===1);
+document.getElementById("viewJournal").classList.toggle("active",idx===3);
+if(idx===0)document.getElementById("content").scrollTo({top:0,behavior:"smooth"});
+// Hide/show FAB
+document.querySelector(".fab").style.display=(idx===0||idx===2)?"flex":"none";
+}
+
+// ===== Profile =====
+let gender=0;
+function setGender(g,btn){
+gender=g;
+document.querySelectorAll(".g-btn").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+saveProfile();
+}
+function saveProfile(){
+const h=document.getElementById("inpHeight").value;
+const w=document.getElementById("inpWeight").value;
+const a=document.getElementById("inpAge").value;
+localStorage.setItem("profile",JSON.stringify({height:h,weight:w,age:a,gender}));
+}
+function loadProfile(){
+try{
+const p=JSON.parse(localStorage.getItem("profile")||"{}");
+if(p.height)document.getElementById("inpHeight").value=p.height;
+if(p.weight)document.getElementById("inpWeight").value=p.weight;
+if(p.age)document.getElementById("inpAge").value=p.age;
+if(p.gender!==undefined){gender=p.gender;document.querySelectorAll(".g-btn").forEach((b,i)=>b.classList.toggle("active",i===p.gender));}
+}catch{}
+}
+
+// ===== Body photo =====
+let bodyPhotoB64=null;
+function previewBody(input){
+const f=input.files[0];if(!f)return;
+const r=new FileReader();
+r.onload=e=>{
+const img=document.getElementById("bodyPreview");
+img.src=e.target.result;img.style.display="block";
+bodyPhotoB64=e.target.result;
+};
+r.readAsDataURL(f);
+}
+
+function analyzeBody(){
+const h=document.getElementById("inpHeight").value;
+const w=document.getElementById("inpWeight").value;
+const a=document.getElementById("inpAge").value;
+if(!h||!w){showToast("请先填写身高和体重");return;}
+const bmi=(parseFloat(w)/Math.pow(parseFloat(h)/100,2)).toFixed(1);
+const result=document.getElementById("bodyResult");
+let status,advice,color;
+if(bmi<18.5){status="偏瘦";color="var(--blue)";advice="适当增加优质蛋白和力量训练";}
+else if(bmi<24){status="正常";color="var(--green)";advice="保持当前状态，注意体脂率";}
+else if(bmi<28){status="偏胖";color="var(--orange)";advice="控制碳水+有氧运动，目标减5-8kg";}
+else{status="肥胖";color="var(--red)";advice="建议制定详细减重计划，必要时咨询医生";}
+result.innerHTML=`
+<div class="ar-head"><div class="ar-title">📊 分析结果</div><div class="ar-badge" style="background:var(--green-bg);color:var(--green);">BMI ${bmi}</div></div>
+<div style="font-size:32px;font-weight:800;margin:10px 0;color:${color};">${status}</div>
+<div style="font-size:13px;color:var(--ink2);line-height:1.7;">${advice}</div>
+<div style="margin-top:14px;padding:12px;background:var(--bg);border-radius:12px;font-size:12px;color:var(--ink2);line-height:1.7;">
+💡 想要更精确的体型分析，可以拍一张全身照发到对话框，AI 会根据照片分析体型比例、脂肪分布，并给出具体的穿搭建议和减肥方向。
+</div>`;
+result.classList.add("show");
+}
+
+// ===== Journal =====
+const INITIAL_EVENTS=[
+{date:"2026-09-25",type:"travel",title:"去了景德镇玩3天",desc:"中秋假期去了景德镇，来回吃了泡面，中间3天吃了江西菜，喝了超级多的水和饮料，天气特别热。",impact:"体重从 ~70kg 涨到 73.8kg，胖了约 <b>6斤</b>"},
+{date:"2026-09-27",type:"milestone",title:"开始记录体重",desc:"从景德镇回来后开始认真记录体重，目标是回到70kg。"},
+{date:"2026-09-29",type:"milestone",title:"体重降到72.0kg",desc:"比昨天早上降了1.4kg，水分在消退，继续保持清淡饮食。",impact:"距离第一阶段目标 70kg 还差 <b>2kg</b>"}
+];
+function loadEvents(){
+try{
+const saved=JSON.parse(localStorage.getItem("journal_events")||"null");
+if(saved&&Array.isArray(saved)&&saved.length>0)return saved;
+localStorage.setItem("journal_events",JSON.stringify(INITIAL_EVENTS));
+return INITIAL_EVENTS;
+}catch{return INITIAL_EVENTS;}
+function renderJournal(){
+const events=loadEvents();
+const typeLabels={travel:"✈️ 旅行",feast:"🎉 聚餐",milestone:"🎯 里程碑",other:"📝 事件"};
+const typeCls={travel:"travel",feast:"feast",milestone:"milestone",other:"other"};
+const el=document.getElementById("journalTimeline");
+el.innerHTML=events.map((e,i)=>`
+<div class="journal-entry" style="animation-delay:${i*0.06}s">
+<div class="je-date">${e.date} <span class="je-type ${typeCls[e.type]||"other"}">${typeLabels[e.type]||typeLabels.other}</span></div>
+<div class="je-title">${e.title}</div>
+${e.desc?`<div class="je-desc">${e.desc}</div>`:""}
+${e.impact?`<div class="je-impact">📉 ${e.impact}</div>`:""}
+</div>`).reverse?events.map((e,i)=>`
+<div class="journal-entry" style="animation-delay:${i*0.06}s">
+<div class="je-date">${e.date} <span class="je-type ${typeCls[e.type]||"other"}">${typeLabels[e.type]||typeLabels.other}</span></div>
+<div class="je-title">${e.title}</div>
+${e.desc?`<div class="je-desc">${e.desc}</div>`:""}
+${e.impact?`<div class="je-impact">📉 ${e.impact}</div>`:""}
+</div>`).join(""):"";
+}
+function addEvent(){
+document.getElementById("evtDate").value=TODAY;
+document.getElementById("evtTitle").value="";
+document.getElementById("evtDesc").value="";
+document.getElementById("eventMo").classList.add("show");
+document.body.style.overflow="hidden";
+}
+function closeEvent(){document.getElementById("eventMo").classList.remove("show");document.body.style.overflow="";}
+document.getElementById("eventMo").addEventListener("click",e=>{if(e.target===e.currentTarget)closeEvent();});
+document.querySelectorAll("#evtType .mp").forEach(b=>{b.addEventListener("click",function(){document.querySelectorAll("#evtType .mp").forEach(x=>x.classList.remove("active"));this.classList.add("active");});});
+function saveEvent(){
+const title=document.getElementById("evtTitle").value.trim();
+if(!title){showToast("请输入标题");return;}
+const events=loadEvents();
+events.push({
+date:document.getElementById("evtDate").value||TODAY,
+type:document.querySelector("#evtType .mp.active").dataset.type,
+title:title,
+desc:document.getElementById("evtDesc").value.trim(),
+impact:""
+});
+localStorage.setItem("journal_events",JSON.stringify(events));
+closeEvent();
+renderJournal();
+showToast("已记录到日记 ✅");
+}
+loadProfile();
+renderJournal();
 </script>
 </body>
 </html>
