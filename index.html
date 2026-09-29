@@ -636,9 +636,13 @@ var mealsHtml="";
 allMeals.forEach(function(meal,i){
 var mi=mealIcons[meal.type]||{icon:"apple",cls:"snack"};
 var iconSvg=iconMap[mi.icon]||svgApple;
-var sum=0,foods="";
-meal.items.forEach(function(item){sum+=safeNum(item.kcal,0);foods+="<div class='food'><span>"+item.name+"<span class='f-p'>"+(item.portion||"")+"</span></span><span class='f-k'>"+safeNum(item.kcal,0)+"</span></div>";});
-mealsHtml+="<div class='meal-card' style='animation-delay:"+(i*0.08)+"s' onclick='toggleMeal(this)'><div class='meal-row'><div class='meal-icon "+mi.cls+"'>"+iconSvg+"</div><div class='meal-info'><div class='meal-name'>"+meal.type+"<span class='m-t'>"+(meal.time||"")+"</span><span class='m-s'>"+sum+" kcal</span></div>"+foods+"</div><div class='meal-right'><div class='meal-kcal'>"+sum+"<span class='u'> kcal</span></div><div class='meal-time'>"+(meal.time||"")+"</div></div>"+svgChevron+"</div></div>";
+var sum=0,foods="",itemsHtml="";
+meal.items.forEach(function(item,j){
+sum+=safeNum(item.kcal,0);
+foods+="<div class='food'><span>"+item.name+"<span class='f-p'>"+(item.portion||"")+"</span></span><span class='f-k'>"+safeNum(item.kcal,0)+"</span></div>";
+itemsHtml+="<div class='mi-row' style='animation-delay:"+(j*0.04)+"s'><span class='mi-name'>"+item.name+"<span class='mi-port'>"+(item.portion||"")+"</span></span><span class='mi-kcal'>"+safeNum(item.kcal,0)+" kcal</span></div>";
+});
+mealsHtml+="<div class='meal-card' style='animation-delay:"+(i*0.08)+"s' onclick='toggleMeal(this)'><div class='meal-row'><div class='meal-icon "+mi.cls+"'>"+iconSvg+"</div><div class='meal-info'><div class='meal-name'>"+meal.type+"</div><div class='meal-detail'>"+detail+"</div></div><div class='meal-right'><div class='meal-kcal'>"+sum+"<span class='u'> kcal</span></div><div class='meal-time'>"+(meal.time||"")+"</div></div>"+svgChevron+"</div><div class='meal-items'>"+itemsHtml+"</div></div>";
 });
 if(isToday)mealsHtml+="<button class='add-meal' onclick='openModal()'>"+svgPlus+" 添加饮食记录</button>";
 el=document.getElementById("mealList");if(el)el.innerHTML=mealsHtml;
