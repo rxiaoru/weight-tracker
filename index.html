@@ -386,14 +386,14 @@ animation:flowGradient 40s ease infinite;}
 <div class="content">
 <div class="sec-head" style="padding-top:8px;"><div class="sec-title">📷 体型分析</div></div>
 <div class="body-card">
-<div class="bc-head"><div class="bc-icon">📏</div><div>基本信息</div></div>
+<div class="bc-head"><div class="bc-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M6 12V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/><path d="M4 12v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></div><div>基本信息</div></div>
 <div class="bc-row"><span class="bc-l">身高</span><input class="bc-input" id="inpHeight" type="number" placeholder="170" oninput="saveProfile()"><span class="bc-u">cm</span></div>
 <div class="bc-row"><span class="bc-l">体重</span><input class="bc-input" id="inpWeight" type="number" step="0.1" placeholder="72.0" oninput="saveProfile()"><span class="bc-u">kg</span></div>
 <div class="bc-row"><span class="bc-l">年龄</span><input class="bc-input" id="inpAge" type="number" placeholder="25" oninput="saveProfile()"><span class="bc-u">岁</span></div>
 <div class="bc-row"><span class="bc-l">性别</span><div class="bc-gender"><button class="g-btn active" onclick="setGender(0,this)">男</button><button class="g-btn" onclick="setGender(1,this)">女</button></div></div>
 </div>
 <div class="body-card">
-<div class="bc-head"><div class="bc-icon">📷</div><div>全身照分析</div></div>
+<div class="bc-head"><div class="bc-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div><div>全身照分析</div></div>
 <div class="pu" onclick="document.getElementById('bodyPhoto').click()" style="border:1.5px dashed var(--line);border-radius:var(--r-md);padding:28px;text-align:center;cursor:pointer;">
 <div style="font-size:32px;margin-bottom:8px;color:var(--ink3);">📷</div>
 <div style="font-size:14px;font-weight:700;">拍一张全身照</div>
@@ -413,7 +413,7 @@ animation:flowGradient 40s ease infinite;}
 <div class="sec-head" style="padding-top:8px;"><div class="sec-title">📖 我的日记</div><div class="sec-more" onclick="addEvent()">+ 记录</div></div>
 <div id="journalTimeline"></div>
 <div class="add-event-card" onclick="addEvent()" id="addEventBtn">
-<div style="font-size:24px;margin-bottom:6px;">✍️</div>
+<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
 <div style="font-size:13px;font-weight:700;">记录一个事件</div>
 <div style="font-size:10px;color:var(--ink3);margin-top:3px;">旅行、聚餐、减肥里程碑...</div>
 </div>
@@ -424,17 +424,17 @@ animation:flowGradient 40s ease infinite;}
 <div class="mo" id="eventMo">
 <div class="modal">
 <div class="modal-grab"></div>
-<div class="m-head"><div class="m-title">✍️ 记录事件</div><button class="m-close" onclick="closeEvent()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-<div class="m-sec"><div class="m-label">📅 日期</div><input type="date" class="m-input" id="evtDate" style="min-height:auto;padding:12px 14px;"></div>
-<div class="m-sec"><div class="m-label">📝 标题</div><input class="m-input" id="evtTitle" placeholder="例：去了景德镇玩了3天"></div>
-<div class="m-sec"><div class="m-label">📄 详细描述</div><textarea class="m-input" id="evtDesc" rows="3" placeholder="发生了什么？吃了什么？对体重有什么影响？"></textarea></div>
-<div class="m-sec"><div class="m-label">🏷️ 类型</div><div class="meal-picker" id="evtType">
+<div class="m-head"><div class="m-title">记录事件</div><button class="m-close" onclick="closeEvent()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+<div class="m-sec"><div class="m-label">日期</div><input type="date" class="m-input" id="evtDate" style="min-height:auto;padding:12px 14px;"></div>
+<div class="m-sec"><div class="m-label">标题</div><input class="m-input" id="evtTitle" placeholder="例：去了景德镇玩了3天"></div>
+<div class="m-sec"><div class="m-label">描述</div><textarea class="m-input" id="evtDesc" rows="3" placeholder="发生了什么？吃了什么？对体重有什么影响？"></textarea></div>
+<div class="m-sec"><div class="m-label">类型</div><div class="meal-picker" id="evtType">
 <button class="mp" data-type="travel">✈️ 旅行</button>
 <button class="mp" data-type="feast">🎉 聚餐</button>
 <button class="mp active" data-type="milestone">🎯 里程碑</button>
 <button class="mp" data-type="other">📝 其他</button>
 </div></div>
-<button class="m-btn" onclick="saveEvent()">💾 保存到日记</button>
+<button class="m-btn" onclick="saveEvent()">保存到日记</button>
 </div>
 </div>
 
@@ -451,14 +451,14 @@ animation:flowGradient 40s ease infinite;}
 <div class="modal">
 <div class="modal-grab"></div>
 <div class="m-head"><div class="m-title">记录饮食</div><button class="m-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-<div class="m-sec"><div class="m-label">🍽️ 餐次</div><div class="meal-picker" id="mp">
-<button class="mp active" data-meal="早餐"><span class="mp-i">🥐</span>早餐</button>
-<button class="mp" data-meal="午餐"><span class="mp-i">🍱</span>午餐</button>
-<button class="mp" data-meal="晚餐"><span class="mp-i">🌙</span>晚餐</button>
-<button class="mp" data-meal="加餐"><span class="mp-i">🍎</span>加餐</button>
+<div class="m-sec"><div class="m-label">餐次</div><div class="meal-picker" id="mp">
+<button class="mp active" data-meal="早餐"><span class="mp-i"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13c0 2 1 4 3 4 1.5 0 2.5-1 3.5-2.5"/><path d="M22 13c0 2-1 4-3 4-1.5 0-2.5-1-3.5-2.5"/><path d="M8.5 14.5C8.5 11 10 8 12 8s3.5 3 3.5 6.5c0 1.5-.5 2.5-1 3.5h-5c-.5-1-1-2-1-3.5z"/></svg></span>早餐</button>
+<button class="mp" data-meal="午餐"><span class="mp-i"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="12" x2="12" y2="21"/></svg></span>午餐</button>
+<button class="mp" data-meal="晚餐"><span class="mp-i"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>晚餐</button>
+<button class="mp" data-meal="加餐"><span class="mp-i"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-1.06 0-2.07.3-3 .8-.48.27-1.04.4-1.6.44-.25.02-.5.02-.8 0-.56-.04-1.12-.17-1.6-.44-.93-.5-1.94-.8-3-.8a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06z"/><path d="M9 5c0-1.5.5-2.5 2-3"/></svg></span>加餐</button>
 </div></div>
-<div class="m-sec"><div class="m-label">✏️ 记录食物</div><textarea class="m-input" id="fi" rows="3" placeholder="用逗号分隔，例如：&#10;米饭半碗，西兰花炒虾仁，一个苹果"></textarea></div>
-<div class="m-sec"><div class="m-label">📷 拍照识别</div>
+<div class="m-sec"><div class="m-label">记录食物</div><textarea class="m-input" id="fi" rows="3" placeholder="用逗号分隔，例如：&#10;米饭半碗，西兰花炒虾仁，一个苹果"></textarea></div>
+<div class="m-sec"><div class="m-label">拍照识别</div>
 <div class="pu" onclick="document.getElementById('pi').click()">
 <div class="pu-icon" style="color:var(--peach);"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div>
 <div class="pu-text">拍照或从相册选择</div>
@@ -528,7 +528,7 @@ document.getElementById("todayDate").textContent=`${TODAY} ${DATA_DAYS[0].weekda
 
 function navDay(dir){
 const n=dayIdx-dir; // dir -1 (left) = older = higher index
-if(n<0){showToast("已经是今天啦");return;}
+if(n<0){showToast("已经是今天");return;}
 if(n>=DATA_DAYS.length){showToast("已经是第一天");return;}
 dayIdx=n;
 renderDay(true);
@@ -627,7 +627,7 @@ document.getElementById("mealList").innerHTML=mealsHtml;
 const a=D.advice;
 document.getElementById("advGood").innerHTML=a.good.map((g,i)=>`<span class="g-tag" style="animation-delay:${i*0.06}s">✓ ${g}</span>`).join("");
 document.getElementById("advTips").innerHTML=a.tips.map(t=>`<div class="adv-tip"><div class="at-d"></div><div>${t}</div></div>`).join("");
-document.getElementById("advFinal").innerHTML=`📌 ${a.overall}`;
+document.getElementById("advFinal").innerHTML=`${a.overall}`;
 document.getElementById("content").scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -662,7 +662,7 @@ return{items,total};
 async function analyze(){
 const text=document.getElementById("fi").value.trim();
 const btn=document.getElementById("ab");
-if(!text&&!photoB64){showToast("请输入食物或拍照 📷");return;}
+if(!text&&!photoB64){showToast("请输入食物或拍照");return;}
 btn.disabled=true;document.getElementById("ld").classList.add("show");
 document.getElementById("result").classList.remove("show");
 await new Promise(r=>setTimeout(r,600));
@@ -694,15 +694,15 @@ return"🔥 热量较高，建议减少主食或增加运动";
 function copyRes(){if(!lastRes)return;
 const curDate=DATA_DAYS[dayIdx].date;
 const t=`帮我记录(${curDate})的饮食：\n${lastRes.items.map(i=>`• ${i.name}（${i.detail}）≈ ${i.kcal} kcal`).join("\n")}\n总计约 ${lastRes.total} kcal`;
-if(navigator.share){navigator.share({text:t}).catch(()=>{navigator.clipboard.writeText(t).then(()=>showToast("已复制 💬"));});}
-else{navigator.clipboard.writeText(t).then(()=>showToast("已复制 💬"));}}
+if(navigator.share){navigator.share({text:t}).catch(()=>{navigator.clipboard.writeText(t).then(()=>showToast("已复制"));});}
+else{navigator.clipboard.writeText(t).then(()=>showToast("已复制"));}}
 function saveLocal(){if(!lastRes)return;
 const curDate=DATA_DAYS[dayIdx].date;
 const entries=loadEntriesSafe();
 if(!entries[curDate])entries[curDate]=[];
 entries[curDate].push({type:selMeal,time:new Date().getHours()<12?"早上":(new Date().getHours()<18?"下午":"晚上"),kcal:lastRes.total,items:lastRes.items.map(i=>({name:i.name,portion:i.detail,kcal:i.kcal}))});
 localStorage.setItem("health_entries",JSON.stringify(entries));
-closeModal();showToast("已保存 ✅");setTimeout(()=>location.reload(),800);}
+closeModal();showToast("已保存");setTimeout(()=>location.reload(),800);}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1800);}
 
 function toggleMeal(card){card.classList.toggle("open");}
@@ -796,10 +796,10 @@ return INITIAL_EVENTS;
 }
 function renderJournal(){
 const events=loadEvents();
-const typeLabels={travel:"✈️ 旅行",feast:"🎉 聚餐",milestone:"🎯 里程碑",other:"📝 事件"};
+const typeLabels={travel:"旅行",feast:"聚餐",milestone:"里程碑",other:"事件"};
 const typeCls={travel:"travel",feast:"feast",milestone:"milestone",other:"other"};
 const el=document.getElementById("journalTimeline");
-el.innerHTML=events.map((e,i)=>`<div class="journal-entry" style="animation-delay:${i*0.06}s"><div class="je-date">${e.date} <span class="je-type ${typeCls[e.type]||"other"}">${typeLabels[e.type]||typeLabels.other}</span></div><div class="je-title">${e.title}</div>${e.desc?`<div class="je-desc">${e.desc}</div>`:""}${e.impact?`<div class="je-impact">📉 ${e.impact}</div>`:""}</div>`).join("");
+el.innerHTML=events.map((e,i)=>`<div class="journal-entry" style="animation-delay:${i*0.06}s"><div class="je-date">${e.date} <span class="je-type ${typeCls[e.type]||"other"}">${typeLabels[e.type]||typeLabels.other}</span></div><div class="je-title">${e.title}</div>${e.desc?`<div class="je-desc">${e.desc}</div>`:""}${e.impact?`<div class="je-impact">${e.impact}</div>`:""}</div>`).join("");
 }
 function addEvent(){
 document.getElementById("evtDate").value=TODAY;
@@ -859,7 +859,7 @@ try{localStorage.setItem("user_bg",dataUrl);}catch(e2){showToast("图片太大�
 };
 img.src=ev.target.result;
 }catch(e3){}
-showToast("背景已更换 ✨");
+showToast("背景已更换");
 };
 r.readAsDataURL(f);
 };
