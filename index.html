@@ -303,7 +303,7 @@ document.getElementById("stats").innerHTML=`
 <div class="stat"><div class="sa-num">${curW}<span class="u">kg</span></div><div class="sa-label">当前体重</div></div>
 <div class="stat"><div class="sa-num ${chg>0?'warn':'ok'}">${chg>0?'+':''}${chg}<span class="u">kg</span></div><div class="sa-label">较基线</div></div>
 <div class="stat"><div class="sa-num ok">${(curW-D.target).toFixed(1)}<span class="u">kg</span></div><div class="sa-label">距目标</div></div>
-<div class="stat"><div class="sa-num">${D.target}<span class="u">kg</span></div><div class="sa-label">目标</div></div>`;
+<div class="stat"><div class="sa-num">${D.target}<span class="u">kg</span></div><div class="sa-label">第一阶段</div></div>`;
 
 const track=document.getElementById("track");
 D.days.forEach((day,idx)=>{
