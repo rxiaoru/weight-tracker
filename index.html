@@ -737,7 +737,13 @@ return{items,total};
 async function analyze(){
 const text=document.getElementById("fi").value.trim();
 const btn=document.getElementById("ab");
-if(!text&&!photoB64){showToast("请输入食物或拍照");return;}
+const apiKeyInput=document.getElementById("apiKeyInput");
+if(apiKeyInput&&apiKeyInput.value.trim()){
+localStorage.setItem("ai_key",apiKeyInput.value.trim());
+}
+const providerBtn=document.querySelector("#providerPicker .mp.active");
+if(providerBtn){localStorage.setItem("ai_provider",providerBtn.dataset.provider);}
+if(!text&&(!photos||photos.length===0)){showToast("请输入食物或拍照");return;}
 btn.disabled=true;document.getElementById("ld").classList.add("show");
 document.getElementById("result").classList.remove("show");
 await new Promise(r=>setTimeout(r,600));
