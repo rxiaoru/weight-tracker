@@ -545,7 +545,7 @@ summary:{totalKcal:675,protein:35,carbs:70,fat:18},
 advice:{good:["蔬菜6份很棒","碳水控制合理","美式咖啡好"],tips:["蛋白质偏少","菱角计入碳水","热量偏低正常吃","避免含糖饮料","多喝水2000ml+"],overall:"适合减重期，补足蛋白质和水分"}}
 ];
 var TODAY="2026-09-29";
-var dayIdx=0;
+var dayIdx=0; // today
 var photos=[];
 var selMeal="早餐";
 var lastRes=null;
@@ -637,6 +637,7 @@ allMeals.forEach(function(meal,i){
 var mi=mealIcons[meal.type]||{icon:"apple",cls:"snack"};
 var iconSvg=iconMap[mi.icon]||svgApple;
 var sum=0,foods="",itemsHtml="";
+var detail=meal.items.map(function(x){return x.name;}).join("、");
 meal.items.forEach(function(item,j){
 sum+=safeNum(item.kcal,0);
 foods+="<div class='food'><span>"+item.name+"<span class='f-p'>"+(item.portion||"")+"</span></span><span class='f-k'>"+safeNum(item.kcal,0)+"</span></div>";
