@@ -901,6 +901,71 @@ document.querySelector(".bg-flow").style.display="none";
 }catch(e){}
 }
 loadBg();
+
+// ===== Stats/Analysis =====
+function renderStats(){
+var el=document.getElementById("statsContent");
+if(!el)return;
+var days=DATA_DAYS.slice(0,2);
+var foodCount={};
+var foodKcal={};
+days.forEach(function(d){
+d.meals.forEach(function(m){
+m.items.forEach(function(item){
+foodCount[item.name]=(foodCount[item.name]||0)+1;
+foodKcal[item.name]=(foodKcal[item.name]||0)+safeNum(item.kcal,0);
+});
+});
+});
+var vegKeys=["西兰花","菠菜","白菜","生菜","萝卜","青椒","豆芽","芹菜","韭菜","茄子","冬瓜","南瓜","香菇","蘑菇","芦笋","黄瓜","西红柿"];
+var proteinKeys=["鸡胸肉","鸡蛋","牛肉","鱼肉","虾","虾仁","豆腐","牛奶","酸奶"];
+var carbKeys=["米饭","面条","馒头","包子","饺子","面包","全麦面包","玉米","红薯","土豆","燕麦","炒饭","炒面","粥"];
+var junkKeys=["薯片","饼干","蛋糕","巧克力","可乐","奶茶","辣条","冰淇淋","薯条","披萨","汉堡"];
+var vegCount=0,proteinCount=0,carbCount=0,junkCount=0;
+var vegEaten=[],proteinEaten=[],carbEaten=[],junkEaten=[];
+Object.keys(foodCount).forEach(function(k){
+var isVeg=vegKeys.some(function(v){return k.indexOf(v)>=0;});
+var isPro=proteinKeys.some(function(v){return k.indexOf(v)>=0;});
+var isCarb=carbKeys.some(function(v){return k.indexOf(v)>=0;});
+var isJunk=junkKeys.some(function(v){return k.indexOf(v)>=0;});
+if(isVeg){vegCount+=foodCount[k];vegEaten.push(k);}
+else if(isPro){proteinCount+=foodCount[k];proteinEaten.push(k);}
+else if(isCarb){carbCount+=foodCount[k];carbEaten.push(k);}
+else if(isJunk){junkCount+=foodCount[k];junkEaten.push(k);}
+});
+var totalKcal=days.reduce(function(sum,d){return sum+safeNum(d.summary.totalKcal,0);},0);
+var avgKcal=Math.round(totalKcal/days.length);
+var totalProtein=days.reduce(function(s,d){return s+safeNum(d.summary.protein,0);},0);
+var weights=days.map(function(d){return safeNum(d.weight.morning,0);});
+var weightChange=weights.length>=2?(weights[0]-weights[1]).toFixed(1):null;
+var html="";
+html+="<div class='stat-card'><div class='sc-head'>📋 两天总览</div><div class='sc-grid'><div class='sc-item'><div class='sc-val'>"+avgKcal+"</div><div class='sc-l'>日均热量</div></div><div class='sc-item'><div class='sc-val'>"+totalProtein.toFixed(0)+"g</div><div class='sc-l'>总蛋白</div></div><div class='sc-item'><div class='sc-val'>"+(weightChange||(weightChange>0?"+":"")+weightChange||"--")+"</div><div class='sc-l'>体重变化</div></div></div></div>";
+html+="<div class='stat-card more'><div class='sc-head' style='color:var(--green);'>✓ 多吃这些</div>";
+if(proteinCount<3){html+="<div class='sc-tip'>🥩 <b>蛋白质不够</b> — 两天只吃了"+proteinCount+"次蛋白，建议每天至少1份（鸡蛋/鸡胸肉/鱼虾）</div>";}
+if(vegCount<4){html+="<div class='sc-tip'>🥬 <b>蔬菜偏少</b> — 只吃了"+vegCount+"份，建议每天至少2-3份绿叶菜</div>";}
+if(proteinEaten.length>0)html+="<div class='sc-note'>已吃蛋白："+proteinEaten.join("、")+"</div>";
+if(vegEaten.length>0)html+="<div class='sc-note'>已吃蔬菜："+vegEaten.join("、")+"</div>";
+html+="</div>";
+html+="<div class='stat-card less'><div class='sc-head' style='color:var(--orange);'>⚠ 少吃这些</div>";
+if(carbCount>6){html+="<div class='sc-tip warn'>🍚 <b>碳水偏多</b> — 两天吃了"+carbCount+"次碳水（"+carbEaten.join("、")+"），可以适当减半碗</div>";}
+if(junkCount>0){html+="<div class='sc-tip warn'>🚫 <b>垃圾食品</b> — 检测到"+junkEaten.join("、")+"，减重期尽量避免</div>";}
+if(junkCount===0&&carbCount<=6){html+="<div class='sc-tip ok'>👍 这两天碳水控制得不错，继续保持</div>";}
+html+="</div>";
+html+="<div class='stat-card obs'><div class='sc-head'>🔍 具体观察</div>";
+var observations=[];
+if(foodCount["米饭"])observations.push("米饭吃了"+foodCount["米饭"]+"次，量控制得不错");
+if(foodCount["美式咖啡+纯牛奶"]||foodCount["美式"])observations.push("咖啡选择很好，避免含糖饮料");
+if(foodCount["玉米"])observations.push("玉米是优质粗粮 ✓");
+if(foodCount["菱角"])observations.push("菱角属淀粉类，吃了要减少其他主食");
+if(foodCount["全麦面包"])observations.push("全麦面包比白面包好 ✓");
+if(weightChange&&parseFloat(weightChange)<0)observations.push("体重在下降("+weightChange+"kg)，说明方法有效");
+if(weightChange&&parseFloat(weightChange)>0)observations.push("体重上升了"+weightChange+"kg，检查是否吃了过多碳水或钠");
+observations.forEach(function(o){html+="<div class='sc-tip'>• "+o+"</div>";});
+html+="</div>";
+html+="<div class='stat-card rec'><div class='sc-head' style='color:var(--primary);'>💡 明天建议</div><div class='sc-tip'>🍳 早餐加一个<b>水煮蛋</b>（补蛋白）</div><div class='sc-tip'>🥗 午餐保证<b>2份蔬菜</b>（深绿色优先）</div><div class='sc-tip'>🍚 晚餐<b>减少主食</b>，多吃蛋白质+蔬菜</div><div class='sc-tip'>💧 喝水<b>2000ml+</b>（帮助代谢）</div><div class='sc-tip'>🚶 饭后散步<b>20分钟</b>（有助消化）</div></div>";
+el.innerHTML=html;
+}
+
 </script>
 
 <input type="file" id="bgInput" accept="image/*" onchange="setBg(this)">
