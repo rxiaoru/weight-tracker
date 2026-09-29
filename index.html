@@ -4,501 +4,499 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>我的健康手账</title>
-<script src="data.js"></script>
 <style>
 :root {
   --paper: #FBF6EE;
-  --paper2: #F5EDE0;
   --card: #FFFDF8;
   --ink: #3E3A33;
   --ink2: #6B6558;
   --ink3: #A69E8F;
   --line: #E8DFD0;
   --accent: #E8734A;
-  --accent2: #D94F70;
+  --rose: #D94F70;
   --sage: #7A9B76;
   --sage-l: #EDF3EC;
   --sky: #6B9BC3;
   --sky-l: #EBF2F7;
   --butter: #E5A84B;
   --butter-l: #FDF3E3;
-  --rose: #D94F70;
-  --rose-l: #FBEAEE;
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html { scroll-behavior:smooth; }
 body {
   font-family: "PingFang SC", -apple-system, "Helvetica Neue", "Microsoft YaHei", sans-serif;
   background: var(--paper);
   color: var(--ink);
-  min-height: 100vh;
+  height: 100vh; height: 100dvh;
+  overflow: hidden;
   -webkit-user-select:none; user-select:none;
+  display: flex; flex-direction: column;
+  max-width: 480px; margin: 0 auto;
 }
 
-/* ===== Cover / Hero ===== */
-.cover {
-  max-width: 480px; margin: 0 auto;
-  padding: 48px 24px 36px;
-  text-align: center;
+/* ===== Header ===== */
+.head {
+  flex-shrink: 0;
+  padding: 14px 20px 10px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.head .h-brand { display: flex; align-items: center; gap: 9px; }
+.head .h-logo {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 3px 10px rgba(232,115,74,0.25);
+}
+.head .h-title { font-size: 15px; font-weight: 800; letter-spacing: -0.3px; }
+.head .h-sub { font-size: 9px; color: var(--ink3); }
+.head .h-count {
+  font-size: 10px; color: var(--ink3);
+  background: var(--card); border: 1px solid var(--line);
+  padding: 4px 10px; border-radius: 12px;
+}
+
+/* ===== Stats strip ===== */
+.stats {
+  flex-shrink: 0;
+  display: flex; gap: 0;
+  margin: 0 20px 12px;
+  background: var(--card);
+  border: 1px solid rgba(232,223,208,0.6);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.stat {
+  flex: 1; text-align: center; padding: 10px 4px;
   position: relative;
 }
-.cover::before {
-  content:""; position:absolute; top:0; left:50%; transform:translateX(-50%);
-  width: 1px; height: 100%;
-  background: repeating-linear-gradient(to bottom, transparent 0 6px, var(--line) 6px 7px);
-  z-index: 0;
+.stat:not(:last-child)::after {
+  content:""; position:absolute; right:0; top:25%; height:50%; width:1px; background: var(--line);
 }
-.cover > * { position: relative; z-index: 1; }
-.cover-badge {
-  display:inline-flex; align-items:center; gap:6px;
-  font-size: 10px; letter-spacing: 3px; color: var(--ink3);
-  text-transform: uppercase;
-  border: 1px solid var(--line);
-  border-radius: 20px; padding: 5px 16px;
-  background: var(--card);
-  margin-bottom: 18px;
-}
-.cover-title {
-  font-size: 30px; font-weight: 800; letter-spacing: -0.5px;
-  line-height: 1.2;
-}
-.cover-title em {
-  font-style: normal; color: var(--accent);
-  position: relative; display: inline-block;
-}
-.cover-title em::after {
-  content:""; position:absolute; left:-2px; right:-2px; bottom:3px;
-  height:8px; background: var(--butter-l);
-  border-radius: 3px; z-index:-1; transform: rotate(-1deg);
-}
-.cover-sub { font-size: 12px; color: var(--ink2); margin-top: 8px; line-height: 1.6; }
+.stat .sa-num { font-size: 17px; font-weight: 800; letter-spacing: -0.4px; }
+.stat .sa-num .u { font-size: 9px; font-weight: 500; color: var(--ink3); }
+.stat .sa-num.warn { color: var(--accent); }
+.stat .sa-num.ok { color: var(--sage); }
+.stat .sa-label { font-size: 8px; color: var(--ink3); margin-top: 2px; letter-spacing: 1px; }
 
-/* Cover stamp */
-.stamp-row {
-  display:flex; justify-content:center; gap:14px; margin-top:26px;
+/* ===== Card carousel ===== */
+.carousel {
+  flex: 1; min-height: 0;
+  position: relative;
+  overflow: hidden;
+  padding: 0 20px;
 }
-.stamp {
-  background: var(--card);
-  border-radius: 16px; padding: 14px 18px;
-  min-width: 86px;
-  box-shadow: 0 2px 10px rgba(62,58,51,0.05), 0 1px 3px rgba(62,58,51,0.04);
-  border: 1px solid rgba(232,223,208,0.7);
-  transition: transform .25s cubic-bezier(.32,.72,.32,1);
+.track {
+  display: flex;
+  height: 100%;
+  transition: transform .45s cubic-bezier(.32,.72,.32,1);
 }
-.stamp:active { transform: scale(0.96) rotate(-1deg); }
-.stamp .s-num { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
-.stamp .s-num .u { font-size: 10px; font-weight: 500; color: var(--ink3); margin-left: 1px; }
-.stamp .s-num.warn { color: var(--accent); }
-.stamp .s-num.ok { color: var(--sage); }
-.stamp .s-label { font-size: 9px; color: var(--ink3); margin-top: 3px; letter-spacing: 1px; }
-.stamp.tilt-l { transform: rotate(-2deg); }
-.stamp.tilt-l:active { transform: rotate(-2deg) scale(0.96); }
-.stamp.tilt-r { transform: rotate(1.5deg); }
-.stamp.tilt-r:active { transform: rotate(1.5deg) scale(0.96); }
-
-/* Doodle divider */
-.doodle-div {
-  display:flex; align-items:center; gap:12px;
-  max-width:480px; margin: 8px auto 0; padding: 0 24px;
-}
-.doodle-div .dd-line { flex:1; height:1px; background: var(--line); }
-.doodle-div .dd-icon { font-size: 13px; opacity:0.5; }
-
-/* ===== Timeline ===== */
-.journal { max-width: 480px; margin: 0 auto; padding: 20px 20px 60px; position: relative; }
-.journal::before {
-  content:""; position:absolute; left: 34px; top: 40px; bottom: 60px;
-  width: 2px;
-  background: repeating-linear-gradient(to bottom, var(--line) 0 8px, transparent 8px 14px);
-  border-radius: 1px;
+.slide {
+  min-width: 100%;
+  padding: 0 2px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-/* Day entry */
-.entry { position: relative; padding-left: 40px; margin-bottom: 36px; }
-.entry:last-child { margin-bottom: 0; }
-
-/* Date pin */
-.date-pin {
-  position: absolute; left: 0; top: 2px;
-  width: 28px; height: 28px;
-  background: var(--accent);
-  border-radius: 50% 50% 50% 4px;
-  display:flex; align-items:center; justify-content:center;
-  color:#fff; font-size: 10px; font-weight: 800;
-  box-shadow: 0 3px 8px rgba(232,115,74,0.3);
-  z-index: 2;
-}
-.entry.e2 .date-pin { background: var(--sky); box-shadow: 0 3px 8px rgba(107,155,195,0.3); }
-.entry.e3 .date-pin { background: var(--sage); box-shadow: 0 3px 8px rgba(122,155,118,0.3); }
-
-/* Page card */
+/* ===== Page card ===== */
 .page-card {
   background: var(--card);
-  border-radius: 4px 18px 18px 18px;
+  border-radius: 4px 20px 20px 20px;
   border: 1px solid rgba(232,223,208,0.6);
-  box-shadow: 0 4px 20px rgba(62,58,51,0.06), 0 1px 3px rgba(62,58,51,0.04);
-  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(62,58,51,0.07), 0 1px 3px rgba(62,58,51,0.04);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   position: relative;
+  flex: 1;
+  min-height: 0;
+  scrollbar-width: none;
 }
+.page-card::-webkit-scrollbar { display: none; }
+
 /* Washi tape */
 .page-card::before {
   content:"";
-  position: absolute; top: -6px; right: 24px;
-  width: 58px; height: 16px;
+  position:absolute; top:-5px; right:24px;
+  width:56px; height:15px;
   background: repeating-linear-gradient(45deg, rgba(232,115,74,0.18) 0 4px, rgba(232,115,74,0.10) 4px 8px);
-  border-radius: 1px;
-  transform: rotate(3deg);
-  z-index: 3;
+  border-radius:1px; transform: rotate(3deg);
+  z-index:3;
 }
-.entry.e2 .page-card::before {
-  background: repeating-linear-gradient(45deg, rgba(107,155,195,0.18) 0 4px, rgba(107,155,195,0.10) 4px 8px);
-}
-.entry.e3 .page-card::before {
-  background: repeating-linear-gradient(45deg, rgba(122,155,118,0.18) 0 4px, rgba(122,155,118,0.10) 4px 8px);
-}
+.slide:nth-child(2) .page-card::before { background: repeating-linear-gradient(45deg, rgba(107,155,195,0.18) 0 4px, rgba(107,155,195,0.10) 4px 8px); }
+.slide:nth-child(3) .page-card::before { background: repeating-linear-gradient(45deg, rgba(122,155,118,0.18) 0 4px, rgba(122,155,118,0.10) 4px 8px); }
 
 /* Card head */
 .pc-head {
-  padding: 16px 18px 12px;
-  display:flex; justify-content:space-between; align-items:flex-end;
+  position: sticky; top: 0; z-index: 5;
+  background: rgba(255,253,248,0.92);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  padding: 14px 18px 10px;
+  display: flex; justify-content: space-between; align-items: flex-end;
   border-bottom: 1px dashed var(--line);
 }
 .pc-head .pc-date { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
 .pc-head .pc-week { font-size: 10px; color: var(--ink3); margin-top: 2px; }
-.pc-head .pc-weight {
-  text-align: right; display:flex; align-items: baseline; gap:3px;
-}
-.pc-head .pc-w-num { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
-.pc-head .pc-w-unit { font-size: 10px; color: var(--ink3); font-weight: 500; }
-.pc-head .pc-w-chg {
-  font-size: 9px; font-weight: 700;
-  border-radius: 8px; padding: 2px 6px; margin-left: 5px;
-  align-self: center;
-}
-.pc-w-chg.up { color: var(--accent); background: var(--butter-l); }
-.pc-w-chg.down { color: var(--sage); background: var(--sage-l); }
-.pc-w-chg.same { color: var(--ink3); background: var(--paper2); }
+.pc-head .pc-right { display: flex; align-items: baseline; gap: 3px; }
+.pc-head .pc-w { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+.pc-head .pc-u { font-size: 10px; color: var(--ink3); font-weight: 500; }
+.pc-head .pc-chg { font-size: 9px; font-weight: 700; border-radius: 8px; padding: 3px 7px; margin-left: 5px; align-self: center; }
+.pc-chg.up { color: var(--accent); background: var(--butter-l); }
+.pc-chg.down { color: var(--sage); background: var(--sage-l); }
+.pc-chg.same { color: var(--ink3); background: var(--paper); }
 
-.pc-body { padding: 14px 18px 18px; }
+.pc-body { padding: 12px 18px 20px; }
 
 /* Section */
 .sec { margin-bottom: 16px; }
 .sec:last-child { margin-bottom: 0; }
 .sec-tag {
-  display:inline-flex; align-items:center; gap:5px;
-  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
-  color: var(--ink3); text-transform: uppercase;
-  margin-bottom: 10px;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  color: var(--ink3); text-transform: uppercase; margin-bottom: 10px;
 }
-.sec-tag .st-line { width: 16px; height: 2px; border-radius: 1px; }
-.sec-tag.t-w .st-line { background: var(--sky); }
-.sec-tag.t-d .st-line { background: var(--butter); }
-.sec-tag.t-a .st-line { background: var(--sage); }
+.sec-tag .st-l { width: 14px; height: 2px; border-radius: 1px; }
+.sec-tag.t-w .st-l { background: var(--sky); }
+.sec-tag.t-d .st-l { background: var(--butter); }
+.sec-tag.t-a .st-l { background: var(--sage); }
 
-/* Weight tiles */
-.w-row { display:flex; gap:10px; }
+/* Weight */
+.w-row { display: flex; gap: 10px; }
 .w-box {
-  flex:1; background: var(--paper); border-radius: 12px;
-  padding: 12px 8px; text-align:center;
+  flex: 1; background: var(--paper); border-radius: 12px;
+  padding: 11px 8px; text-align: center;
   border: 1px solid rgba(232,223,208,0.5);
 }
-.w-box .wb-ico { font-size: 15px; margin-bottom: 2px; }
-.w-box .wb-label { font-size: 9px; color: var(--ink3); }
-.w-box .wb-val { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-top: 2px; }
-.w-box .wb-val .u { font-size: 10px; font-weight: 400; color: var(--ink3); }
+.w-box .wb-i { font-size: 14px; }
+.w-box .wb-l { font-size: 9px; color: var(--ink3); }
+.w-box .wb-v { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-top: 2px; }
+.w-box .wb-v .u { font-size: 10px; font-weight: 400; color: var(--ink3); }
 .w-note {
   margin-top: 8px; font-size: 10px; color: var(--ink2);
   background: var(--paper); border-radius: 10px; padding: 7px 12px;
-  text-align:center; border: 1px dashed var(--line);
+  text-align: center; border: 1px dashed var(--line);
 }
 
-/* Nutrition strip */
+/* Nutrition */
 .nutri {
-  display:flex; gap:0; background: var(--paper);
-  border-radius: 12px; overflow:hidden;
+  display: flex; background: var(--paper);
+  border-radius: 12px; overflow: hidden;
   border: 1px solid rgba(232,223,208,0.5);
   margin-bottom: 12px;
 }
-.nutri-cell {
-  flex:1; text-align:center; padding: 10px 4px;
-  position:relative;
+.nc { flex: 1; text-align: center; padding: 10px 4px; position: relative; }
+.nc:not(:last-child)::after {
+  content: ""; position: absolute; right: 0; top: 25%; height: 50%; width: 1px; background: var(--line);
 }
-.nutri-cell:not(:last-child)::after {
-  content:""; position:absolute; right:0; top:25%; height:50%;
-  width:1px; background: var(--line);
-}
-.nutri-cell .n-val { font-size: 15px; font-weight: 800; letter-spacing:-0.3px; }
-.nutri-cell .n-val.total { color: var(--accent); font-size: 17px; }
-.nutri-cell .n-val.p { color: var(--sky); }
-.nutri-cell .n-val.c { color: var(--butter); }
-.nutri-cell .n-val.f { color: var(--rose); }
-.nutri-cell .n-label { font-size: 8px; color: var(--ink3); margin-top: 2px; letter-spacing: 1px; }
+.nc .n-v { font-size: 15px; font-weight: 800; letter-spacing: -0.3px; }
+.nc .n-v.total { color: var(--accent); font-size: 17px; }
+.nc .n-v.p { color: var(--sky); }
+.nc .n-v.c { color: var(--butter); }
+.nc .n-v.f { color: var(--rose); }
+.nc .n-l { font-size: 8px; color: var(--ink3); margin-top: 2px; letter-spacing: 1px; }
 
-/* Meal entries */
-.meal { display:flex; gap:12px; margin-bottom: 12px; }
-.meal:last-child { margin-bottom:0; }
-.meal-rail { display:flex; flex-direction:column; align-items:center; width:34px; flex-shrink:0; }
-.meal-rail .m-dot {
+/* Meals */
+.meal { display: flex; gap: 12px; margin-bottom: 12px; }
+.meal:last-child { margin-bottom: 0; }
+.m-rail { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0; }
+.m-dot {
   width: 28px; height: 28px; border-radius: 50%;
-  display:flex; align-items:center; justify-content:center;
+  display: flex; align-items: center; justify-content: center;
   font-size: 12px; flex-shrink: 0;
   border: 2px solid var(--card);
   box-shadow: 0 0 0 1.5px var(--line);
 }
-.meal-rail .m-line { flex:1; width:1.5px; background: var(--line); margin-top:3px; }
+.m-rail .m-ln { flex: 1; width: 1.5px; background: var(--line); margin-top: 3px; }
 .m-dot.morning { background: var(--butter-l); }
 .m-dot.noon { background: var(--sky-l); }
 .m-dot.snack { background: var(--rose-l); }
 .m-dot.night { background: #EDE9FE; }
-.meal-info { flex:1; min-width:0; }
-.meal-name { font-size: 12px; font-weight: 700; margin-bottom: 5px; display:flex; align-items:baseline; gap:6px; }
-.meal-name .m-time { font-size: 9px; color: var(--ink3); font-weight: 400; }
-.meal-name .m-sum { font-size: 9px; color: var(--accent); font-weight: 700; margin-left:auto; }
-.food-line {
-  display:flex; align-items:center; justify-content:space-between;
+.m-info { flex: 1; min-width: 0; }
+.m-name { font-size: 12px; font-weight: 700; margin-bottom: 5px; display: flex; align-items: baseline; gap: 6px; }
+.m-name .m-t { font-size: 9px; color: var(--ink3); font-weight: 400; }
+.m-name .m-s { font-size: 9px; color: var(--accent); font-weight: 700; margin-left: auto; }
+.f-line {
+  display: flex; align-items: center; justify-content: space-between;
   font-size: 11px; color: var(--ink2);
-  padding: 4px 0; border-bottom: 1px dashed rgba(232,223,208,0.6);
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(232,223,208,0.6);
 }
-.food-line:last-child { border-bottom:none; }
-.food-line .f-name .f-port { font-size: 9px; color: var(--ink3); margin-left: 4px; }
-.food-line .f-kcal { font-size: 10px; font-weight: 700; color: var(--butter); }
+.f-line:last-child { border-bottom: none; }
+.f-line .f-p { font-size: 9px; color: var(--ink3); margin-left: 4px; }
+.f-line .f-k { font-size: 10px; font-weight: 700; color: var(--butter); }
 
 /* Advice */
-.adv-card {
+.adv {
   background: var(--sage-l);
-  border-radius: 14px; padding: 14px;
+  border-radius: 14px; padding: 13px;
   border: 1px solid rgba(122,155,118,0.15);
 }
-.adv-good { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
-.adv-good .g-tag {
+.adv .a-good { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.adv .g-tag {
   font-size: 9px; font-weight: 700;
-  background:#fff; color: var(--sage);
+  background: #fff; color: var(--sage);
   border-radius: 8px; padding: 4px 9px;
   border: 1px solid rgba(122,155,118,0.25);
 }
-.adv-tip { display:flex; gap:7px; padding:3px 0; }
-.adv-tip .at-dot { width:4px; height:4px; border-radius:50%; background: var(--sage); margin-top:5.5px; flex-shrink:0; }
-.adv-tip .at-txt { font-size: 10.5px; color: var(--ink2); line-height:1.6; }
-.adv-final {
+.adv .a-tip { display: flex; gap: 7px; padding: 3px 0; }
+.adv .a-tip .at-d { width: 4px; height: 4px; border-radius: 50%; background: var(--sage); margin-top: 5.5px; flex-shrink: 0; }
+.adv .a-tip .at-t { font-size: 10.5px; color: var(--ink2); line-height: 1.6; }
+.adv .a-final {
   margin-top: 10px; font-size: 10.5px; font-weight: 600; color: var(--sage);
   background: rgba(255,255,255,0.6); border-radius: 10px; padding: 8px 12px;
   border: 1px dashed rgba(122,155,118,0.3);
 }
 
-/* Footer */
-.foot {
-  text-align:center; padding: 10px 0 40px;
-  font-size: 10px; color: var(--ink3); letter-spacing: 2px;
+/* Bottom nav */
+.bnav {
+  flex-shrink: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 24px 14px;
 }
-.foot .f-line { width: 40px; height:1px; background: var(--line); margin: 0 auto 10px; }
-
-/* Float TOC button */
-.toc-btn {
-  position: fixed; right: 16px; bottom: 20px;
-  width: 44px; height: 44px; border-radius: 14px;
-  background: var(--ink); color: var(--paper);
-  display:flex; align-items:center; justify-content:center;
-  font-size: 18px; cursor:pointer;
-  box-shadow: 0 4px 16px rgba(62,58,51,0.25);
-  border: none; z-index: 50;
-  transition: transform .2s;
+.bnav .bn-btn {
+  width: 40px; height: 40px; border-radius: 13px;
+  background: var(--card); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; color: var(--ink2); cursor: pointer;
+  box-shadow: 0 2px 8px rgba(62,58,51,0.06);
+  transition: transform .15s;
 }
-.toc-btn:active { transform: scale(0.9); }
+.bnav .bn-btn:active { transform: scale(0.9); }
+.bnav .bn-btn:disabled { opacity: 0.25; }
+.bnav .bn-mid { text-align: center; }
+.bnav .bn-dots { display: flex; gap: 5px; justify-content: center; margin-bottom: 4px; }
+.bnav .bn-dot { width: 5px; height: 5px; border-radius: 3px; background: var(--line); transition: all .3s; }
+.bnav .bn-dot.on { width: 18px; background: var(--accent); }
+.bnav .bn-num { font-size: 10px; color: var(--ink3); font-weight: 600; }
+.bnav .bn-date { font-size: 9px; color: var(--ink3); margin-top: 1px; }
 
 /* Toast */
 .toast {
-  position: fixed; bottom: 80px; left:50%;
+  position: fixed; bottom: 80px; left: 50%;
   transform: translateX(-50%) translateY(16px);
   background: var(--ink); color: var(--paper);
   font-size: 12px; padding: 8px 18px; border-radius: 20px;
-  opacity:0; pointer-events:none;
+  opacity: 0; pointer-events: none;
   transition: all .3s cubic-bezier(.32,.72,.32,1);
-  z-index: 100;
+  z-index: 100; white-space: nowrap;
 }
-.toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
-
-/* Entry animations */
-.entry { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.32,.72,.32,1); }
-.entry.visible { opacity: 1; transform: translateY(0); }
-
-/* Top progress */
-.read-progress {
-  position: fixed; top: 0; left: 0; height: 3px;
-  background: linear-gradient(90deg, var(--accent), var(--rose));
-  z-index: 60; transition: width .1s linear;
-  border-radius: 0 2px 2px 0;
-}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<div class="read-progress" id="progress"></div>
-
-<!-- Cover -->
-<div class="cover">
-  <div class="cover-badge">📖 Health Journal</div>
-  <div class="cover-title">我的<em>健康手账</em></div>
-  <div class="cover-sub">记录体重与饮食 · 慢慢变好<br><span id="coverDate"></span></div>
-
-  <div class="stamp-row">
-    <div class="stamp tilt-l">
-      <div class="s-num" id="stWeight">--<span class="u">kg</span></div>
-      <div class="s-label">当前体重</div>
-    </div>
-    <div class="stamp">
-      <div class="s-num warn" id="stChange">--<span class="u">kg</span></div>
-      <div class="s-label">较基线</div>
-    </div>
-    <div class="stamp tilt-r">
-      <div class="s-num" id="stDays">--</div>
-      <div class="s-label">已记录</div>
+<div class="head">
+  <div class="h-brand">
+    <div class="h-logo">📖</div>
+    <div>
+      <div class="h-title">健康手账</div>
+      <div class="h-sub">体重 · 饮食 · 每日记录</div>
     </div>
   </div>
+  <div class="h-count" id="countBadge"></div>
 </div>
 
-<div class="doodle-div"><div class="dd-line"></div><div class="dd-icon">🌱</div><div class="dd-line"></div></div>
+<div class="stats" id="stats"></div>
 
-<!-- Journal entries -->
-<div class="journal" id="journal"></div>
-
-<div class="foot">
-  <div class="f-line"></div>
-  TO BE CONTINUED · 明天继续记录
+<div class="carousel" id="carousel">
+  <div class="track" id="track"></div>
 </div>
 
-<button class="toc-btn" id="tocBtn" onclick="scrollTop()">↑</button>
+<div class="bnav">
+  <button class="bn-btn" id="btnPrev" onclick="go(-1)">‹</button>
+  <div class="bn-mid">
+    <div class="bn-dots" id="dots"></div>
+    <div class="bn-num" id="pageNum"></div>
+    <div class="bn-date" id="pageDate"></div>
+  </div>
+  <button class="bn-btn" id="btnNext" onclick="go(1)">›</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-const D = TRACKER_DATA;
+const D = {
+baseline: { weight: 70.0, label: "旅行前基线" },
+target: 70.0,
+days: [
+{
+date: "2026-09-29",
+weekday: "周二",
+weight: { morning: 72.0, evening: null, change: 2.0, changeJin: 4.0, note: "比昨天早上下降1.4kg，水分回落中 💪" },
+diet: [
+{ meal: "早餐", time: "早上", items: [
+{ name: "美式咖啡+纯牛奶", portion: "自制拿铁", kcal: 70 },
+{ name: "全麦面包", portion: "1片(昨天剩的)", kcal: 75 }
+]}
+],
+summary: { totalKcal: 145, protein: "~8g", carbs: "~20g", fat: "~4g", veggieServings: 0, water: "待记录" },
+advice: {
+good: ["体重明显回落(↓1.4kg)", "拿铁代替含糖咖啡", "早餐简单清淡"],
+tips: ["早餐蛋白质不够，可加个鸡蛋", "午餐晚餐记得正常吃", "蔬菜今天还没吃", "多喝水帮助代谢"],
+overall: "水分在消退，继续保持清淡饮食"
+}
+},
+{
+date: "2026-09-28",
+weekday: "周一",
+weight: { morning: 73.4, evening: null, change: 3.4, changeJin: 6.8, note: "景德镇回来第一天，正在恢复" },
+diet: [
+{ meal: "早餐", time: "早上", items: [{ name: "自制美式咖啡", portion: "1杯", kcal: 5 }] },
+{ meal: "午餐", time: "中午", items: [
+{ name: "蒜苗芦笋炒肉", portion: "~100g", kcal: 80 },
+{ name: "芹菜黄瓜凉拌", portion: "~80g", kcal: 25 },
+{ name: "小白菜香菇", portion: "~100g", kcal: 60 },
+{ name: "青椒香菇肉片", portion: "~80g", kcal: 110 },
+{ name: "豌豆虾仁蛋", portion: "~80g", kcal: 100 },
+{ name: "凉拌豆芽", portion: "~80g", kcal: 20 },
+{ name: "蒸玉米", portion: "~1/2根", kcal: 60 },
+{ name: "米饭", portion: "半拳头", kcal: 75 }
+]},
+{ meal: "加餐", time: "下午", items: [
+{ name: "全麦面包", portion: "1片", kcal: 75 },
+{ name: "菱角", portion: "2个", kcal: 40 },
+{ name: "西红柿", portion: "1个", kcal: 25 }
+]}
+],
+summary: { totalKcal: 675, protein: "~35g", carbs: "~70g", fat: "~18g", veggieServings: 6, water: "待记录" },
+advice: {
+good: ["蔬菜摄入很棒，6份种类丰富", "碳水控制合理", "美式咖啡是好的选择"],
+tips: ["蛋白质偏少，晚餐建议补足", "菱角属淀粉类需计入碳水", "全天热量偏低，晚餐正常吃", "继续避免含糖饮料", "多喝水 2000ml+"],
+overall: "适合减重期，注意补足蛋白质和水分"
+}
+}
+]
+};
 
-// Cover
+let cur = 0;
+const slides = [];
+const mealMeta = { "早餐":{i:"🍳",c:"morning"}, "午餐":{i:"🍜",c:"noon"}, "晚餐":{i:"🌙",c:"night"}, "加餐":{i:"🍓",c:"snack"} };
+const dayEn = { "周一":"MON","周二":"TUE","周三":"WED","周四":"THU","周五":"FRI","周六":"SAT","周日":"SUN" };
+
+// Header count
+document.getElementById("countBadge").textContent = `${D.days.length} 天记录`;
+
+// Stats (latest day)
 const L = D.days[0];
 const lw = L.weight;
-document.getElementById("coverDate").textContent = `开始于 ${D.days[D.days.length-1].date} · 已有 ${D.days.length} 篇`;
-document.getElementById("stWeight").innerHTML = `${lw.morning || lw.evening || "--"}<span class="u">kg</span>`;
 const chg = lw.change || 0;
-document.getElementById("stChange").innerHTML = `${chg>0?'+':''}${chg}<span class="u">kg</span>`;
-document.getElementById("stDays").textContent = D.days.length;
+const curW = lw.morning || lw.evening || "--";
+document.getElementById("stats").innerHTML = `
+  <div class="stat"><div class="sa-num">${curW}<span class="u">kg</span></div><div class="sa-label">当前体重</div></div>
+  <div class="stat"><div class="sa-num ${chg>0?'warn':'ok'}">${chg>0?'+':''}${chg}<span class="u">kg</span></div><div class="sa-label">较基线</div></div>
+  <div class="stat"><div class="sa-num ok">${(curW - D.target).toFixed(1)}<span class="u">kg</span></div><div class="sa-label">距目标</div></div>
+  <div class="stat"><div class="sa-num">${D.target}<span class="u">kg</span></div><div class="sa-label">目标</div></div>`;
 
-// Meal meta
-const mealMeta = {
-  "早餐": { icon:"🍳", cls:"morning" },
-  "午餐": { icon:"🍜", cls:"noon" },
-  "晚餐": { icon:"🌙", cls:"night" },
-  "加餐": { icon:"🍓", cls:"snack" }
-};
-const pinColors = ["", "e2", "e3"];
-const dayNames = { "周一":"MON","周二":"TUE","周三":"WED","周四":"THU","周五":"FRI","周六":"SAT","周日":"SUN" };
-
-// Build entries
-const journal = document.getElementById("journal");
-D.days.forEach((day, idx) => {
+// Build slides
+const track = document.getElementById("track");
+D.days.forEach(day => {
   const dw = day.weight;
   const wNum = dw.morning || dw.evening || "--";
   const cCls = dw.change > 0 ? "up" : (dw.change < 0 ? "down" : "same");
   const cTxt = dw.change > 0 ? `+${dw.change}kg` : (dw.change < 0 ? `${dw.change}kg` : "—");
-  const pinTxt = day.date.slice(8); // day number
-  const weekEn = dayNames[day.weekday] || "";
-  const colorCls = pinColors[idx % 3];
 
-  // Diet
   let dietHtml = "";
   day.diet.forEach(meal => {
-    const meta = mealMeta[meal.meal] || { icon:"🍽️", cls:"snack" };
-    let mealSum = 0;
-    let foods = "";
+    const meta = mealMeta[meal.meal] || { i: "🍽️", c: "snack" };
+    let sum = 0, foods = "";
     meal.items.forEach(item => {
-      mealSum += item.kcal;
-      foods += `<div class="food-line"><span class="f-name">${item.name}<span class="f-port">${item.portion}</span></span><span class="f-kcal">${item.kcal}</span></div>`;
+      sum += item.kcal;
+      foods += `<div class="f-line"><span>${item.name}<span class="f-p">${item.portion}</span></span><span class="f-k">${item.kcal}</span></div>`;
     });
-    dietHtml += `
-      <div class="meal">
-        <div class="meal-rail">
-          <div class="m-dot ${meta.cls}">${meta.icon}</div>
-          <div class="m-line"></div>
-        </div>
-        <div class="meal-info">
-          <div class="meal-name">${meal.meal}<span class="m-time">${meal.time}</span><span class="m-sum">${mealSum} kcal</span></div>
-          ${foods}
-        </div>
-      </div>`;
+    dietHtml += `<div class="meal"><div class="m-rail"><div class="m-dot ${meta.c}">${meta.i}</div><div class="m-ln"></div></div><div class="m-info"><div class="m-name">${meal.meal}<span class="m-t">${meal.time}</span><span class="m-s">${sum} kcal</span></div>${foods}</div></div>`;
   });
 
-  // Nutrition
   const s = day.summary;
-  const nutriHtml = `
-    <div class="nutri">
-      <div class="nutri-cell"><div class="n-val total">${s.totalKcal}</div><div class="n-label">KCAL</div></div>
-      <div class="nutri-cell"><div class="n-val p">${s.protein}</div><div class="n-label">蛋白</div></div>
-      <div class="nutri-cell"><div class="n-val c">${s.carbs}</div><div class="n-label">碳水</div></div>
-      <div class="nutri-cell"><div class="n-val f">${s.fat}</div><div class="n-label">脂肪</div></div>
-    </div>`;
-
-  // Advice
   const a = day.advice;
-  const advHtml = `
-    <div class="adv-card">
-      <div class="adv-good">${a.good.map(g => `<span class="g-tag">✓ ${g}</span>`).join("")}</div>
-      ${a.tips.map(t => `<div class="adv-tip"><div class="at-dot"></div><div class="at-txt">${t}</div></div>`).join("")}
-      <div class="adv-final">📌 ${a.overall}</div>
-    </div>`;
 
-  const entry = document.createElement("div");
-  entry.className = `entry ${colorCls}`;
-  entry.innerHTML = `
-    <div class="date-pin">${pinTxt}</div>
+  const slide = document.createElement("div");
+  slide.className = "slide";
+  slide.innerHTML = `
     <div class="page-card">
       <div class="pc-head">
         <div>
           <div class="pc-date">${day.date}</div>
-          <div class="pc-week">${day.weekday} · ${weekEn}</div>
+          <div class="pc-week">${day.weekday} · ${dayEn[day.weekday] || ""}</div>
         </div>
-        <div class="pc-weight">
-          <span class="pc-w-num">${wNum}</span><span class="pc-w-unit">kg</span>
-          <span class="pc-w-chg ${cCls}">${cTxt}</span>
+        <div class="pc-right">
+          <span class="pc-w">${wNum}</span><span class="pc-u">kg</span>
+          <span class="pc-chg ${cCls}">${cTxt}</span>
         </div>
       </div>
       <div class="pc-body">
         <div class="sec">
-          <div class="sec-tag t-w"><span class="st-line"></span>WEIGHT · 体重</div>
+          <div class="sec-tag t-w"><span class="st-l"></span>WEIGHT · 体重</div>
           <div class="w-row">
-            <div class="w-box"><div class="wb-ico">🌅</div><div class="wb-label">早上</div><div class="wb-val">${dw.morning || "--"}<span class="u">kg</span></div></div>
-            <div class="w-box"><div class="wb-ico">🌙</div><div class="wb-label">晚上</div><div class="wb-val">${dw.evening || "--"}<span class="u">kg</span></div></div>
+            <div class="w-box"><div class="wb-i">🌅</div><div class="wb-l">早上</div><div class="wb-v">${dw.morning || "--"}<span class="u">kg</span></div></div>
+            <div class="w-box"><div class="wb-i">🌙</div><div class="wb-l">晚上</div><div class="wb-v">${dw.evening || "--"}<span class="u">kg</span></div></div>
           </div>
           ${dw.note ? `<div class="w-note">💬 ${dw.note}</div>` : ""}
         </div>
         <div class="sec">
-          <div class="sec-tag t-d"><span class="st-line"></span>MEALS · 饮食</div>
-          ${nutriHtml}
+          <div class="sec-tag t-d"><span class="st-l"></span>MEALS · 饮食</div>
+          <div class="nutri">
+            <div class="nc"><div class="n-v total">${s.totalKcal}</div><div class="n-l">KCAL</div></div>
+            <div class="nc"><div class="n-v p">${s.protein}</div><div class="n-l">蛋白</div></div>
+            <div class="nc"><div class="n-v c">${s.carbs}</div><div class="n-l">碳水</div></div>
+            <div class="nc"><div class="n-v f">${s.fat}</div><div class="n-l">脂肪</div></div>
+          </div>
           ${dietHtml}
         </div>
         <div class="sec">
-          <div class="sec-tag t-a"><span class="st-line"></span>NOTES · 建议</div>
-          ${advHtml}
+          <div class="sec-tag t-a"><span class="st-l"></span>NOTES · 建议</div>
+          <div class="adv">
+            <div class="a-good">${a.good.map(g => `<span class="g-tag">✓ ${g}</span>`).join("")}</div>
+            ${a.tips.map(t => `<div class="a-tip"><div class="at-d"></div><div class="at-t">${t}</div></div>`).join("")}
+            <div class="a-final">📌 ${a.overall}</div>
+          </div>
         </div>
       </div>
     </div>`;
-  journal.appendChild(entry);
+  track.appendChild(slide);
+  slides.push(slide);
 });
 
-// Scroll animations
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
-}, { threshold: 0.08 });
-document.querySelectorAll(".entry").forEach(el => io.observe(el));
+// Dots
+const dotsEl = document.getElementById("dots");
+slides.forEach(() => {
+  const d = document.createElement("span");
+  d.className = "bn-dot";
+  dotsEl.appendChild(d);
+});
 
-// Progress bar
-window.addEventListener("scroll", () => {
-  const h = document.documentElement;
-  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
-  document.getElementById("progress").style.width = pct + "%";
+function update() {
+  track.style.transform = `translateX(-${cur * 100}%)`;
+  document.querySelectorAll(".bn-dot").forEach((d, i) => d.classList.toggle("on", i === cur));
+  document.getElementById("btnPrev").disabled = cur === 0;
+  document.getElementById("btnNext").disabled = cur === slides.length - 1;
+  document.getElementById("pageNum").textContent = `${cur + 1} / ${slides.length}`;
+  document.getElementById("pageDate").textContent = D.days[cur].date;
+  // Reset inner scroll
+  const card = slides[cur].querySelector(".page-card");
+  if (card) card.scrollTop = 0;
+}
+
+function go(dir) {
+  const n = cur + dir;
+  if (n < 0 || n >= slides.length) return;
+  cur = n;
+  update();
+}
+
+// Swipe
+const car = document.getElementById("carousel");
+let sx = 0, sy = 0;
+car.addEventListener("touchstart", e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+car.addEventListener("touchend", e => {
+  const dx = e.changedTouches[0].clientX - sx;
+  const dy = e.changedTouches[0].clientY - sy;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) go(dx < 0 ? 1 : -1);
 }, { passive: true });
 
-function scrollTop() {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  showToast("回到顶部 ☝️");
-}
+// Keyboard
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft") go(-1);
+  if (e.key === "ArrowRight") go(1);
+});
 
 function showToast(msg) {
   const t = document.getElementById("toast");
@@ -506,6 +504,8 @@ function showToast(msg) {
   t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), 1500);
 }
+
+update();
 </script>
 </body>
 </html>
