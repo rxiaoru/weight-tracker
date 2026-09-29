@@ -8,6 +8,36 @@ const TRACKER_DATA = {
   target: 70.0,
   days: [
     {
+      date: "2026-09-29",
+      weekday: "周二",
+      weight: {
+        morning: 72.0,
+        evening: null,
+        change: 2.0,
+        changeJin: 4.0,
+        note: "比昨天早上下降1.4kg，水分回落中 💪"
+      },
+      diet: [
+        { meal: "早餐", time: "早上", items: [
+          { name: "美式咖啡+纯牛奶", portion: "自制拿铁", kcal: 70 },
+          { name: "全麦面包", portion: "1片(昨天剩的)", kcal: 75 }
+        ]}
+      ],
+      summary: {
+        totalKcal: 145,
+        protein: "~8g",
+        carbs: "~20g",
+        fat: "~4g",
+        veggieServings: 0,
+        water: "待记录"
+      },
+      advice: {
+        good: ["体重明显回落(↓1.4kg)", "拿铁代替含糖咖啡", "早餐简单清淡"],
+        tips: ["早餐蛋白质不够，可加个鸡蛋", "午餐晚餐记得正常吃", "蔬菜今天还没吃", "多喝水帮助代谢"],
+        overall: "水分在消退，继续保持清淡饮食"
+      }
+    },
+    {
       date: "2026-09-28",
       weekday: "周一",
       weight: {
