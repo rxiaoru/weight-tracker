@@ -738,11 +738,12 @@ function switchTab(idx,el){
 document.querySelectorAll(".tab-item").forEach(t=>t.classList.remove("active"));
 el.classList.add("active");
 document.getElementById("viewHome").classList.toggle("active",idx===0);
-document.getElementById("viewBody").classList.toggle("active",idx===1);
+document.getElementById("viewStats").classList.toggle("active",idx===2);
 document.getElementById("viewJournal").classList.toggle("active",idx===3);
 if(idx===0)document.getElementById("content").scrollTo({top:0,behavior:"smooth"});
-// Hide/show FAB
-document.querySelector(".fab").style.display=(idx===0||idx===2)?"flex":"none";
+if(idx===2)renderStats();
+if(idx===3)renderJournal();
+document.querySelector(".fab").style.display=(idx===0)?"flex":"none";
 }
 
 // ===== Profile =====
