@@ -7,7 +7,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
---bg:#F2EEE9;--bg2:#FFFFFF;--card:#FFFFFF;
+--bg:#F2EEE9;--bg2:rgba(255,255,255,0.82);--card:#FFFFFF;
 --ink:#2C2C2E;--ink2:#6B6B70;--ink3:#AEAEB2;
 --line:#E8E4DE;
 --peach:#FF9F7C;--peach-l:#FFF3EE;
@@ -49,10 +49,10 @@ animation:flowGradient 40s ease infinite;}
 .h-left{display:flex;align-items:center;gap:11px;}
 .h-logo{width:42px;height:42px;border-radius:16px;background:linear-gradient(135deg,#E8734A,#D4907B);display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;box-shadow:0 4px 14px rgba(255,159,124,0.35);transition:transform .3s var(--ease-spring);}
 .h-logo:active{transform:scale(0.9) rotate(-10deg);}
-.h-greeting{font-size:16px;font-weight:800;letter-spacing:-0.3px;}
+.h-greeting{font-size:16px;font-weight:800;letter-spacing:-0.3px;text-shadow:0 1px 4px rgba(255,255,255,0.8);}
 .h-date{font-size:11px;color:var(--ink2);margin-top:1px;font-weight:500;}
 .h-right{display:flex;gap:8px;}
-.h-btn{width:38px;height:38px;border-radius:14px;background:var(--bg2);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--sh-sm);transition:all .25s var(--ease-spring);color:var(--ink2);}
+.h-btn{width:38px;height:38px;border-radius:14px;background:rgba(255,255,255,0.6);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--sh-sm);transition:all .25s var(--ease-spring);color:var(--ink2);}
 .h-btn svg{width:17px;height:17px;}
 .h-btn:active{transform:scale(0.85);box-shadow:var(--sh-md);}
 
@@ -304,7 +304,7 @@ animation:flowGradient 40s ease infinite;}
 /* User background */
 .bg-user{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;pointer-events:none;z-index:0;}
 .bg-user img{width:100%;height:100%;object-fit:cover;}
-.bg-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.72);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);}
+.bg-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.35);}
 /* Hidden file input */
 #bgInput{display:none;}
 
