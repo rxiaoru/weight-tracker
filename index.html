@@ -210,8 +210,10 @@ textarea.modal-input { min-height:80px; resize:vertical; }
       <div id="resultItems"></div>
       <div class="ar-summary" id="resultSummary"></div>
       <div class="ar-actions">
-        <button class="ar-copy" onclick="copyResult()">📋 复制发给AI</button>
-        <button class="ar-save" onclick="saveToLocal()">💾 保存到今天</button>
+        <button class="ar-copy" onclick="tellAI()" style="background:var(--accent);color:#fff;border:none;">
+          💬 发给AI分析
+        </button>
+        <button class="ar-save" onclick="saveToLocal()" style="background:#fff;color:var(--ink2);border:1.5px solid var(--line);">💾 保存到今天</button>
       </div>
     </div>
   </div>
@@ -337,7 +339,7 @@ D.days.forEach(day => {
       <div class="sec"><div class="sec-tag t-a"><span class="st-l"></span>NOTES · 建议</div>
         <div class="adv"><div class="a-good">${a.good.map(g=>`<span class="g-tag">✓ ${g}</span>`).join("")}</div>${a.tips.map(t=>`<div class="a-tip"><div class="at-d"></div><div class="at-t">${t}</div></div>`).join("")}<div class="a-final">📌 ${a.overall}</div></div>
       </div>
-      ${day.date === today ? `<div class="sec quick-sec"><div class="qa-box"><div class="qa-title">📝 今天吃更多了？</div><div class="qa-sub">输入食物名或拍照，AI 帮你估算热量<br>保存后显示在手账里</div><div class="qa-btns"><button class="qa-btn primary" onclick="openModal()">快速记录</button><button class="qa-btn secondary" onclick="tellMe()">💬 告诉AI</button></div></div></div>` : ""}
+      ${day.date === today ? `<div class="sec quick-sec"><div class="qa-box"><div class="qa-title">📝 今天吃更多了？</div><div class="qa-sub">输入食物名或拍照，AI 帮你估算热量<br>保存后显示在手账里</div><div class="qa-btns"><button class="qa-btn primary" onclick="openModal()">📝 快速记录</button><button class="qa-btn secondary" onclick="tellAIDirect()">💬 直接告诉AI</button></div></div></div>` : ""}
     </div>
   </div>`;
   track.appendChild(slide);
@@ -517,9 +519,37 @@ function saveToLocal() {
   setTimeout(() => location.reload(), 1000);
 }
 
+function tellAI() {
+  if (!lastResult) return;
+  const text = `帮我记录今天(${today})的饮食：\n\n${lastResult.items.map(i => `• ${i.name}（${i.detail}）≈ ${i.kcal} kcal`).join("\n")}\n\n总计约 ${lastResult.totalKcal} kcal\n\n请帮我分析一下，给出建议`;
+
+  // Try Web Share API first (works on mobile)
+  if (navigator.share) {
+    navigator.share({ text: text }).then(() => {
+      showToast("已分享 ✅");
+    }).catch(() => {
+      // Fallback to clipboard
+      navigator.clipboard.writeText(text).then(() => showToast("已复制，去粘贴给AI 💬"));
+    });
+  } else {
+    // Desktop fallback: copy to clipboard
+    navigator.clipboard.writeText(text).then(() => showToast("已复制，去粘贴给AI 💬"));
+  }
+}
+
 function tellMe() {
-  const text = `请帮我记录今天(${today})的饮食：`;
-  navigator.clipboard.writeText(text).then(() => showToast("已复制，去粘贴给AI吧 💬"));
+  tellAI();
+}
+
+function tellAIDirect() {
+  const text = `请帮我记录今天(${today})的饮食，我会告诉你我吃了什么`;
+  if (navigator.share) {
+    navigator.share({ text }).then(() => showToast("去告诉AI你吃了什么吧 💬")).catch(() => {
+      navigator.clipboard.writeText(text).then(() => showToast("已复制 💬"));
+    });
+  } else {
+    navigator.clipboard.writeText(text).then(() => showToast("已复制，去粘贴给AI 💬"));
+  }
 }
 
 update();
