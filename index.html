@@ -779,8 +779,22 @@ return"🔥 热量较高，建议减少主食或增加运动";
 }
 function copyRes(){if(!lastRes)return;
 const curDate=DATA_DAYS[dayIdx].date;
-const t=`帮我记录(${curDate})的饮食：\n${lastRes.items.map(i=>`• ${i.name}（${i.detail}）≈ ${i.kcal} kcal`).join("\n")}\n总计约 ${lastRes.total} kcal`;
+function copyRes_fix(){}
+function copyRes(){
+if(!lastRes)return;
+const curDate=DATA_DAYS[dayIdx].date;
+let t;
+if(lastRes.total===0||!lastRes.items||lastRes.items.length===0){
+t=`请帮我识别今天(${curDate})${selMeal}吃了什么，并估算热量。\n我拍了一张照片（包含食物）。\n请列出每种食物的名称、分量和热量。`;
+}else{
+t=`帮我记录(${curDate})的饮食：\n${lastRes.items.map(i=>`• ${i.name}（${i.detail}）≈ ${i.kcal} kcal`).join("\n")}\n总计约 ${lastRes.total} kcal\n请帮我分析一下，给出建议`;
+}
 if(navigator.share){navigator.share({text:t}).catch(()=>{navigator.clipboard.writeText(t).then(()=>showToast("已复制"));});}
+else{navigator.clipboard.writeText(t).then(()=>showToast("已复制，去粘贴给AI"));}
+}
+function copyRes_old(){if(!lastRes)return;
+const curDate=DATA_DAYS[dayIdx].date;
+const t=`帮我记录(${curDate})的饮食：if(navigator.share){navigator.share({text:t}).catch(()=>{navigator.clipboard.writeText(t).then(()=>showToast("已复制"));});}
 else{navigator.clipboard.writeText(t).then(()=>showToast("已复制"));}}
 function saveLocal(){if(!lastRes)return;
 const curDate=DATA_DAYS[dayIdx].date;
