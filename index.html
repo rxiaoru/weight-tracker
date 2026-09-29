@@ -308,6 +308,23 @@ animation:flowGradient 40s ease infinite;}
 /* Hidden file input */
 #bgInput{display:none;}
 
+
+/* Stats view */
+.stat-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:18px;margin-bottom:14px;animation:popUp .45s var(--ease-out) both;}
+.sc-head{font-size:14px;font-weight:800;margin-bottom:14px;color:var(--ink);}
+.sc-grid{display:flex;justify-content:space-around;text-align:center;}
+.sc-item .sc-val{font-size:22px;font-weight:800;letter-spacing:-0.5px;font-variant-numeric:tabular-nums;color:var(--primary);}
+.sc-item .sc-l{font-size:10px;color:var(--ink3);margin-top:3px;font-weight:600;}
+.sc-tip{font-size:12px;color:var(--ink2);padding:8px 0;line-height:1.7;display:flex;align-items:flex-start;gap:6px;}
+.sc-tip b{color:var(--ink);font-weight:700;}
+.sc-tip.warn{color:var(--orange);}
+.sc-tip.ok{color:var(--green);}
+.sc-tip::before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor;margin-top:8px;flex-shrink:0;opacity:0.4;}
+.sc-note{font-size:10px;color:var(--ink3);margin-top:6px;padding:6px 10px;background:var(--bg);border-radius:8px;font-weight:500;}
+.stat-card.more{border-left:3px solid var(--green);}
+.stat-card.less{border-left:3px solid var(--orange);}
+.stat-card.rec{border-left:3px solid var(--primary);}
+
 </style>
 </head>
 <body>
@@ -404,6 +421,14 @@ animation:flowGradient 40s ease infinite;}
 <div id="bodyResult" class="result" style="margin-top:16px;"></div>
 </div>
 <button class="an-btn" onclick="analyzeBody()">🔍 分析体型 + 给出建议</button>
+</div>
+</div>
+
+<!-- ===== Stats/Analysis View ===== -->
+<div class="view" id="viewStats">
+<div class="content">
+<div class="sec-head" style="padding-top:8px;"><div class="sec-title">📊 近两天饮食分析</div></div>
+<div id="statsContent"></div>
 </div>
 </div>
 
