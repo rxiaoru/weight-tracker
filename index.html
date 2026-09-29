@@ -737,6 +737,11 @@ return{items,total};
 async function analyze(){
 const text=document.getElementById("fi").value.trim();
 const btn=document.getElementById("ab");
+
+const apiKeyInput=document.getElementById("apiKeyInput");
+if(apiKeyInput&&apiKeyInput.value.trim()){localStorage.setItem("ai_key",apiKeyInput.value.trim());}
+const providerBtn=document.querySelector("#providerPicker .mp.active");
+if(providerBtn)localStorage.setItem("ai_provider",providerBtn.dataset.provider);
 const apiKeyInput=document.getElementById("apiKeyInput");
 if(apiKeyInput&&apiKeyInput.value.trim()){
 localStorage.setItem("ai_key",apiKeyInput.value.trim());
@@ -748,7 +753,7 @@ btn.disabled=true;document.getElementById("ld").classList.add("show");
 document.getElementById("result").classList.remove("show");
 await new Promise(r=>setTimeout(r,600));
 let res;
-if(photoB64){
+if(photos&&photos.length>0){
 try{
 const resp=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+(localStorage.getItem("openai_api_key")||"demo")},body:JSON.stringify({model:"gpt-4o-mini",messages:[{role:"user",content:[{type:"text",text:"识别图片中的所有食物，用中文回复，格式：食物名(分量) 热量kcal，每行一个。只列食物。"},{type:"image_url",image_url:{url:photoB64}}]}]}),max_tokens:500});
 const data=await resp.json();
