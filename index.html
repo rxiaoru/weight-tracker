@@ -393,10 +393,12 @@ document.getElementById("greeting").textContent=hour<5?"夜深了 🌙":hour<12?
 document.getElementById("todayDate").textContent=`${TODAY} ${DATA_DAYS[0].weekday}`;
 
 function navDay(dir){
-const n=dayIdx+dir;
-if(n<0||n>=DATA_DAYS.length){showToast(n<0?"已经是第一天了":"已经是今天啦");return;}
+const n=dayIdx-dir; // dir -1 (left) = older = higher index
+if(n<0){showToast("已经是今天啦 ✨");return;}
+if(n>=DATA_DAYS.length){showToast("已经是第一天了");return;}
 dayIdx=n;
 renderDay(true);
+showToast(dayIdx===0?"回到今天 📅":`查看 ${DATA_DAYS[dayIdx].date}`);
 }
 
 function renderDay(animate){
