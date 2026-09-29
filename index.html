@@ -310,6 +310,13 @@ body{background:var(--bg);color:var(--text);height:100vh;height:100dvh;overflow:
 <div class="toast" id="toast"></div>
 
 <script>
+// Safe helpers
+const safeNum=(v,fallback=0)=>{const n=Number(v);return isNaN(n)||!isFinite(n)?fallback:n;};
+const safeStr=(v,fallback="--")=>(v===null||v===undefined||(typeof v==="number"&&isNaN(v)))?fallback:String(v);
+const loadEntriesSafe=()=>{try{const d=JSON.parse(localStorage.getItem("health_entries")||"{}");if(typeof d!=="object"||d===null)return{};return d;}catch{return{};}};
+// Clear any corrupted localStorage
+try{const old=localStorage.getItem("health_entries");if(old&&(old.includes("NaN")||old.includes("undefined"))){localStorage.removeItem("health_entries");}}catch{}
+
 const FOOD_DB={"米饭":{kcal:130,def:195},"面条":{kcal:110,def:330},"馒头":{kcal:220,def:110},"包子":{kcal:230,def:230},"饺子":{kcal:230,def:23},"面包":{kcal:280,def:80},"全麦面包":{kcal:250,def:75},"玉米":{kcal:110,def:120},"红薯":{kcal:100,def:150},"土豆":{kcal:80,def:130},"燕麦":{kcal:370,def:150},"鸡蛋":{kcal:145,def:75},"鸡胸肉":{kcal:133,def:133},"牛肉":{kcal:250,def:250},"猪肉":{kcal:400,def:200},"鱼肉":{kcal:150,def:150},"虾":{kcal:90,def:90},"虾仁":{kcal:90,def:90},"豆腐":{kcal:80,def:80},"牛奶":{kcal:65,def:130},"酸奶":{kcal:70,def:100},"豆浆":{kcal:30,def:60},"美式":{kcal:2,def:5},"咖啡":{kcal:2,def:5},"拿铁":{kcal:40,def:60},"苹果":{kcal:52,def:80},"香蕉":{kcal:90,def:90},"橙子":{kcal:47,def:70},"西红柿":{kcal:20,def:25},"黄瓜":{kcal:15,def:25},"西兰花":{kcal:35,def:35},"菠菜":{kcal:25,def:25},"白菜":{kcal:15,def:20},"生菜":{kcal:15,def:15},"萝卜":{kcal:20,def:25},"青椒":{kcal:20,def:25},"豆芽":{kcal:20,def:20},"芹菜":{kcal:15,def:20},"韭菜":{kcal:25,def:30},"茄子":{kcal:25,def:40},"冬瓜":{kcal:12,def:15},"南瓜":{kcal:25,def:40},"香菇":{kcal:30,def:30},"蘑菇":{kcal:25,def:25},"花生":{kcal:570,def:60},"核桃":{kcal:650,def:45},"饼干":{kcal:450,def:50},"蛋糕":{kcal:350,def:250},"巧克力":{kcal:550,def:150},"可乐":{kcal:45,def:100},"奶茶":{kcal:250,def:350},"果汁":{kcal:50,def:120},"披萨":{kcal:270,def:280},"汉堡":{kcal:250,def:500},"薯条":{kcal:310,def:300},"炒饭":{kcal:180,def:360},"炒面":{kcal:160,def:320},"粥":{kcal:45,def:90},"沙拉":{kcal:80,def:150},"山药":{kcal:55,def:80},"芋头":{kcal:80,def:100},"菱角":{kcal:100,def:50},"毛豆":{kcal:130,def:65},"豌豆":{kcal:110,def:55},"芦笋":{kcal:20,def:20},"西瓜":{kcal:30,def:60},"葡萄":{kcal:70,def:70},"草莓":{kcal:30,def:35},"蓝莓":{kcal:55,def:55},"桃子":{kcal:40,def:70},"梨":{kcal:50,def:80},"柚子":{kcal:40,def:100},"火龙果":{kcal:55,def:110},"猕猴桃":{kcal:60,def:40},"芒果":{kcal:60,def:100},"菠萝":{kcal:45,def:60},"辣条":{kcal:400,def:200},"冰淇淋":{kcal:200,def:200}};
 
 const DATA={
@@ -330,7 +337,7 @@ const hour=now.getHours();
 document.getElementById("greeting").textContent=hour<12?"早上好 ☀️":hour<18?"下午好 🌤":"晚上好 🌙";
 
 // Ring
-const total=DATA.summary.totalKcal,goal=2000;
+const total=safeNum(DATA.summary.totalKcal,0),goal=2000;
 const pct=Math.min(total/goal,1);
 const offset=377*(1-pct);
 setTimeout(()=>{document.getElementById("ringVal").style.strokeDashoffset=offset;},200);
@@ -343,19 +350,19 @@ document.getElementById("ringNum").textContent=num;
 },40);
 document.getElementById("hiEaten").textContent=total+" kcal";
 document.getElementById("hiLeft").textContent=Math.max(goal-total,0)+" kcal";
-document.getElementById("hiProtein").textContent=DATA.summary.protein+"g";
-document.getElementById("macroP").textContent=DATA.summary.protein+"g";
-document.getElementById("macroC").textContent=DATA.summary.carbs+"g";
-document.getElementById("macroF").textContent=DATA.summary.fat+"g";
+document.getElementById("hiProtein").textContent=safeNum(DATA.summary.protein,0)+"g";
+document.getElementById("macroP").textContent=safeNum(DATA.summary.protein,0)+"g";
+document.getElementById("macroC").textContent=safeNum(DATA.summary.carbs,0)+"g";
+document.getElementById("macroF").textContent=safeNum(DATA.summary.fat,0)+"g";
 
 // Weight
 const w=DATA.weight;
-document.getElementById("wcNum").textContent=w.morning;
-const chg=w.morning-w.baseline;
+document.getElementById("wcNum").textContent=safeNum(w.morning,0).toFixed(1);
+const chg=safeNum(w.morning,0)-safeNum(w.baseline,0);
 const badge=document.getElementById("wcBadge");
 if(chg>0){badge.textContent=`▲ 较基线 +${chg.toFixed(1)}`;badge.className="wc-badge up";}
 else{badge.textContent=`▼ 较基线 ${chg.toFixed(1)}`;badge.className="wc-badge down";}
-const diff=w.morning-w.target;
+const diff=safeNum(w.morning,0)-safeNum(w.target,0);
 document.getElementById("wcSub").textContent=diff>0?`第一阶段目标 ${w.target}kg · 还差 ${diff.toFixed(1)}kg`:`🎉 已达成第一阶段目标！`;
 
 // Mini chart
