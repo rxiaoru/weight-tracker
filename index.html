@@ -524,7 +524,7 @@ const safeNum=(v,fallback=0)=>{const n=Number(v);return isNaN(n)||!isFinite(n)?f
 const loadEntriesSafe=()=>{try{const d=JSON.parse(localStorage.getItem("health_entries")||"{}");return(typeof d==="object"&&d)?d:{};}catch{return{};}};
 try{const old=localStorage.getItem("health_entries");if(old&&(old.includes("NaN")||old.includes("undefined")))localStorage.removeItem("health_entries");}catch{}
 
-const FOOD_DB={"米饭":{kcal:130,def:195},"面条":{kcal:110,def:330},"馒头":{kcal:220,def:110},"包子":{kcal:230,def:230},"饺子":{kcal:230,def:23},"面包":{kcal:280,def:80},"全麦面包":{kcal:250,def:75},"玉米":{kcal:110,def:120},"红薯":{kcal:100,def:150},"土豆":{kcal:80,def:130},"燕麦":{kcal:370,def:150},"鸡蛋":{kcal:145,def:75},"鸡胸肉":{kcal:133,def:133},"牛肉":{kcal:250,def:250},"猪肉":{kcal:400,def:200},"鱼肉":{kcal:150,def:150},"虾":{kcal:90,def:90},"虾仁":{kcal:90,def:90},"豆腐":{kcal:80,def:80},"牛奶":{kcal:65,def:130},"酸奶":{kcal:70,def:100},"豆浆":{kcal:30,def:60},"美式":{kcal:2,def:5},"咖啡":{kcal:2,def:5},"拿铁":{kcal:40,def:60},"苹果":{kcal:52,def:80},"香蕉":{kcal:90,def:90},"橙子":{kcal:47,def:70},"西红柿":{kcal:20,def:25},"黄瓜":{kcal:15,def:25},"西兰花":{kcal:35,def:35},"菠菜":{kcal:25,def:25},"白菜":{kcal:15,def:20},"生菜":{kcal:15,def:15},"萝卜":{kcal:20,def:25},"青椒":{kcal:20,def:25},"豆芽":{kcal:20,def:20},"芹菜":{kcal:15,def:20},"韭菜":{kcal:25,def:30},"茄子":{kcal:25,def:40},"冬瓜":{kcal:12,def:15},"南瓜":{kcal:25,def:40},"香菇":{kcal:30,def:30},"蘑菇":{kcal:25,def:25},"花生":{kcal:570,def:60},"核桃":{kcal:650,def:45},"饼干":{kcal:450,def:50},"蛋糕":{kcal:350,def:250},"巧克力":{kcal:550,def:150},"可乐":{kcal:45,def:100},"奶茶":{kcal:250,def:350},"果汁":{kcal:50,def:120},"披萨":{kcal:270,def:280},"汉堡":{kcal:250,def:500},"薯条":{kcal:310,def:300},"炒饭":{kcal:180,def:360},"炒面":{kcal:160,def:320},"粥":{kcal:45,def:90},"沙拉":{kcal:80,def:150},"山药":{kcal:55,def:80},"芋头":{kcal:80,def:100},"菱角":{kcal:100,def:50},"毛豆":{kcal:130,def:65},"豌豆":{kcal:110,def:55},"芦笋":{kcal:20,def:20},"西瓜":{kcal:30,def:60},"葡萄":{kcal:70,def:70},"草莓":{kcal:30,def:35},"蓝莓":{kcal:55,def:55},"桃子":{kcal:40,def:70},"梨":{kcal:50,def:80},"柚子":{kcal:40,def:100},"火龙果":{kcal:55,def:110},"猕猴桃":{kcal:60,def:40},"芒果":{kcal:60,def:100},"菠萝":{kcal:45,def:60},"辣条":{kcal:400,def:200},"冰淇淋":{kcal:200,def:200}};
+var photos=[];\nvar selMeal="早餐";\nvar lastRes=null;\nconst FOOD_DB={"米饭":{kcal:130,def:195},"面条":{kcal:110,def:330},"馒头":{kcal:220,def:110},"包子":{kcal:230,def:230},"饺子":{kcal:230,def:23},"面包":{kcal:280,def:80},"全麦面包":{kcal:250,def:75},"玉米":{kcal:110,def:120},"红薯":{kcal:100,def:150},"土豆":{kcal:80,def:130},"燕麦":{kcal:370,def:150},"鸡蛋":{kcal:145,def:75},"鸡胸肉":{kcal:133,def:133},"牛肉":{kcal:250,def:250},"猪肉":{kcal:400,def:200},"鱼肉":{kcal:150,def:150},"虾":{kcal:90,def:90},"虾仁":{kcal:90,def:90},"豆腐":{kcal:80,def:80},"牛奶":{kcal:65,def:130},"酸奶":{kcal:70,def:100},"豆浆":{kcal:30,def:60},"美式":{kcal:2,def:5},"咖啡":{kcal:2,def:5},"拿铁":{kcal:40,def:60},"苹果":{kcal:52,def:80},"香蕉":{kcal:90,def:90},"橙子":{kcal:47,def:70},"西红柿":{kcal:20,def:25},"黄瓜":{kcal:15,def:25},"西兰花":{kcal:35,def:35},"菠菜":{kcal:25,def:25},"白菜":{kcal:15,def:20},"生菜":{kcal:15,def:15},"萝卜":{kcal:20,def:25},"青椒":{kcal:20,def:25},"豆芽":{kcal:20,def:20},"芹菜":{kcal:15,def:20},"韭菜":{kcal:25,def:30},"茄子":{kcal:25,def:40},"冬瓜":{kcal:12,def:15},"南瓜":{kcal:25,def:40},"香菇":{kcal:30,def:30},"蘑菇":{kcal:25,def:25},"花生":{kcal:570,def:60},"核桃":{kcal:650,def:45},"饼干":{kcal:450,def:50},"蛋糕":{kcal:350,def:250},"巧克力":{kcal:550,def:150},"可乐":{kcal:45,def:100},"奶茶":{kcal:250,def:350},"果汁":{kcal:50,def:120},"披萨":{kcal:270,def:280},"汉堡":{kcal:250,def:500},"薯条":{kcal:310,def:300},"炒饭":{kcal:180,def:360},"炒面":{kcal:160,def:320},"粥":{kcal:45,def:90},"沙拉":{kcal:80,def:150},"山药":{kcal:55,def:80},"芋头":{kcal:80,def:100},"菱角":{kcal:100,def:50},"毛豆":{kcal:130,def:65},"豌豆":{kcal:110,def:55},"芦笋":{kcal:20,def:20},"西瓜":{kcal:30,def:60},"葡萄":{kcal:70,def:70},"草莓":{kcal:30,def:35},"蓝莓":{kcal:55,def:55},"桃子":{kcal:40,def:70},"梨":{kcal:50,def:80},"柚子":{kcal:40,def:100},"火龙果":{kcal:55,def:110},"猕猴桃":{kcal:60,def:40},"芒果":{kcal:60,def:100},"菠萝":{kcal:45,def:60},"辣条":{kcal:400,def:200},"冰淇淋":{kcal:200,def:200}};
 
 // Multi-day data
 const DATA_DAYS=[
@@ -670,7 +670,7 @@ document.getElementById("content").scrollTo({top:0,behavior:"smooth"});
 
 
 // Modal
-let selMeal="早餐",photoB64=null,lastRes=null;
+var photoB64=null;
 document.querySelectorAll("#mp .mp").forEach(b=>{b.addEventListener("click",function(){document.querySelectorAll("#mp .mp").forEach(x=>x.classList.remove("active"));this.classList.add("active");selMeal=this.dataset.meal;});});
 document.querySelectorAll("#providerPicker .mp").forEach(b=>{b.addEventListener("click",function(){document.querySelectorAll("#providerPicker .mp").forEach(x=>x.classList.remove("active"));this.classList.add("active");localStorage.setItem("ai_provider",this.dataset.provider);});});
 // Load saved provider
@@ -678,7 +678,6 @@ document.querySelectorAll("#providerPicker .mp").forEach(b=>{b.addEventListener(
 function openModal(){document.getElementById("mo").classList.add("show");checkApiKeySection();document.getElementById("result").classList.remove("show");document.getElementById("ld").classList.remove("show");document.getElementById("ab").disabled=false;document.body.style.overflow="hidden";}
 function closeModal(){document.getElementById("mo").classList.remove("show");document.body.style.overflow="";}
 document.getElementById("mo").addEventListener("click",e=>{if(e.target===e.currentTarget)closeModal();});
-let photos=[];
 
 function checkApiKeySection(){
 const hasKey=!!(localStorage.getItem("ai_key")||localStorage.getItem("openai_api_key"));
@@ -686,13 +685,14 @@ document.getElementById("apiKeySec").style.display=(!hasKey)?"block":"none";
 }
 
 function previewPhoto(input){
-photos=[];
+window.photos=[];
+photos=window.photos;
 const files=Array.from(input.files);
 if(files.length===0)return;
 const pp=document.getElementById("pp");
 if(files.length===1){
 const r=new FileReader();
-r.onload=e=>{pp.src=e.target.result;pp.style.display="block";photos.push(e.target.result);};
+r.onload=e=>{pp.src=e.target.result;pp.style.display="block";photos.push(e.target.result);window.photos=photos;};
 r.readAsDataURL(files[0]);
 }else{
 // Multiple: show first + count
@@ -704,7 +704,7 @@ let loaded=0;
 photos=[];
 files.forEach((f,i)=>{
 const fr=new FileReader();
-fr.onload=ev=>{photos.push(ev.target.result);loaded++;};
+fr.onload=ev=>{photos.push(ev.target.result);window.photos=photos;loaded++;};
 fr.readAsDataURL(f);
 });
 };
