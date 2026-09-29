@@ -800,7 +800,7 @@ var prompt="识别这些图片中的所有食物。用中文回复，每行一�
 var msgContent=[{type:"text",text:prompt}];
 photos.forEach(function(p){msgContent.push({type:"image_url",image_url:{url:p}});});
 var apiUrl,model;
-if(provider==="zai"){apiUrl="https://open.bigmodel.cn/api/paas/v4/chat/completions";model="glm-4v-flash";}
+if(provider==="zai"){apiUrl="https://open.bigmodel.cn/api/paas/v4/chat/completions";model="glm-4v";}
 else if(provider==="qwen"){apiUrl="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";model="qwen-vl-plus";}
 else{apiUrl="https://api.openai.com/v1/chat/completions";model="gpt-4o-mini";}
 var xhr=new XMLHttpRequest();
@@ -942,7 +942,7 @@ var p=document.getElementById("progress");if(p)p.style.width=pct+"%";
 var now=new Date();var hour=now.getHours();
 var greetEl=document.getElementById("greeting");
 if(greetEl)greetEl.textContent=hour<5?"夜深了":hour<12?"早上好":hour<14?"中午好":hour<18?"下午好":"晚上好";
-document.getElementById("countBadge").textContent=DATA_DAYS.length+" 天记录";
+var _cb=document.getElementById("countBadge");if(_cb)_cb.textContent=DATA_DAYS.length+" 天记录";
 var L=DATA_DAYS[0];var lw=L.weight;var chg=safeNum(lw.morning,0)-safeNum(lw.baseline,0);
 var statsEl=document.getElementById("stats");
 if(statsEl)statsEl.innerHTML="<div class='stat'><div class='sa-num'>"+safeNum(lw.morning,0)+"<span class='u'>kg</span></div><div class='sa-label'>当前体重</div></div><div class='stat'><div class='sa-num "+(chg>0?"warn":"ok")+"'>"+(chg>0?"+":"")+chg+"<span class='u'>kg</span></div><div class='sa-label'>较基线</div></div><div class='stat'><div class='sa-num ok'>"+(safeNum(lw.morning,0)-70).toFixed(1)+"<span class='u'>kg</span></div><div class='sa-label'>距目标</div></div><div class='stat'><div class='sa-num'>70<span class='u'>kg</span></div><div class='sa-label'>第一阶段</div></div>";
