@@ -195,6 +195,14 @@ textarea.modal-input { min-height:80px; resize:vertical; }
       <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="previewPhoto(this)">
       <img class="photo-preview" id="photoPreview">
     </div>
+    <div class="modal-sec" id="apiKeySec" style="display:none;">
+      <label class="modal-label">🔑 OpenAI API Key（用于AI识图，仅存在你的手机上）</label>
+      <input type="password" class="modal-input" id="apiKeyInput" placeholder="sk-..." style="font-size:12px;">
+      <div style="font-size:9px; color:var(--ink3); margin-top:5px; line-height:1.5;">
+        免费获取：platform.openai.com/api-keys<br>
+        不填也可以用，文字输入照样能用本地食物库分析
+      </div>
+    </div>
     <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">🔍 AI 分析热量</button>
     <div class="loading" id="loading"><div class="ld-icon">🔄</div><div class="ld-text">正在分析，请稍等...</div></div>
     <div class="analyze-result" id="result">
@@ -426,35 +434,58 @@ async function analyze() {
   const loading = document.getElementById("loading");
   const result = document.getElementById("result");
   if (!text && !photoBase64) { showToast("请输入食物或拍照 📷"); return; }
+  const keyVal = document.getElementById("apiKeyInput")?.value.trim();
+  if (keyVal) localStorage.setItem("openai_api_key", keyVal);
   btn.disabled = true;
   loading.style.display = "block";
   result.classList.remove("show");
   await new Promise(r => setTimeout(r, 800));
 
+  const apiKey = localStorage.getItem("openai_api_key") || "";
+  if (apiKeySec) apiKeySec.style.display = (photoBase64 && !apiKey) ? "block" : "none";
+
   let analysis;
-  if (photoBase64) {
-    // Photo uploaded - try to send to AI backend for analysis, fallback to text
+  if (photoBase64 && apiKey) {
+    // Real AI analysis with photo
     try {
       const resp = await fetch("https://api.openai.com/v1/chat/completions", {
         method:"POST",
-        headers:{ "Content-Type":"application/json", "Authorization":"Bearer demo-key" },
-        body: JSON.stringify({ model:"gpt-4o", messages:[{role:"user",content:[{type:"text",text:"识别图片中的食物,列出每种食物名称和估算热量(kcal)"},{type:"image_url",image_url:{url:photoBase64}}]}] })
+        headers:{ "Content-Type":"application/json", "Authorization":"Bearer " + apiKey },
+        body: JSON.stringify({
+          model:"gpt-4o-mini",
+          messages:[{role:"user",content:[
+            {type:"text",text:"识别图片中的所有食物。用中文回复，格式：食物名+估算分量+热量(kcal)，每行一个，例如：\n米饭(半碗) 100kcal\n西兰花炒虾仁(1份) 150kcal\n只列食物，不要其他说明。"},
+            {type:"image_url",image_url:{url:photoBase64}}
+          ]}]
+        }),
+        max_tokens: 500
       });
       const data = await resp.json();
       const aiText = data.choices?.[0]?.message?.content || "";
-      analysis = analyzeText(aiText || text || "食物");
-    } catch {
+      if (aiText) {
+        analysis = analyzeText(aiText);
+        analysis.aiUsed = true;
+      } else {
+        analysis = analyzeText(text || "食物");
+      }
+    } catch (err) {
+      console.error("AI call failed:", err);
       analysis = analyzeText(text || "未知食物");
+      analysis.aiError = true;
     }
   } else {
-    analysis = analyzeText(text);
+    analysis = analyzeText(text || "食物");
   }
 
   loading.style.display = "none";
   btn.disabled = false;
   lastResult = analysis;
   document.getElementById("resultItems").innerHTML = analysis.items.map(it => `<div class="ar-item"><span class="k">${it.name}${it.detail !== it.name ? ` (${it.detail})` : ""}</span><span class="v">${it.kcal} kcal</span></div>`).join("");
-  document.getElementById("resultSummary").innerHTML = `<b>总热量约 ${analysis.totalKcal} kcal</b><br>${getSummary(analysis.totalKcal)}`;
+  let aiNote = "";
+  if (analysis.aiUsed) aiNote = "🤖 AI识图结果";
+  else if (analysis.aiError) aiNote = "⚠️ AI调用失败，使用本地估算";
+  else if (photoBase64) aiNote = "📝 基于本地食物库估算";
+  document.getElementById("resultSummary").innerHTML = `${aiNote ? aiNote + "<br>" : ""}<b>总热量约 ${analysis.totalKcal} kcal</b><br>${getSummary(analysis.totalKcal)}`;
   result.classList.add("show");
 }
 
