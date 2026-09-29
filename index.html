@@ -262,10 +262,11 @@ animation:flowGradient 40s ease infinite;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
 
 /* Views */
-.view{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;scrollbar-width:none;}
-.view.active{display:block;}
+.view{display:none;flex-direction:column;flex:1;min-height:0;}
+.view.active{display:flex;}
 .view .content::-webkit-scrollbar{display:none;}
-.view .content{padding:0 20px calc(var(--safe-b) + 100px);}
+.view .content{padding:0 20px calc(var(--safe-b) + 100px);flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.view .content::-webkit-scrollbar{display:none;}
 
 /* Body Analysis */
 .body-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;margin-bottom:16px;}
@@ -324,7 +325,7 @@ animation:flowGradient 40s ease infinite;}
 </div>
 </div>
 
-<div class="view" id="viewHome"><div class="content" id="content">
+<div class="view active" id="viewHome"><div class="content" id="content">
 
 <div class="hero pop">
 <div class="hero-card">
@@ -381,7 +382,7 @@ animation:flowGradient 40s ease infinite;}
 </div></div>
 
 <!-- ===== Body Analysis View ===== -->
-<div class="view" id="viewBody" style="display:none;">
+<div class="view" id="viewBody">
 <div class="content">
 <div class="sec-head" style="padding-top:8px;"><div class="sec-title">📷 体型分析</div></div>
 <div class="body-card">
@@ -407,7 +408,7 @@ animation:flowGradient 40s ease infinite;}
 </div>
 
 <!-- ===== Journal View ===== -->
-<div class="view" id="viewJournal" style="display:none;">
+<div class="view" id="viewJournal">
 <div class="content">
 <div class="sec-head" style="padding-top:8px;"><div class="sec-title">📖 我的日记</div><div class="sec-more" onclick="addEvent()">+ 记录</div></div>
 <div id="journalTimeline"></div>
