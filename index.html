@@ -742,8 +742,6 @@ const apiKeyInput=document.getElementById("apiKeyInput");
 if(apiKeyInput&&apiKeyInput.value.trim()){localStorage.setItem("ai_key",apiKeyInput.value.trim());}
 const providerBtn=document.querySelector("#providerPicker .mp.active");
 if(providerBtn)localStorage.setItem("ai_provider",providerBtn.dataset.provider);
-const apiKeyInput=document.getElementById("apiKeyInput");
-if(apiKeyInput&&apiKeyInput.value.trim()){
 localStorage.setItem("ai_key",apiKeyInput.value.trim());
 }
 const providerBtn=document.querySelector("#providerPicker .mp.active");
