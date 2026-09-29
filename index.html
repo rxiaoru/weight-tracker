@@ -326,6 +326,10 @@ animation:flowGradient 40s ease infinite;}
 .stat-card.less{border-left:3px solid var(--orange);}
 .stat-card.rec{border-left:3px solid var(--primary);}
 
+
+.body-link{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:6px 14px;border-radius:20px;background:var(--blue-light);color:var(--blue);font-size:11px;font-weight:700;border:none;cursor:pointer;transition:all .2s var(--spring);font-family:inherit;}
+.body-link:active{transform:scale(0.95);}
+
 </style>
 </head>
 <body>
@@ -383,6 +387,7 @@ animation:flowGradient 40s ease infinite;}
 <div class="wc-top"><div class="wc-title" style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--ink2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22c4.5 0 8-3.5 8-8s-3.5-8-8-8-8 3.5-8 8 3.5 8 8 8z"/><path d="M12 14l3-3"/></svg> 体重记录</div><div class="wc-badge" id="wcBadge">--</div></div>
 <div class="wc-big"><span class="wc-num" id="wcNum">--</span><span class="wc-unit">kg</span></div>
 <div class="wc-sub"><span class="dot"></span><span id="wcSub">--</span></div>
+<button class="body-link" onclick="openBody()">📏 填写身高·体型分析</button>
 <div class="mini-chart"><div class="mini-label"><span>体重趋势</span><span id="chartRange"></span></div><div id="chartArea"></div></div>
 </div>
 
@@ -657,6 +662,7 @@ el.classList.add("active");
 var vh=document.getElementById("viewHome");if(vh)vh.classList.toggle("active",idx===0);
 var vs=document.getElementById("viewStats");if(vs)vs.classList.toggle("active",idx===2);
 var vj=document.getElementById("viewJournal");if(vj)vj.classList.toggle("active",idx===3);
+var vb=document.getElementById("viewBody");if(vb)vb.classList.toggle("active",idx===4);
 if(idx===0){var c=document.getElementById("content");if(c)c.scrollTop=0;}
 if(idx===2)renderStats();
 if(idx===3)renderJournal();
@@ -947,6 +953,19 @@ var _cb=document.getElementById("countBadge");if(_cb)_cb.textContent=DATA_DAYS.l
 var L=DATA_DAYS[0];var lw=L.weight;var chg=safeNum(lw.morning,0)-safeNum(lw.baseline,0);
 var statsEl=document.getElementById("stats");
 if(statsEl)statsEl.innerHTML="<div class='stat'><div class='sa-num'>"+safeNum(lw.morning,0)+"<span class='u'>kg</span></div><div class='sa-label'>当前体重</div></div><div class='stat'><div class='sa-num "+(chg>0?"warn":"ok")+"'>"+(chg>0?"+":"")+chg+"<span class='u'>kg</span></div><div class='sa-label'>较基线</div></div><div class='stat'><div class='sa-num ok'>"+(safeNum(lw.morning,0)-70).toFixed(1)+"<span class='u'>kg</span></div><div class='sa-label'>距目标</div></div><div class='stat'><div class='sa-num'>70<span class='u'>kg</span></div><div class='sa-label'>第一阶段</div></div>";
+
+function openBody(){
+var vh=document.getElementById("viewHome");if(vh)vh.classList.remove("active");
+var vs=document.getElementById("viewStats");if(vs)vs.classList.remove("active");
+var vj=document.getElementById("viewJournal");if(vj)vj.classList.remove("active");
+var vb=document.getElementById("viewBody");if(vb)vb.classList.add("active");
+var fab=document.querySelector(".fab");if(fab)fab.style.display="none";
+// Deactivate all tabs
+var tabs=document.querySelectorAll(".tab-item");
+for(var i=0;i<tabs.length;i++)tabs[i].classList.remove("active");
+loadProfile();
+}
+
 renderDay();
 loadBg();
 
