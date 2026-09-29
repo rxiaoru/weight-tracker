@@ -7,7 +7,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
---bg:#F2EEE9;--bg2:rgba(255,255,255,0.85);--card:#FFFFFF;
+--bg:#F2EEE9;--bg2:#FFFFFF;--card:#FFFFFF;
 --ink:#2C2C2E;--ink2:#6B6B70;--ink3:#AEAEB2;
 --line:#E8E4DE;
 --peach:#FF9F7C;--peach-l:#FFF3EE;
@@ -31,15 +31,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","PingFang SC"
 
 /* ===== Flowing gradient background ===== */
 .bg-flow{position:fixed;inset:0;pointer-events:none;z-index:0;
-background:linear-gradient(120deg,var(--peach-l),var(--lemon-l),var(--sage-l),var(--lilac-l),var(--peach-l));
-background-size:400% 400%;
-animation:flowGradient 18s ease infinite;}
+background:linear-gradient(120deg,#F5F2ED,#FDF8F2,#F0F5F1,#F5F1FA,#F5F2ED);
+background-size:300% 300%;
+animation:flowGradient 30s ease infinite;}
 @keyframes flowGradient{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
 /* Soft floating orbs */
-.bg-orb{position:absolute;border-radius:50%;filter:blur(50px);mix-blend-mode:multiply;}
-.orb-1{width:220px;height:220px;background:rgba(255,159,124,0.18);top:-40px;right:-40px;animation:orb1 16s ease-in-out infinite;}
-.orb-2{width:180px;height:180px;background:rgba(184,169,232,0.15);top:45%;left:-50px;animation:orb2 20s ease-in-out infinite;}
-.orb-3{width:160px;height:160px;background:rgba(127,182,158,0.15);bottom:-30px;right:8%;animation:orb3 18s ease-in-out infinite;}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(70px);}
+.orb-1{width:260px;height:260px;background:rgba(255,159,124,0.07);top:-40px;right:-40px;animation:orb1 16s ease-in-out infinite;}
+.orb-2{width:220px;height:220px;background:rgba(184,169,232,0.06);top:45%;left:-50px;animation:orb2 20s ease-in-out infinite;}
+.orb-3{width:200px;height:200px;background:rgba(127,182,158,0.06);bottom:-30px;right:8%;animation:orb3 18s ease-in-out infinite;}
 @keyframes orb1{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(-30px,40px) scale(1.15);}66%{transform:translate(20px,-20px) scale(0.9);}}
 @keyframes orb2{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,-30px) scale(1.1);}66%{transform:translate(-20px,25px) scale(0.92);}}
 @keyframes orb3{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(-25px,-25px) scale(1.12);}66%{transform:translate(25px,15px) scale(0.88);}}
@@ -67,11 +67,11 @@ animation:flowGradient 18s ease infinite;}
 
 /* ===== Calorie Hero ===== */
 .hero{margin-bottom:16px;position:relative;}
-.hero-card{background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:var(--r-lg);padding:26px 22px;box-shadow:var(--sh-md);position:relative;overflow:hidden;}
+.hero-card{background:#FFFFFF;border-radius:var(--r-lg);padding:26px 22px;box-shadow:var(--sh-md);position:relative;overflow:hidden;}
 .hero-card::before{content:"";position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,var(--peach-l),var(--lemon-l));opacity:0.7;}
 .hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;position:relative;z-index:1;}
 .hero-label{font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;}
-.hero-label .hl-dot{width:8px;height:8px;border-radius:50%;background:var(--peach);animation:pulse 2s ease-in-out infinite;}
+.hero-label .hl-dot{width:8px;height:8px;border-radius:50%;background:var(--peach);}
 @keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.3);opacity:0.6;}}
 .hero-nav{display:flex;align-items:center;gap:6px;}
 .date-nav{width:30px;height:30px;border-radius:11px;background:var(--bg);border:none;color:var(--ink2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s var(--ease-spring);box-shadow:var(--sh-sm);padding:0;}
@@ -96,7 +96,7 @@ animation:flowGradient 18s ease infinite;}
 
 /* ===== Macros ===== */
 .macros{display:flex;gap:12px;margin-bottom:18px;}
-.macro-card{flex:1;background:rgba(255,255,255,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:var(--r-md);padding:16px 10px;text-align:center;box-shadow:var(--sh-sm);transition:all .3s var(--ease-spring);position:relative;overflow:hidden;}
+.macro-card{flex:1;background:#FFFFFF;border-radius:var(--r-md);padding:16px 10px;text-align:center;box-shadow:var(--sh-sm);transition:all .3s var(--ease-spring);position:relative;overflow:hidden;}
 .macro-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;border-radius:4px 4px 0 0;transition:width 1s var(--ease-out);width:0%;}
 .macro-card.p::before{background:var(--sage);}
 .macro-card.c::before{background:var(--peach);}
@@ -110,7 +110,7 @@ animation:flowGradient 18s ease infinite;}
 .mc-label{font-size:10px;color:var(--ink3);margin-top:3px;font-weight:600;}
 
 /* ===== Weight ===== */
-.weight-card{background:rgba(255,255,255,0.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:var(--r-lg);padding:22px;margin-bottom:18px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
+.weight-card{background:#FFFFFF;border-radius:var(--r-lg);padding:22px;margin-bottom:18px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
 .weight-card::after{content:"";position:absolute;top:14px;right:16px;font-size:40px;opacity:0.06;transform:rotate(-10deg);}
 .wc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .wc-title{font-size:14px;font-weight:700;color:var(--ink2);}
@@ -121,7 +121,7 @@ animation:flowGradient 18s ease infinite;}
 .wc-num{font-size:46px;font-weight:800;letter-spacing:-2px;font-variant-numeric:tabular-nums;line-height:1;color:var(--ink);}
 .wc-unit{font-size:16px;color:var(--ink3);font-weight:600;}
 .wc-sub{font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:6px;font-weight:500;}
-.wc-sub .dot{width:6px;height:6px;border-radius:50%;background:var(--sage);animation:pulse 2s ease-in-out infinite;}
+.wc-sub .dot{width:6px;height:6px;border-radius:50%;background:var(--sage);}
 /* mini chart */
 .mini-chart{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
 .mini-label{font-size:11px;color:var(--ink3);font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;}
@@ -137,7 +137,7 @@ animation:flowGradient 18s ease infinite;}
 .sec-title{font-size:17px;font-weight:800;letter-spacing:-0.3px;display:flex;align-items:center;gap:8px;}
 .sec-more{font-size:13px;color:var(--peach);font-weight:700;cursor:pointer;transition:all .2s;}
 .sec-more:active{transform:scale(0.92);opacity:0.7;}
-.meal-card{background:rgba(255,255,255,0.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:var(--r-md);margin-bottom:10px;box-shadow:var(--sh-sm);overflow:hidden;transition:all .3s var(--ease-spring);animation:popUp .5s var(--ease-out) both;}
+.meal-card{background:#FFFFFF;border-radius:var(--r-md);margin-bottom:10px;box-shadow:var(--sh-sm);overflow:hidden;transition:all .3s var(--ease-spring);animation:popUp .5s var(--ease-out) both;}
 .meal-card:active{transform:scale(0.97);box-shadow:var(--sh-md);}
 .meal-row{display:flex;align-items:center;padding:15px 18px;gap:14px;}
 .meal-icon{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;transition:transform .3s var(--ease-spring);}
@@ -170,7 +170,7 @@ animation:flowGradient 18s ease infinite;}
 .add-meal:active svg{transform:rotate(90deg);}
 
 /* ===== Advice ===== */
-.advice-card{background:linear-gradient(135deg,rgba(238,246,242,0.85),rgba(255,255,255,0.8) 60%);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:var(--r-lg);padding:20px;margin-bottom:16px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
+.advice-card{background:linear-gradient(135deg,#EEF6F2,#FFFFFF 60%);border-radius:var(--r-lg);padding:20px;margin-bottom:16px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
 .advice-card::before{content:"💡";position:absolute;top:12px;right:16px;font-size:50px;opacity:0.06;}
 .adv-head{display:flex;align-items:center;gap:9px;margin-bottom:14px;position:relative;z-index:1;}
 .adv-icon{width:36px;height:36px;border-radius:12px;background:var(--sage);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;box-shadow:0 3px 10px rgba(127,182,158,0.3);}
@@ -196,8 +196,7 @@ animation:flowGradient 18s ease infinite;}
 @media(max-width:430px){.fab{right:20px;}}
 .fab:active{transform:scale(0.85) rotate(135deg);}
 .fab svg{width:26px;height:26px;}
-.fab::after{content:"";position:absolute;inset:-4px;border-radius:26px;border:2px solid var(--peach);opacity:0.3;animation:fabPulse 2.5s ease-in-out infinite;}
-@keyframes fabPulse{0%,100%{transform:scale(1);opacity:0.3;}50%{transform:scale(1.08);opacity:0;}}
+
 
 /* ===== Modal ===== */
 .mo{position:fixed;inset:0;background:rgba(44,44,46,0.3);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s ease;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
@@ -282,7 +281,7 @@ animation:flowGradient 18s ease infinite;}
 <div class="hero pop">
 <div class="hero-card">
 <div class="hero-top">
-<div class="hero-label"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--peach)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:pulse 2s ease-in-out infinite;"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><span id="heroLabel">今日热量</span></div>
+<div class="hero-label"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--peach)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><span id="heroLabel">今日热量</span></div>
 <div class="hero-nav">
 <button class="date-nav" onclick="navDay(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
 <div class="hero-date-chip" id="heroDate"></div>
