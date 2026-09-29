@@ -44,7 +44,11 @@ body{background:var(--bg);color:var(--text);height:100vh;height:100dvh;overflow:
 .hero-card::before{content:"";position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.15),transparent 70%);}
 .hero-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;position:relative;z-index:1;}
 .hero-label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:0.5px;}
-.hero-date{font-size:11px;color:var(--text2);background:var(--bg2);padding:4px 10px;border-radius:12px;border:1px solid var(--border);}
+.hero-date{font-size:11px;color:var(--text2);background:var(--bg2);padding:4px 10px;border-radius:12px;border:1px solid var(--border);font-variant-numeric:tabular-nums;}
+.date-nav{width:26px;height:26px;border-radius:9px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;padding:0;}
+.date-nav svg{width:12px;height:12px;}
+.date-nav:active{transform:scale(0.85);background:var(--card2);}
+.date-nav:disabled{opacity:0.2;pointer-events:none;}
 .hero-main{display:flex;align-items:center;gap:24px;position:relative;z-index:1;}
 .ring-wrap{position:relative;width:130px;height:130px;flex-shrink:0;}
 .ring-wrap svg{transform:rotate(-90deg);}
@@ -214,7 +218,7 @@ body{background:var(--bg);color:var(--text);height:100vh;height:100dvh;overflow:
 
 <!-- Calorie Ring -->
 <div class="hero-card fade-up">
-<div class="hero-top"><div class="hero-label">今日热量</div><div class="hero-date" id="heroDate"></div></div>
+<div class="hero-top"><div class="hero-label" id="heroLabel">今日热量</div><div style="display:flex;align-items:center;gap:6px;"><button class="date-nav" onclick="navDay(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><div class="hero-date" id="heroDate"></div><button class="date-nav" onclick="navDay(1)" id="btnNextDay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button></div></div>
 <div class="hero-main">
 <div class="ring-wrap">
 <svg width="130" height="130" viewBox="0 0 130 130">
@@ -319,44 +323,68 @@ try{const old=localStorage.getItem("health_entries");if(old&&(old.includes("NaN"
 
 const FOOD_DB={"米饭":{kcal:130,def:195},"面条":{kcal:110,def:330},"馒头":{kcal:220,def:110},"包子":{kcal:230,def:230},"饺子":{kcal:230,def:23},"面包":{kcal:280,def:80},"全麦面包":{kcal:250,def:75},"玉米":{kcal:110,def:120},"红薯":{kcal:100,def:150},"土豆":{kcal:80,def:130},"燕麦":{kcal:370,def:150},"鸡蛋":{kcal:145,def:75},"鸡胸肉":{kcal:133,def:133},"牛肉":{kcal:250,def:250},"猪肉":{kcal:400,def:200},"鱼肉":{kcal:150,def:150},"虾":{kcal:90,def:90},"虾仁":{kcal:90,def:90},"豆腐":{kcal:80,def:80},"牛奶":{kcal:65,def:130},"酸奶":{kcal:70,def:100},"豆浆":{kcal:30,def:60},"美式":{kcal:2,def:5},"咖啡":{kcal:2,def:5},"拿铁":{kcal:40,def:60},"苹果":{kcal:52,def:80},"香蕉":{kcal:90,def:90},"橙子":{kcal:47,def:70},"西红柿":{kcal:20,def:25},"黄瓜":{kcal:15,def:25},"西兰花":{kcal:35,def:35},"菠菜":{kcal:25,def:25},"白菜":{kcal:15,def:20},"生菜":{kcal:15,def:15},"萝卜":{kcal:20,def:25},"青椒":{kcal:20,def:25},"豆芽":{kcal:20,def:20},"芹菜":{kcal:15,def:20},"韭菜":{kcal:25,def:30},"茄子":{kcal:25,def:40},"冬瓜":{kcal:12,def:15},"南瓜":{kcal:25,def:40},"香菇":{kcal:30,def:30},"蘑菇":{kcal:25,def:25},"花生":{kcal:570,def:60},"核桃":{kcal:650,def:45},"饼干":{kcal:450,def:50},"蛋糕":{kcal:350,def:250},"巧克力":{kcal:550,def:150},"可乐":{kcal:45,def:100},"奶茶":{kcal:250,def:350},"果汁":{kcal:50,def:120},"披萨":{kcal:270,def:280},"汉堡":{kcal:250,def:500},"薯条":{kcal:310,def:300},"炒饭":{kcal:180,def:360},"炒面":{kcal:160,def:320},"粥":{kcal:45,def:90},"沙拉":{kcal:80,def:150},"山药":{kcal:55,def:80},"芋头":{kcal:80,def:100},"菱角":{kcal:100,def:50},"毛豆":{kcal:130,def:65},"豌豆":{kcal:110,def:55},"芦笋":{kcal:20,def:20},"西瓜":{kcal:30,def:60},"葡萄":{kcal:70,def:70},"草莓":{kcal:30,def:35},"蓝莓":{kcal:55,def:55},"桃子":{kcal:40,def:70},"梨":{kcal:50,def:80},"柚子":{kcal:40,def:100},"火龙果":{kcal:55,def:110},"猕猴桃":{kcal:60,def:40},"芒果":{kcal:60,def:100},"菠萝":{kcal:45,def:60},"辣条":{kcal:400,def:200},"冰淇淋":{kcal:200,def:200}};
 
-const DATA={
+const DATA_DAYS=[
+{
 date:"2026-09-29",weekday:"周二",
 weight:{morning:72.0,evening:null,baseline:70.0,target:70.0,note:"比昨天下降1.4kg，水分回落中"},
 meals:[
-{type:"早餐",icon:"🌅",cls:"breakfast",time:"早上",kcal:145,items:[{name:"美式咖啡+纯牛奶",portion:"自制拿铁",kcal:70},{name:"全麦面包",portion:"1片",kcal:75}]}
+{type:"早餐",time:"早上",kcal:145,items:[{name:"美式咖啡+纯牛奶",portion:"自制拿铁",kcal:70},{name:"全麦面包",portion:"1片",kcal:75}]}
 ],
 summary:{totalKcal:145,protein:8,carbs:20,fat:4},
 advice:{good:["体重回落(↓1.4kg)","拿铁代替含糖咖啡","早餐清淡"],tips:["早餐可加个鸡蛋补蛋白","午餐晚餐正常吃","蔬菜今天还没吃","多喝水帮助代谢"],overall:"水分在消退，继续保持清淡饮食"}
-};
+},
+{
+date:"2026-09-28",weekday:"周一",
+weight:{morning:73.4,evening:73.8,baseline:70.0,target:70.0,note:"景德镇回来第一天，正在恢复"},
+meals:[
+{type:"早餐",time:"早上",kcal:5,items:[{name:"自制美式咖啡",portion:"1杯",kcal:5}]},
+{type:"午餐",time:"中午",kcal:530,items:[{name:"蒜苗芦笋炒肉",portion:"~100g",kcal:80},{name:"芹菜黄瓜凉拌",portion:"~80g",kcal:25},{name:"小白菜香菇",portion:"~100g",kcal:60},{name:"青椒香菇肉片",portion:"~80g",kcal:110},{name:"豌豆虾仁蛋",portion:"~80g",kcal:100},{name:"凉拌豆芽",portion:"~80g",kcal:20},{name:"蒸玉米",portion:"~1/2根",kcal:60},{name:"米饭",portion:"半拳头",kcal:75}]},
+{type:"加餐",time:"下午",kcal:140,items:[{name:"全麦面包",portion:"1片",kcal:75},{name:"菱角",portion:"2个",kcal:40},{name:"西红柿",portion:"1个",kcal:25}]}
+],
+summary:{totalKcal:675,protein:35,carbs:70,fat:18},
+advice:{good:["蔬菜6份很棒","碳水控制合理","美式咖啡好"],tips:["蛋白质偏少","菱角计入碳水","热量偏低正常吃","避免含糖饮料","多喝水2000ml+"],overall:"适合减重期，补足蛋白质和水分"}
+}
+];
+const TODAY="2026-09-29";
+let dayIdx=0; // 0 = today, 1 = yesterday, etc.
 
 // Init
 const now=new Date();
-document.getElementById("todayDate").textContent=`${DATA.date} ${DATA.weekday}`;
-document.getElementById("heroDate").textContent=`${DATA.date.slice(5)} ${DATA.weekday}`;
 const hour=now.getHours();
 document.getElementById("greeting").textContent=hour<12?"早上好 ☀️":hour<18?"下午好 🌤":"晚上好 🌙";
+const mealIcons={"早餐":{icon:"🌅",cls:"breakfast"},"午餐":{icon:"☀️",cls:"lunch"},"晚餐":{icon:"🌙",cls:"dinner"},"加餐":{icon:"🍰",cls:"snack"}};
+
+function navDay(dir){
+const n=dayIdx+dir;
+if(n<0||n>=DATA_DAYS.length){showToast(n<0?"已经是第一天":"已经是今天");return;}
+dayIdx=n;
+renderDay();
+}
+
+function renderDay(){
+const D=DATA_DAYS[dayIdx];
+const isToday=D.date===TODAY;
+// Header
+document.getElementById("todayDate").textContent=`${D.date} ${D.weekday}`;
+document.getElementById("heroDate").textContent=`${D.date.slice(5)} ${D.weekday}`;
+document.getElementById("heroLabel").textContent=isToday?"今日热量":`${D.date.slice(5)} 热量`;
+document.getElementById("btnNextDay").disabled=isToday;
 
 // Ring
-const total=safeNum(DATA.summary.totalKcal,0),goal=2000;
+const total=safeNum(D.summary.totalKcal,0),goal=2000;
 const pct=Math.min(total/goal,1);
 const offset=377*(1-pct);
-setTimeout(()=>{document.getElementById("ringVal").style.strokeDashoffset=offset;},200);
-// Animate number
-let num=0;
-const anim=setInterval(()=>{
-num+=Math.ceil(total/30);
-if(num>=total){num=total;clearInterval(anim);}
-document.getElementById("ringNum").textContent=num;
-},40);
+document.getElementById("ringVal").style.strokeDashoffset=offset;
+document.getElementById("ringNum").textContent=total;
 document.getElementById("hiEaten").textContent=total+" kcal";
 document.getElementById("hiLeft").textContent=Math.max(goal-total,0)+" kcal";
-document.getElementById("hiProtein").textContent=safeNum(DATA.summary.protein,0)+"g";
-document.getElementById("macroP").textContent=safeNum(DATA.summary.protein,0)+"g";
-document.getElementById("macroC").textContent=safeNum(DATA.summary.carbs,0)+"g";
-document.getElementById("macroF").textContent=safeNum(DATA.summary.fat,0)+"g";
+document.getElementById("hiProtein").textContent=safeNum(D.summary.protein,0)+"g";
+document.getElementById("macroP").textContent=safeNum(D.summary.protein,0)+"g";
+document.getElementById("macroC").textContent=safeNum(D.summary.carbs,0)+"g";
+document.getElementById("macroF").textContent=safeNum(D.summary.fat,0)+"g";
 
 // Weight
-const w=DATA.weight;
+const w=D.weight;
 document.getElementById("wcNum").textContent=safeNum(w.morning,0).toFixed(1);
 const chg=safeNum(w.morning,0)-safeNum(w.baseline,0);
 const badge=document.getElementById("wcBadge");
@@ -365,9 +393,11 @@ else{badge.textContent=`▼ 较基线 ${chg.toFixed(1)}`;badge.className="wc-bad
 const diff=safeNum(w.morning,0)-safeNum(w.target,0);
 document.getElementById("wcSub").textContent=diff>0?`第一阶段目标 ${w.target}kg · 还差 ${diff.toFixed(1)}kg`:`🎉 已达成第一阶段目标！`;
 
-// Mini chart
-const weights=[73.8,73.4,72.0];
-const wMin=71.5,wMax=74.5,wRange=wMax-wMin;
+// Chart (always shows all days for context)
+const weights=DATA_DAYS.map(d=>safeNum(d.weight.morning,0)).reverse();
+const dates=DATA_DAYS.map(d=>d.date.slice(5)).reverse();
+if(weights.length>=2){
+const wMin=Math.min(...weights)-0.5,wMax=Math.max(...weights)+0.5,wRange=wMax-wMin||1;
 const CW=320,CH=50,CP=6;
 const pts=weights.map((v,i)=>{
 const x=CP+(i/(weights.length-1))*(CW-2*CP);
@@ -376,38 +406,70 @@ return[x,y];
 });
 const line=pts.map(p=>p.join(",")).join(" ");
 const area=`${CP},${CH-CP} ${line} ${CW-CP},${CH-CP}`;
+const activeIdx=weights.length-1-dayIdx;
 document.getElementById("chartArea").innerHTML=`
 <svg class="chart-svg" viewBox="0 0 ${CW} ${CH}" preserveAspectRatio="none">
 <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.2"/><stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/></linearGradient></defs>
 <polygon points="${area}" fill="url(#cg)"/>
 <polyline points="${line}" fill="none" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${i===pts.length-1?'#8B5CF6':'#475569'}" stroke="#1A2232" stroke-width="2"/>`).join("")}
+${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="${i===activeIdx?5:3.5}" fill="${i===activeIdx?'#8B5CF6':'#475569'}" stroke="#1A2232" stroke-width="2"/>`).join("")}
 </svg>
 <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:6px;">
-<span>09-27</span><span>09-28</span><span style="color:var(--primary2);font-weight:600;">09-29</span>
+${dates.map((d,i)=>`<span style="${i===activeIdx?'color:var(--primary2);font-weight:600;':''}">${d}</span>`).join("")}
 </div>`;
+}
 
 // Meals
-const mealIcons={"早餐":{icon:"🌅",cls:"breakfast"},"午餐":{icon:"☀️",cls:"lunch"},"晚餐":{icon:"🌙",cls:"dinner"},"加餐":{icon:"🍰",cls:"snack"}};
 let mealsHtml="";
-DATA.meals.forEach(meal=>{
+D.meals.forEach(meal=>{
 const mi=mealIcons[meal.type]||{icon:"🍽️",cls:"snack"};
 const detail=meal.items.map(i=>i.name).join("、");
 mealsHtml+=`
 <div class="meal-card"><div class="meal-row">
 <div class="meal-icon ${mi.cls}">${mi.icon}</div>
 <div class="meal-info"><div class="meal-name">${meal.type}</div><div class="meal-detail">${detail}</div></div>
-<div class="meal-right"><div class="meal-kcal">${meal.kcal}<span class="u"> kcal</span></div><div class="meal-time">${meal.time}</div></div>
+<div class="meal-right"><div class="meal-kcal">${safeNum(meal.kcal,0)}<span class="u"> kcal</span></div><div class="meal-time">${meal.time||""}</div></div>
 </div></div>`;
 });
+if(isToday){
 mealsHtml+=`<button class="add-meal-btn" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>添加饮食记录</button>`;
+}
 document.getElementById("mealList").innerHTML=mealsHtml;
 
 // Advice
-const a=DATA.advice;
+const a=D.advice;
 document.getElementById("advGood").innerHTML=a.good.map(g=>`<span class="g-tag">✓ ${g}</span>`).join("");
 document.getElementById("advTips").innerHTML=a.tips.map(t=>`<div class="adv-tip"><div class="at-d"></div><div>${t}</div></div>`).join("");
 document.getElementById("advFinal").innerHTML=`📌 ${a.overall}`;
+
+// Reset scroll
+document.getElementById("content").scrollTo({top:0,behavior:"smooth"});
+}
+
+// Also update saveLocal to use current date
+const _origSave=saveLocal;
+saveLocal=function(){
+if(!lastRes)return;
+const curDate=DATA_DAYS[dayIdx].date;
+const entries=loadEntriesSafe();
+if(!entries[curDate])entries[curDate]=[];
+entries[curDate].push({type:selMeal,icon:mealIcons[selMeal]?.icon||"📝",cls:mealIcons[selMeal]?.cls||"snack",time:new Date().getHours()<12?"早上":(new Date().getHours()<18?"下午":"晚上"),kcal:lastRes.total,items:lastRes.items.map(i=>({name:i.name,portion:i.detail,kcal:i.kcal}))});
+localStorage.setItem("health_entries",JSON.stringify(entries));
+closeModal();showToast("已保存 ✅");
+setTimeout(()=>location.reload(),800);
+};
+
+// Override copyRes to use current date
+const _origCopy=copyRes;
+copyRes=function(){
+if(!lastRes)return;
+const curDate=DATA_DAYS[dayIdx].date;
+const t=`帮我记录今天(${curDate})的饮食：\n${lastRes.items.map(i=>`• ${i.name}（${i.detail}）≈ ${i.kcal} kcal`).join("\n")}\n总计约 ${lastRes.total} kcal`;
+if(navigator.share){navigator.share({text:t}).catch(()=>{navigator.clipboard.writeText(t).then(()=>showToast("已复制 💬"));});}
+else{navigator.clipboard.writeText(t).then(()=>showToast("已复制，去粘贴给AI 💬"));}
+};
+
+renderDay();
 
 // Tab
 function switchTab(idx,el){
