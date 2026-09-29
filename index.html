@@ -299,11 +299,19 @@ animation:flowGradient 40s ease infinite;}
 .add-event-card{background:var(--card);border:2px dashed var(--line);border-radius:var(--r-md);padding:24px;text-align:center;cursor:pointer;transition:all .25s var(--ease-spring);margin-top:8px;}
 .add-event-card:active{border-color:var(--primary);background:#FDF1EA;transform:scale(0.97);}
 
+
+/* User background */
+.bg-user{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;pointer-events:none;z-index:0;}
+.bg-user img{width:100%;height:100%;object-fit:cover;}
+.bg-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.72);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);}
+/* Hidden file input */
+#bgInput{display:none;}
+
 </style>
 </head>
 <body>
 
-<div class="bg-flow"></div>
+<div class="bg-flow" id="bgFlow"></div><div class="bg-user" id="bgUser" style="display:none;"><img id="bgImg" style="width:100%;height:100%;object-fit:cover;"><div class="bg-overlay"></div></div>
 
 <div class="header">
 <div class="h-left">
@@ -311,6 +319,7 @@ animation:flowGradient 40s ease infinite;}
 <div><div class="h-greeting" id="greeting">Hi</div><div class="h-date" id="todayDate"></div></div>
 </div>
 <div class="h-right">
+<button class="h-btn" onclick="openBgUpload()" title="更换背景"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></button>
 <button class="h-btn" onclick="showToast('提醒功能开发中')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
 </div>
 </div>
@@ -819,6 +828,56 @@ showToast("已记录到日记 ✅");
 }
 loadProfile();
 renderJournal();
+
+// ===== Background upload =====
+function openBgUpload(){
+// Create a temporary input
+const input=document.createElement("input");
+input.type="file";input.accept="image/*";
+input.onchange=function(e){
+const f=e.target.files[0];if(!f)return;
+const r=new FileReader();
+r.onload=function(ev){
+const bgUser=document.getElementById("bgUser");
+const bgImg=document.getElementById("bgImg");
+bgImg.src=ev.target.result;
+bgUser.style.display="block";
+document.querySelector(".bg-flow").style.display="none";
+// Save to localStorage (compress if too large)
+try{
+// Create smaller version
+const canvas=document.createElement("canvas");
+const img=new Image();
+img.onload=function(){
+const maxW=800;let w=img.width,h=img.height;
+if(w>maxW){h=h*(maxW/w);w=maxW;}
+canvas.width=w;canvas.height=h;
+canvas.getContext("2d").drawImage(img,0,0,w,h);
+const dataUrl=canvas.toDataURL("image/jpeg",0.7);
+try{localStorage.setItem("user_bg",dataUrl);}catch(e2){showToast("图片太大，本次显示但不保存");}
+};
+img.src=ev.target.result;
+}catch(e3){}
+showToast("背景已更换 ✨");
+};
+r.readAsDataURL(f);
+};
+input.click();
+}
+// Load saved bg on start
+function loadBg(){
+try{
+const saved=localStorage.getItem("user_bg");
+if(saved){
+document.getElementById("bgImg").src=saved;
+document.getElementById("bgUser").style.display="block";
+document.querySelector(".bg-flow").style.display="none";
+}
+}catch(e){}
+}
+loadBg();
 </script>
+
+<input type="file" id="bgInput" accept="image/*" onchange="setBg(this)">
 </body>
 </html>
