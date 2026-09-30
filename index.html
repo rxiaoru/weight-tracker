@@ -167,6 +167,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 .ar-item .v{font-weight:700;color:var(--accent);}
 .ar-total{display:flex;justify-content:space-between;padding:12px 0 4px;font-size:15px;font-weight:800;color:var(--ink);}
 .ar-total .v{color:var(--accent);font-size:18px;}
+.kcal-in{width:58px;border:1px solid rgba(var(--line-rgb),0.9);border-radius:8px;padding:2px 5px;font-size:12px;text-align:right;background:var(--bg);color:var(--accent);font-weight:700;-moz-appearance:textfield;}
+.kcal-in::-webkit-outer-spin-button,.kcal-in::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .ar-actions{display:flex;gap:10px;margin-top:14px;}
 .ar-actions button{flex:1;padding:13px;border-radius:14px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
 .ar-save{background:var(--sage);color:#fff;}
@@ -221,7 +223,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 <div class="m-sec"><div class="m-label">📷 拍照识别（选照片后AI自动识别）</div>
 <input type="file" id="addPhotoInput" accept="image/*" multiple style="display:none" onchange="addPreviewPhoto(this)">
 <button class="m-btn" style="margin:0;" onclick="document.getElementById('addPhotoInput').click()">📷 选照片或拍照</button>
-<div id="addPhotoThumb" style="display:none;margin-top:8px;"><img id="addPhotoImg" style="max-width:100%;max-height:140px;border-radius:10px;display:block;"></div>
+<div id="addPhotoThumb" style="display:none;margin-top:8px;position:relative;width:fit-content;">
+<img id="addPhotoImg" style="max-width:100%;max-height:140px;border-radius:10px;display:block;">
+<span onclick="clearAddPhotos()" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;">✕</span>
+</div>
 </div>
 <div class="m-sec" id="arkKeySec" style="display:none;">
 <div class="m-label">🔑 API Key（智谱 glm-4v-flash 免费，仅存手机本地）</div>
@@ -396,12 +401,31 @@ else{var n=line.replace(/[≈~:]|\d+\s*k?cal/gi,"").trim();if(n)items.push({name
 });
 if(!items.length){showToast("未能识别出食物，请手动输入");return;}
 var html="";
-items.forEach(function(it){html+="<div class='ar-item'><span>"+it.name+" ("+it.detail+")</span><span class='v'>"+(it.kcal>0?it.kcal+" kcal":"--")+"</span></div>";});
-html+="<div class='ar-total'><span>总计</span><span class='v'>"+total+" kcal</span></div>";
+items.forEach(function(it,i){html+="<div class='ar-item'><span>"+it.name+" ("+it.detail+")</span><span class='f-right'><input type='number' class='kcal-in' value='"+it.kcal+"' oninput='updateAddKcal(this,"+i+")' onclick='event.stopPropagation()'> kcal</span></div>";});
 document.getElementById("addResultItems").innerHTML=html;
-document.getElementById("addResultTotal").innerHTML="";
 document.getElementById("addResult").classList.add("show");
 window._addResult={items:items,total:total,meal:addSelMeal};
+updateAddTotal();
+}
+function updateAddKcal(el,i){
+if(!window._addResult||!window._addResult.items[i])return;
+window._addResult.items[i].kcal=parseFloat(el.value)||0;
+updateAddTotal();
+}
+function updateAddTotal(){
+if(!window._addResult)return;
+var t=0;window._addResult.items.forEach(function(i){t+=safeNum(i.kcal,0);});
+window._addResult.total=t;
+document.getElementById("addResultTotal").innerHTML="<div class='ar-total'><span>总计</span><span class='v'>"+t+" kcal</span></div>";
+}
+function clearAddPhotos(){
+addPhotos=[];
+var th=document.getElementById("addPhotoThumb");if(th)th.style.display="none";
+var inp=document.getElementById("addPhotoInput");if(inp)inp.value="";
+}
+function showKeyInput(){
+var ks=document.getElementById("arkKeySec");if(ks)ks.style.display="block";
+var k=document.getElementById("arkKeyInput");if(k){k.focus();}
 }
 function closeAddModal(){document.getElementById("addMo").classList.remove("show");document.body.style.overflow="";}
 document.getElementById("addMo").addEventListener("click",function(e){if(e.target===e.currentTarget)closeAddModal();});
@@ -420,11 +444,11 @@ if(q)p=Math.round(FOOD_DB[key]*parseFloat(q[1]));else if(h)p=Math.round(FOOD_DB[
 items.push({name:key,detail:line,kcal:p});total+=p;matched=true;break;}}
 if(!matched){items.push({name:line,detail:"估算",kcal:80});total+=80;}});
 var html="";
-items.forEach(function(it){html+="<div class='ar-item'><span>"+it.name+" ("+it.detail+")</span><span class='v'>"+it.kcal+" kcal</span></div>";});
-html+="<div class='ar-total'><span>总计</span><span class='v'>"+total+" kcal</span></div>";
+items.forEach(function(it,i){html+="<div class='ar-item'><span>"+it.name+" ("+it.detail+")</span><span class='f-right'><input type='number' class='kcal-in' value='"+it.kcal+"' oninput='updateAddKcal(this,"+i+")' onclick='event.stopPropagation()'> kcal</span></div>";});
 document.getElementById("addResultItems").innerHTML=html;
 document.getElementById("addResult").classList.add("show");
 window._addResult={items:items,total:total,meal:addSelMeal};
+updateAddTotal();
 }
 function parseWeightText(text){
 if(!/体重|称|早上|早晨|今早|晚|夜里|睡前|kg|公斤/.test(text))return null;
