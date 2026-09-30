@@ -21,20 +21,29 @@ const TRACKER_DATA = {
         { meal: "早餐", time: "早上", items: [
           { name: "美式咖啡+纯牛奶", portion: "自制拿铁", kcal: 70 },
           { name: "全麦面包", portion: "1片(昨天剩的)", kcal: 75 }
+        ]},
+        { meal: "午餐", time: "中午", items: [
+          { name: "煎蛋", portion: "1个", kcal: 90 },
+          { name: "煎牛肉", portion: "~100g", kcal: 200 },
+          { name: "虾仁", portion: "7-8个", kcal: 60 },
+          { name: "烤肠", portion: "1根", kcal: 180 },
+          { name: "鸡米花", portion: "5-6块", kcal: 220 },
+          { name: "菠菜", portion: "1份", kcal: 40 },
+          { name: "米饭", portion: "半碗", kcal: 100 }
         ]}
       ],
       summary: {
-        totalKcal: 145,
-        protein: "~8g",
-        carbs: "~20g",
-        fat: "~4g",
-        veggieServings: 0,
+        totalKcal: 1035,
+        protein: "~55g",
+        carbs: "~95g",
+        fat: "~45g",
+        veggieServings: 1,
         water: "待记录"
       },
       advice: {
-        good: ["体重明显回落(↓1.4kg)", "拿铁代替含糖咖啡", "早餐简单清淡"],
-        tips: ["早餐蛋白质不够，可加个鸡蛋", "午餐晚餐记得正常吃", "蔬菜今天还没吃", "多喝水帮助代谢"],
-        overall: "水分在消退，继续保持清淡饮食"
+        good: ["体重回落(↓1.4kg)", "午餐蛋白质非常充足(蛋+牛肉+虾)", "菠菜补充了纤维"],
+        tips: ["鸡米花和烤肠是炸物，热量较高(400kcal)", "午餐总热量偏高(~980kcal)", "晚餐建议清淡：蔬菜+少量蛋白", "今天总热量已接近1100，晚餐控制在300-400", "多喝水帮助代谢"],
+        overall: "午餐蛋白质很棒，但炸物偏多，晚餐吃清淡点就好"
       }
     },
     {

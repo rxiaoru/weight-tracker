@@ -492,7 +492,7 @@ animation:flowGradient 40s ease infinite;}
 <div class="pu" onclick="document.getElementById('pi').click()">
 <div class="pu-icon" style="color:var(--primary);"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div>
 <div class="pu-text">拍照或从相册选择（可多张）</div>
-<div class="pu-sub">选照片后填入API Key 即可AI识别</div>
+<div class="pu-sub">选照片后AI 自动识别热量</div>
 </div>
 <input type="file" id="pi" accept="image/*" multiple style="display:none" onchange="previewPhoto(this)">
 <img class="pp" id="pp">
@@ -525,6 +525,10 @@ animation:flowGradient 40s ease infinite;}
 <div class="toast" id="toast"></div>
 
 <script>
+// ===== 硬编码 API Key（无需手动输入）=====
+var AI_API_KEY="94084939b5de4d25bb8447c2e6912012.ssfiRDzrBsM6GmnA";
+var AI_PROVIDER="zai";
+
 // ===== Helpers =====
 function safeNum(v,fallback){fallback=fallback||0;var n=Number(v);return isNaN(n)||!isFinite(n)?fallback:n;}
 function loadEntriesSafe(){try{var d=JSON.parse(localStorage.getItem("health_entries")||"{}");return(typeof d==="object"&&d)?d:{};}catch(e){return{};}}
@@ -753,7 +757,7 @@ document.getElementById("result").classList.remove("show");
 document.getElementById("ld").classList.remove("show");
 document.getElementById("ab").disabled=false;
 var keySec=document.getElementById("apiKeySec");
-if(keySec)keySec.style.display=localStorage.getItem("ai_key")?"none":"block";
+if(keySec)keySec.style.display="none";
 document.body.style.overflow="hidden";
 }
 function closeModal(){document.getElementById("mo").classList.remove("show");document.body.style.overflow="";}
@@ -809,8 +813,8 @@ var ld=document.getElementById("ld");ld.classList.add("show");
 document.getElementById("result").classList.remove("show");
 setTimeout(function(){
 var res;
-var apiKey=localStorage.getItem("ai_key")||"";
-var provider=localStorage.getItem("ai_provider")||"zai";
+var apiKey=AI_API_KEY||localStorage.getItem("ai_key")||"";
+var provider=AI_PROVIDER||localStorage.getItem("ai_provider")||"zai";
 if(photos.length>0&&apiKey){
 var prompt="识别这些图片中的所有食物。用中文回复，每行一个：食物名(分量) 热量kcal。只列食物。";
 var msgContent=[{type:"text",text:prompt}];
