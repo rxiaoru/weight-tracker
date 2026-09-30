@@ -45,8 +45,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 /* Journal Timeline */
 .journal{max-width:480px;margin:0 auto;padding:20px 20px 60px;position:relative;}
 .journal::before{content:"";position:absolute;left:34px;top:40px;bottom:60px;width:2px;background:repeating-linear-gradient(to bottom,var(--line) 0 8px,transparent 8px 14px);border-radius:1px;}
-.entry{position:relative;padding-left:40px;margin-bottom:32px;opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s var(--out);}
-.entry.visible{opacity:1;transform:translateY(0);}
+.entry{position:relative;padding-left:40px;margin-bottom:32px;}
+
 .date-pin{position:absolute;left:0;top:2px;width:28px;height:28px;background:var(--accent);border-radius:50% 50% 50% 4px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;box-shadow:0 3px 8px rgba(232,115,74,0.3);z-index:2;}
 .entry:nth-child(2) .date-pin{background:var(--blue);box-shadow:0 3px 8px rgba(107,155,195,0.3);}
 .entry:nth-child(3) .date-pin{background:var(--sage);box-shadow:0 3px 8px rgba(127,155,118,0.3);}
@@ -228,16 +228,19 @@ var L=DATA_DAYS[0];var lw=L.weight;
 document.getElementById("coverSub").textContent="开始于 "+DATA_DAYS[DATA_DAYS.length-1].date+" · 已有 "+DATA_DAYS.length+" 篇";
 document.getElementById("stWeight").innerHTML=safeNum(lw.morning,0)+'<span class="u">kg</span>';
 var chg=safeNum(lw.morning,0)-safeNum(lw.baseline,0);
-document.getElementById("stChange").innerHTML=(chg>0?"+":"")+chg+'<span class="u">kg</span>';
+var chgFixed=chg.toFixed(1);
+document.getElementById("stChange").innerHTML=(chg>0?"+":"")+chgFixed+'<span class="u">kg</span>';
 document.getElementById("stDays").textContent=DATA_DAYS.length;
 
 // Render journal
 var journal=document.getElementById("journal");
+console.log('Journal element found:', !!journal, 'DATA_DAYS length:', DATA_DAYS.length);
 DATA_DAYS.forEach(function(day,idx){
 var dw=day.weight;var wNum=dw.morning||dw.evening||"--";
 var cCls=dw.change>0?"up":(dw.change<0?"down":"");
-var cTxt=dw.change>0?"+"+dw.change+"kg":(dw.change<0?dw.change+"kg":"—");
+var cTxt=chgStr+"kg";
 var chg=safeNum(dw.morning,0)-safeNum(dw.baseline,0);
+var chgStr=(chg>0?'+':'')+chg.toFixed(1);
 var diff=safeNum(dw.morning,0)-safeNum(dw.target,0);
 var pinTxt=day.date.slice(8);
 var weekEn={"周一":"MON","周二":"TUE","周三":"WED","周四":"THU","周五":"FRI","周六":"SAT","周日":"SUN"}[day.weekday]||"";
@@ -245,7 +248,7 @@ var dietHtml="";
 day.diet.forEach(function(meal){
 var meta=mealIcons[meal.meal]||{icon:"🍽️",cls:"snack"};
 var sum=0,foods="";
-meal.items.forEach(function(item){
+(meal.items||[]).forEach(function(item){
 sum+=safeNum(item.kcal,0);
 foods+='<div class="food-row"><span class="f-name">'+item.name+'<span class="f-p">'+(item.portion||"")+'</span></span><span class="f-kcal">'+safeNum(item.kcal,0)+' kcal</span></div>';});
 dietHtml+='<div class="meal-block"><div class="meal-head">'+meal.meal+'<span class="m-time">'+(meal.time||"")+'</span><span class="m-sum">'+sum+' kcal</span></div>'+foods+'</div>';});
@@ -258,9 +261,7 @@ entry.className="entry";
 entry.innerHTML='<div class="date-pin">'+pinTxt+'</div><div class="page-card"><div class="pc-head"><div><div class="pc-date">'+day.date+'</div><div class="pc-week">'+day.weekday+' · '+weekEn+'</div></div><div class="pc-right"><span class="pc-w">'+wNum+'</span><span class="pc-u">kg</span><span class="pc-chg '+cCls+'">'+cTxt+'</span></div></div><div class="pc-body"><div class="sec"><div class="sec-tag tw"><span class="st"></span>WEIGHT · 体重</div><div class="w-row"><div class="w-box"><div class="wb-i">🌅</div><div class="wb-l">早上</div><div class="wb-v">'+safeNum(dw.morning,0)+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div><div class="w-box"><div class="wb-i">🌙</div><div class="wb-l">晚上</div><div class="wb-v">'+(dw.evening||"--")+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div></div>'+(dw.note?'<div class="w-note">💬 '+dw.note+'</div>':"")+'<div class="baseline">较基线(70kg): <b>'+(chg>0?"+":"")+chg.toFixed(1)+'kg</b> · 距目标: <span class="tgt">'+Math.abs(diff).toFixed(1)+'kg</span></div></div><div class="sec"><div class="sec-tag td"><span class="st"></span>MEALS · 饮食</div>'+nutriHtml+dietHtml+'</div><div class="sec"><div class="sec-tag ta"><span class="st"></span>NOTES · 建议</div>'+advHtml+'</div></div></div>';
 journal.appendChild(entry);
 });
-// Animation
-var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add("visible");});},{threshold:0.08});
-document.querySelectorAll(".entry").forEach(function(el){io.observe(el);});
+
 function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove("show");},1500);}
 </script>
 <script>
