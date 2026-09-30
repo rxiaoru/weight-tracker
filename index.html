@@ -368,16 +368,18 @@ try{localStorage.setItem("cal_budget",String(v));}catch(e){}
 renderJournal();
 showToast("预算已更新："+v+" kcal");
 }
+var DEFAULT_SB_URL="https://yplaxysgxzeezkrjylqu.supabase.co";
+var DEFAULT_SB_KEY="sb_publishable_M_15QzYI_gVeLvAD2koRCQ_e0DCBmbE";
 function getCloudCfg(){
-var url="",key="",ukey="";
-try{url=(localStorage.getItem("sb_url")||"").replace(/\/+$/,"");key=localStorage.getItem("sb_key")||"";ukey=(localStorage.getItem("sb_ukey")||"").trim();}catch(e){}
+var url=DEFAULT_SB_URL,key=DEFAULT_SB_KEY,ukey="";
+try{url=(localStorage.getItem("sb_url")||DEFAULT_SB_URL).replace(/\/+$/,"");key=localStorage.getItem("sb_key")||DEFAULT_SB_KEY;ukey=(localStorage.getItem("sb_ukey")||"").trim();}catch(e){}
 if(!url||!key||!ukey)return null;
 return {url:url,key:key,ukey:ukey};
 }
 function openCloudModal(){
 var c=getCloudCfg();
-document.getElementById("sbUrlInput").value=c?c.url:"";
-document.getElementById("sbKeyInput").value=c?c.key:"";
+document.getElementById("sbUrlInput").value=c?c.url:DEFAULT_SB_URL;
+document.getElementById("sbKeyInput").value=c?c.key:DEFAULT_SB_KEY;
 document.getElementById("sbUkeyInput").value=c?c.ukey:"";
 document.getElementById("cloudStatus").textContent=c?"✅ 已配置，每次记录自动同步到云端":"未配置，填写后开启云同步";
 document.getElementById("cloudMo").classList.add("show");document.body.style.overflow="hidden";
@@ -388,8 +390,9 @@ function saveCloudCfg(){
 var url=document.getElementById("sbUrlInput").value.trim().replace(/\/+$/,"");
 var key=document.getElementById("sbKeyInput").value.trim();
 var ukey=document.getElementById("sbUkeyInput").value.trim();
-if(!/^https:\/\/.+\.supabase\.(co|in)/.test(url)){showToast("URL 格式不对，应为 https://xxxx.supabase.co");return;}
-if(!key){showToast("请填写 Publishable Key");return;}
+if(url&&!/^https:\/\/.+\.supabase\.(co|in)/.test(url)){showToast("URL 格式不对，应为 https://xxxx.supabase.co");return;}
+if(!url)url=DEFAULT_SB_URL;
+if(!key)key=DEFAULT_SB_KEY;
 if(!ukey){showToast("请填写用户码");return;}
 try{localStorage.setItem("sb_url",url);localStorage.setItem("sb_key",key);localStorage.setItem("sb_ukey",ukey);}catch(e){}
 document.getElementById("cloudStatus").textContent="✅ 已保存，云同步已开启";
