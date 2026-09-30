@@ -264,7 +264,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 <div class="m-head"><div class="m-title">☁️ 云同步（Supabase）</div><button class="m-close" onclick="closeCloudModal()">✕</button></div>
 <div class="m-sec"><div class="m-label">Project URL</div><input type="text" class="m-input" id="sbUrlInput" placeholder="https://xxxx.supabase.co"></div>
 <div class="m-sec"><div class="m-label">Publishable Key</div><input type="password" class="m-input" id="sbKeyInput" placeholder="sb_publishable_..."></div>
-<div class="m-sec"><div class="m-label">用户码（同一码的多台手机共享数据）</div><input type="text" class="m-input" id="sbUkeyInput" placeholder="例如 rxr2026"></div>
+<div class="m-sec"><div class="m-label">当前账号（登录昵称，自动填入）</div><input type="text" class="m-input" id="sbUkeyInput" placeholder="登录后自动填入"></div>
 <button class="m-btn" onclick="saveCloudCfg()">💾 保存配置</button>
 <div style="display:flex;gap:10px;margin-top:10px;">
 <button class="ar-save" style="flex:1;margin:0;" onclick="pushCloud(false)">⬆️ 上传到云端</button>
@@ -272,6 +272,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 </div>
 <div id="cloudStatus" style="font-size:11px;margin-top:10px;text-align:center;color:var(--ink3);"></div>
 <div style="font-size:10px;color:var(--ink3);margin-top:6px;line-height:1.5;">需要表 health_records（user_key 主键 / data / updated_at）。保存配置后，每次记录会自动同步到云端。</div>
+</div>
+</div>
+<div class="mo" id="profileMo">
+<div class="modal">
+<div class="modal-grab"></div>
+<div class="m-head"><div class="m-title">⚖️ 维持热量计算</div><button class="m-close" onclick="closeProfileModal()">✕</button></div>
+<div style="font-size:11px;color:var(--ink3);margin-bottom:12px;line-height:1.5;">填一次身体资料，自动算出每天吃多少热量正好不胖不瘦（体重用你最近一次称的）</div>
+<div class="m-sec"><div class="m-label">身高 (cm)</div><input type="number" class="m-input" id="pfHeight" placeholder="例如 170" oninput="updateProfileResult()"></div>
+<div class="m-sec"><div class="m-label">年龄</div><input type="number" class="m-input" id="pfAge" placeholder="例如 28" oninput="updateProfileResult()"></div>
+<div class="m-sec"><div class="m-label">性别</div><div class="meal-picker" id="pfSex">
+<button class="mp" data-v="male" onclick="pickMp(this);updateProfileResult()">男</button>
+<button class="mp" data-v="female" onclick="pickMp(this);updateProfileResult()">女</button>
+</div></div>
+<div class="m-sec"><div class="m-label">日常活动量</div><div class="meal-picker" id="pfAct">
+<button class="mp" data-v="1.2" onclick="pickMp(this);updateProfileResult()">🪑 久坐</button>
+<button class="mp" data-v="1.375" onclick="pickMp(this);updateProfileResult()">🚶 轻度</button>
+<button class="mp" data-v="1.55" onclick="pickMp(this);updateProfileResult()">🏃 中度</button>
+</div></div>
+<div id="pfResult" style="font-size:13px;text-align:center;padding:10px 0;line-height:1.8;color:var(--ink3);">填写完整后自动计算</div>
+<button class="m-btn" onclick="saveProfile()">💾 保存资料</button>
+<button class="m-btn" style="margin-top:8px;background:var(--sage);box-shadow:0 4px 14px rgba(154,143,208,0.3);" onclick="applyMaintenance()">⚖️ 把预算设为维持热量（不胖不瘦）</button>
+</div>
+</div>
+<div id="loginMask" style="position:fixed;left:0;right:0;top:0;bottom:0;z-index:200;background:var(--bg);display:none;align-items:center;justify-content:center;padding:24px;">
+<div style="width:100%;max-width:340px;background:var(--card);border-radius:20px;box-shadow:var(--sh);padding:28px 22px;">
+<div style="text-align:center;font-size:36px;margin-bottom:6px;">⚖️</div>
+<div style="text-align:center;font-size:18px;font-weight:800;color:var(--ink);margin-bottom:16px;">健康手账</div>
+<input type="text" class="m-input" id="liNick" placeholder="昵称" style="margin-bottom:10px;">
+<input type="password" class="m-input" id="liPwd" placeholder="密码" style="margin-bottom:14px;" onkeydown="if(event.key==='Enter')doLogin()">
+<button class="m-btn" style="width:100%;" onclick="doLogin()">登录 / 注册</button>
+<div style="font-size:10px;color:var(--ink3);margin-top:12px;text-align:center;line-height:1.7;">新昵称将自动注册&#10;数据按账号存云端，换手机登录同一昵称即可找回</div>
 </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -340,7 +371,16 @@ var msg;
 if(gap>0){msg='<span class="good">🔥 缺口 '+gap+' kcal · 预计明天瘦 '+jin.toFixed(2)+' 斤</span><br>坚持一周约瘦 '+weekJin.toFixed(1)+' 斤';}
 else if(gap<0){msg='<span class="bad">⚠ 超出 '+(-gap)+' kcal · 预计明天胖 '+jin.toFixed(2)+' 斤</span><br>一周约胖 '+weekJin.toFixed(1)+' 斤';}
 else{msg='刚好持平，体重预计不变';}
-return '<div class="bgt"><div class="bgt-top"><span>已吃 <b>'+intake+'</b> / 预算 <b>'+budget+'</b> kcal</span><span class="bgt-edit" onclick="editBudget()">✏️ 改预算</span></div><div class="bgt-bar"><div class="bgt-fill'+(gap<0?' over':'')+'" style="width:'+pct+'%"></div></div><div class="bgt-msg">'+msg+'</div></div>';
+var p=getProfile();
+var extra;
+if(p){
+var lw=latestWeight()||70;
+var r=calcTDEE(p,lw);
+extra='<div style="font-size:10px;color:var(--ink3);margin-top:4px;">⚖️ 维持热量 ≈ <b style="color:var(--accent)">'+r.tdee+'</b> kcal/天（BMR '+r.bmr+'，按 '+lw+'kg）· <span onclick="openProfileModal()" style="text-decoration:underline;cursor:pointer;">调整</span></div>';
+}else{
+extra='<div style="font-size:10px;color:var(--ink3);margin-top:4px;">⚖️ 想知道每天吃多少正好不胖不瘦？<span onclick="openProfileModal()" style="text-decoration:underline;cursor:pointer;">填写身体资料自动计算</span></div>';
+}
+return '<div class="bgt"><div class="bgt-top"><span>已吃 <b>'+intake+'</b> / 预算 <b>'+budget+'</b> kcal</span><span><span class="bgt-edit" onclick="openProfileModal()">⚖️ 资料与维持热量</span> · <span class="bgt-edit" onclick="editBudget()">✏️ 改预算</span></span></div><div class="bgt-bar"><div class="bgt-fill'+(gap<0?' over':'')+'" style="width:'+pct+'%"></div></div><div class="bgt-msg">'+msg+'</div>'+extra+'</div>';
 })();
 var a=day.advice;
 var advHtml='<div class="adv-card"><div class="adv-title">💡 AI 建议</div><div class="adv-good">'+a.good.map(function(g){return'<span class="g-tag">✓ '+g+'</span>';}).join("")+'</div>'+a.tips.map(function(t){return'<div class="adv-tip"><div class="dot"></div><div>'+t+'</div></div>';}).join("")+'<div class="adv-overall">📌 '+a.overall+'</div></div>';
@@ -351,6 +391,7 @@ journal.appendChild(entry);
 });
 }
 renderJournal();
+checkLogin();
 document.getElementById("journal").addEventListener("click",function(e){
 var t=e.target;
 if(t&&t.classList&&t.classList.contains("f-del"))delFood(t.dataset.d,t.dataset.t,parseInt(t.dataset.i,10));
@@ -366,22 +407,172 @@ v=parseInt(v,10);
 if(!v||v<800||v>6000){showToast("请输入 800~6000 之间的数值");return;}
 try{localStorage.setItem("cal_budget",String(v));}catch(e){}
 renderJournal();
+syncUserMeta();
 showToast("预算已更新："+v+" kcal");
 }
 var DEFAULT_SB_URL="https://yplaxysgxzeezkrjylqu.supabase.co";
 var DEFAULT_SB_KEY="sb_publishable_M_15QzYI_gVeLvAD2koRCQ_e0DCBmbE";
+function cloudBase(){
+var url=DEFAULT_SB_URL,key=DEFAULT_SB_KEY;
+try{url=(localStorage.getItem("sb_url")||DEFAULT_SB_URL).replace(/\/+$/,"");key=localStorage.getItem("sb_key")||DEFAULT_SB_KEY;}catch(e){}
+return {url:url,key:key};
+}
+function loginNick(){try{return localStorage.getItem("login_user")||"";}catch(e){return"";}}
+function hashPwd(s){var h=5381;for(var i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0;}return"h"+(h>>>0).toString(36)+"_"+s.length;}
+function checkLogin(){
+var m=document.getElementById("loginMask");
+if(loginNick()){m.style.display="none";}
+else{m.style.display="flex";}
+}
+function doLogin(){
+var nick=document.getElementById("liNick").value.trim();
+var pwd=document.getElementById("liPwd").value;
+if(!nick||!pwd){showToast("请输入昵称和密码");return;}
+var cb=cloudBase();var h=hashPwd(pwd);
+fetch(cb.url+"/rest/v1/users?user_key=eq."+encodeURIComponent(nick)+"&select=user_key,pwd,height,age,sex,act,budget",{headers:{apikey:cb.key}})
+.then(function(r){if(!r.ok)return r.text().then(function(t){var m="HTTP "+r.status;try{m=JSON.parse(t).message||m;}catch(_e){}throw new Error(m);});return r.json();})
+.then(function(rows){
+if(!rows||!rows.length){
+if(!confirm("昵称「"+nick+"」还不存在，注册为新账号？"))return;
+fetch(cb.url+"/rest/v1/users",{method:"POST",headers:{apikey:cb.key,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates"},body:JSON.stringify([{user_key:nick,pwd:h}])}).then(function(r){
+if(r.ok){afterLogin(nick,h,null);}else{r.text().then(function(t){var m="HTTP "+r.status;try{m=JSON.parse(t).message||m;}catch(_e){}showToast("注册失败:"+m);});}
+}).catch(function(e){showToast("注册失败:"+e.message);});
+return;
+}
+if(rows[0].pwd!==h){showToast("密码不对哦");return;}
+afterLogin(nick,h,rows[0]);
+}).catch(function(e){showToast("登录失败:"+e.message);});
+}
+function afterLogin(nick,h,urow){
+try{localStorage.setItem("login_user",nick);localStorage.setItem("login_pwd",h);}catch(e){}
+if(urow){
+try{
+if(urow.height)localStorage.setItem("pf_h",urow.height);
+if(urow.age)localStorage.setItem("pf_age",urow.age);
+if(urow.sex)localStorage.setItem("pf_sex",urow.sex);
+if(urow.act)localStorage.setItem("pf_act",urow.act);
+if(urow.budget)localStorage.setItem("cal_budget",String(urow.budget));
+}catch(e){}
+}
+document.getElementById("loginMask").style.display="none";
+var cb=cloudBase();
+fetch(cb.url+"/rest/v1/health_records?user_key=eq."+encodeURIComponent(nick)+"&select=data",{headers:{apikey:cb.key}})
+.then(function(r){return r.json();})
+.then(function(rows){
+var cloudDays=(rows&&rows.length&&Array.isArray(rows[0].data))?rows[0].data:[];
+if(cloudDays.length){
+DATA_DAYS=cloudDays;
+try{localStorage.setItem("health_days",JSON.stringify(DATA_DAYS));}catch(e){}
+renderJournal();
+showToast("欢迎回来，"+nick+" ✅");
+}
+else if(DATA_DAYS.length&&confirm("本机有 "+DATA_DAYS.length+" 天记录\n同步到账号「"+nick+"」名下？\n（取消则清空本机记录，从零开始）")){
+pushCloud(true);renderJournal();showToast("已同步到你的账号 ☁️");
+}
+else{
+DATA_DAYS=[];
+try{localStorage.setItem("health_days","[]");}catch(e){}
+renderJournal();
+showToast("新账号开始记录吧 🌱");
+}
+}).catch(function(e){renderJournal();showToast("云端数据获取失败:"+e.message);});
+}
+function logout(){
+if(!confirm("退出登录？\n记录还安全地存在云端，下次登录同名即恢复"))return;
+try{localStorage.removeItem("login_user");localStorage.removeItem("login_pwd");}catch(e){}
+location.reload();
+}
+function syncUserMeta(){
+var nick=loginNick();if(!nick)return;
+var cb=cloudBase();
+var body={user_key:nick,pwd:(function(){try{return localStorage.getItem("login_pwd")||"";}catch(e){return"";}})(),budget:getBudget()};
+var p=getProfile();
+if(p){body.height=p.h;body.age=p.a;body.sex=p.s;body.act=p.act;}
+fetch(cb.url+"/rest/v1/users",{method:"POST",headers:{apikey:cb.key,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates"},body:JSON.stringify([body])}).catch(function(){});
+}
+function getProfile(){
+try{
+var h=parseFloat(localStorage.getItem("pf_h")),a=parseFloat(localStorage.getItem("pf_age")),s=localStorage.getItem("pf_sex"),act=parseFloat(localStorage.getItem("pf_act"));
+if(h>50&&h<260&&a>0&&a<120&&s&&(act===1.2||act===1.375||act===1.55))return {h:h,a:a,s:s,act:act};
+}catch(e){}
+return null;
+}
+function latestWeight(){
+for(var i=0;i<DATA_DAYS.length;i++){
+var d=DATA_DAYS[i];
+if(d.weight){var w=safeNum(d.weight.morning,0)||safeNum(d.weight.evening,0);if(w>0)return w;}
+}
+return 0;
+}
+function calcTDEE(p,w){var bmr=10*w+6.25*p.h-5*p.a+(p.s==="male"?5:-161);return {bmr:Math.round(bmr),tdee:Math.round(bmr*p.act)};}
+function pickMp(el){var sib=el.parentNode.querySelectorAll(".mp");for(var i=0;i<sib.length;i++)sib[i].classList.remove("active");el.classList.add("active");}
+function openProfileModal(){
+var p=getProfile();
+document.getElementById("pfHeight").value=p?p.h:"";
+document.getElementById("pfAge").value=p?p.a:"";
+if(p){
+var sb=document.getElementById("pfSex").querySelectorAll(".mp");
+for(var i=0;i<sb.length;i++)sb[i].classList.toggle("active",sb[i].getAttribute("data-v")===p.s);
+var ab=document.getElementById("pfAct").querySelectorAll(".mp");
+for(var j=0;j<ab.length;j++)ab[j].classList.toggle("active",parseFloat(ab[j].getAttribute("data-v"))===p.act);
+}
+updateProfileResult();
+document.getElementById("profileMo").classList.add("show");document.body.style.overflow="hidden";
+}
+function closeProfileModal(){document.getElementById("profileMo").classList.remove("show");document.body.style.overflow="";}
+document.getElementById("profileMo").addEventListener("click",function(e){if(e.target===e.currentTarget)closeProfileModal();});
+function updateProfileResult(){
+var h=parseFloat(document.getElementById("pfHeight").value);
+var a=parseFloat(document.getElementById("pfAge").value);
+var sb=document.getElementById("pfSex").querySelector(".mp.active");
+var ab=document.getElementById("pfAct").querySelector(".mp.active");
+var el=document.getElementById("pfResult");
+if(!(h>50&&h<260&&a>0&&a<120)||!sb||!ab){el.textContent="填写完整后自动计算";return;}
+var p={h:h,a:a,s:sb.getAttribute("data-v"),act:parseFloat(ab.getAttribute("data-v"))};
+var w=latestWeight()||70;
+var r=calcTDEE(p,w);
+el.innerHTML="基础代谢 BMR ≈ <b style='color:var(--accent)'>"+r.bmr+"</b> kcal/天<br>维持热量（不胖不瘦）≈ <b style='color:var(--accent);font-size:16px;'>"+r.tdee+"</b> kcal/天<br><span style='font-size:10px;color:var(--ink3)'>按最近体重 "+w+" kg · Mifflin-St Jeor 公式</span>";
+}
+function saveProfile(){
+var h=parseFloat(document.getElementById("pfHeight").value);
+var a=parseFloat(document.getElementById("pfAge").value);
+var sb=document.getElementById("pfSex").querySelector(".mp.active");
+var ab=document.getElementById("pfAct").querySelector(".mp.active");
+if(!(h>50&&h<260)){showToast("请填写正确的身高");return;}
+if(!(a>0&&a<120)){showToast("请填写正确的年龄");return;}
+if(!sb||!ab){showToast("请选择性别和活动量");return;}
+try{localStorage.setItem("pf_h",h);localStorage.setItem("pf_age",a);localStorage.setItem("pf_sex",sb.getAttribute("data-v"));localStorage.setItem("pf_act",ab.getAttribute("data-v"));}catch(e){}
+renderJournal();
+syncUserMeta();
+showToast("身体资料已保存 ✅");
+}
+function applyMaintenance(){
+var h=parseFloat(document.getElementById("pfHeight").value);
+var a=parseFloat(document.getElementById("pfAge").value);
+var sb=document.getElementById("pfSex").querySelector(".mp.active");
+var ab=document.getElementById("pfAct").querySelector(".mp.active");
+if(!(h>50&&h<260&&a>0&&a<120)||!sb||!ab){showToast("请先填写完整身体资料");return;}
+var p={h:h,a:a,s:sb.getAttribute("data-v"),act:parseFloat(ab.getAttribute("data-v"))};
+var r=calcTDEE(p,latestWeight()||70);
+try{localStorage.setItem("cal_budget",String(r.tdee));}catch(e){}
+try{localStorage.setItem("pf_h",h);localStorage.setItem("pf_age",a);localStorage.setItem("pf_sex",p.s);localStorage.setItem("pf_act",p.act);}catch(e){}
+renderJournal();
+syncUserMeta();
+closeProfileModal();
+showToast("预算已设为维持热量 "+r.tdee+" kcal ⚖️");
+}
 function getCloudCfg(){
-var url=DEFAULT_SB_URL,key=DEFAULT_SB_KEY,ukey="";
-try{url=(localStorage.getItem("sb_url")||DEFAULT_SB_URL).replace(/\/+$/,"");key=localStorage.getItem("sb_key")||DEFAULT_SB_KEY;ukey=(localStorage.getItem("sb_ukey")||"").trim();}catch(e){}
-if(!url||!key||!ukey)return null;
-return {url:url,key:key,ukey:ukey};
+var cb=cloudBase(),ukey="";
+try{ukey=loginNick()||(localStorage.getItem("sb_ukey")||"").trim();}catch(e){}
+if(!cb.url||!cb.key||!ukey)return null;
+return {url:cb.url,key:cb.key,ukey:ukey};
 }
 function openCloudModal(){
 var c=getCloudCfg();
 document.getElementById("sbUrlInput").value=c?c.url:DEFAULT_SB_URL;
 document.getElementById("sbKeyInput").value=c?c.key:DEFAULT_SB_KEY;
-document.getElementById("sbUkeyInput").value=c?c.ukey:"";
-document.getElementById("cloudStatus").textContent=c?"✅ 已配置，每次记录自动同步到云端":"未配置，填写后开启云同步";
+document.getElementById("sbUkeyInput").value=loginNick()||(c?c.ukey:"");
+document.getElementById("cloudStatus").innerHTML=c?"✅ 已配置，每次记录自动同步到云端 · <span style='text-decoration:underline;cursor:pointer;' onclick='logout()'>🚪 退出登录</span>":"未登录或未配置";
 document.getElementById("cloudMo").classList.add("show");document.body.style.overflow="hidden";
 }
 function closeCloudModal(){document.getElementById("cloudMo").classList.remove("show");document.body.style.overflow="";}
