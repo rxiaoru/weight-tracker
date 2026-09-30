@@ -107,6 +107,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 .meal-head .m-time{font-size:10px;color:var(--ink3);font-weight:400;}
 .meal-head .m-sum{font-size:11px;color:var(--accent);font-weight:700;margin-left:auto;}
 .food-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg);border-radius:10px;margin-bottom:5px;}
+.f-right{display:flex;align-items:center;gap:6px;}
+.f-del{color:var(--ink3);font-size:12px;padding:2px 5px;cursor:pointer;font-weight:700;}
+.f-del:active{color:var(--accent);}
 .food-row .f-name{font-size:12px;color:var(--ink2);font-weight:500;}
 .food-row .f-name .f-p{font-size:10px;color:var(--ink3);margin-left:4px;}
 .food-row .f-kcal{font-size:12px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;}
@@ -270,7 +273,9 @@ document.getElementById("stChange").innerHTML=(chg>0?"+":"")+chgFixed+'<span cla
 document.getElementById("stDays").textContent=DATA_DAYS.length;
 
 // Render journal
+function renderJournal(){
 var journal=document.getElementById("journal");
+journal.innerHTML="";
 DATA_DAYS.forEach(function(day,idx){
 var dw=day.weight;var wNum=dw.morning||dw.evening||"--";
 var chg=safeNum(dw.morning,0)-safeNum(dw.baseline,0);
@@ -284,9 +289,9 @@ var dietHtml="";
 (day.meals||[]).forEach(function(meal){
 var meta=mealIcons[meal.type]||{icon:"🍽️",cls:"snack"};
 var sum=0,foods="";
-(meal.items||[]).forEach(function(item){
+(meal.items||[]).forEach(function(item,ii){
 sum+=safeNum(item.kcal,0);
-foods+='<div class="food-row"><span class="f-name">'+item.name+'<span class="f-p">'+(item.portion||"")+'</span></span><span class="f-kcal">'+safeNum(item.kcal,0)+' kcal</span></div>';});
+foods+='<div class="food-row"><span class="f-name">'+item.name+'<span class="f-p">'+(item.portion||"")+'</span></span><span class="f-right"><span class="f-kcal">'+safeNum(item.kcal,0)+' kcal</span><span class="f-del" data-d="'+day.date+'" data-t="'+meal.type+'" data-i="'+ii+'">✕</span></span></div>';});
 dietHtml+='<div class="meal-block"><div class="meal-head">'+meta.icon+' '+meal.type+'<span class="m-time">'+(meal.time||"")+'</span><span class="m-sum">'+sum+' kcal</span></div>'+foods+'</div>';});
 var s=day.summary;
 var nutriHtml='<div class="nutri"><div class="nc"><div class="n-val total">'+safeNum(s.totalKcal,0)+'</div><div class="n-l">KCAL</div></div><div class="nc"><div class="n-val p">'+safeNum(s.protein,0)+'g</div><div class="n-l">蛋白</div></div><div class="nc"><div class="n-val c">'+safeNum(s.carbs,0)+'g</div><div class="n-l">碳水</div></div><div class="nc"><div class="n-val f">'+safeNum(s.fat,0)+'g</div><div class="n-l">脂肪</div></div></div>';
@@ -297,6 +302,26 @@ entry.className="entry";
 entry.innerHTML='<div class="date-pin">'+pinTxt+'</div><div class="page-card"><div class="pc-head"><div><div class="pc-date">'+day.date+'</div><div class="pc-week">'+day.weekday+' · '+weekEn+'</div></div><div class="pc-right"><span class="pc-w">'+wNum+'</span><span class="pc-u">kg</span><span class="pc-chg '+cCls+'">'+cTxt+'</span></div></div><div class="pc-body"><div class="sec"><div class="sec-tag tw"><span class="st"></span>⚖️ WEIGHT · 体重</div><div class="w-row"><div class="w-box"><div class="wb-i">🌅</div><div class="wb-l">早上</div><div class="wb-v">'+safeNum(dw.morning,0)+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div><div class="w-box"><div class="wb-i">🌙</div><div class="wb-l">晚上</div><div class="wb-v">'+(dw.evening||"--")+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div></div>'+(dw.note?'<div class="w-note">💬 '+dw.note+'</div>':"")+'<div class="baseline">较基线(70kg): <b>'+(chg>0?"+":"")+chg.toFixed(1)+'kg</b> · 距目标: <span class="tgt">'+Math.abs(diff).toFixed(1)+'kg</span></div></div><div class="sec"><div class="sec-tag td"><span class="st"></span>🍽️ MEALS · 饮食</div>'+nutriHtml+dietHtml+'</div><div class="sec"><div class="sec-tag ta"><span class="st"></span>💡 NOTES · 建议</div>'+advHtml+'</div></div></div>';
 journal.appendChild(entry);
 });
+}
+renderJournal();
+document.getElementById("journal").addEventListener("click",function(e){
+var t=e.target;
+if(t&&t.classList&&t.classList.contains("f-del"))delFood(t.dataset.d,t.dataset.t,parseInt(t.dataset.i,10));
+});
+function delFood(date,type,idx){
+var day=DATA_DAYS.find(function(d){return d.date===date;});
+if(!day)return;
+var meal=day.meals.find(function(m){return m.type===type;});
+if(!meal||!meal.items[idx])return;
+if(!confirm("删除「"+meal.items[idx].name+"」？"))return;
+meal.items.splice(idx,1);
+if(meal.items.length===0){day.meals=day.meals.filter(function(m){return m!==meal;});}
+else{meal.kcal=meal.items.reduce(function(s,i){return s+safeNum(i.kcal,0);},0);}
+day.summary.totalKcal=day.meals.reduce(function(s,m){return s+safeNum(m.kcal,0);},0);
+try{localStorage.setItem("health_days",JSON.stringify(DATA_DAYS));}catch(e){}
+renderJournal();
+showToast("已删除");
+}
 
 function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove("show");},1500);}
 </script>
