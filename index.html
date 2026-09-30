@@ -103,9 +103,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 .adv-overall{margin-top:10px;font-size:11px;font-weight:600;color:var(--ink);background:rgba(255,255,255,0.7);border-radius:10px;padding:8px 12px;border:1px dashed rgba(127,155,118,0.2);}
 
 /* FAB */
-.fab{position:fixed;right:20px;bottom:calc(var(--safe-b) + 20px);width:54px;height:54px;border-radius:18px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 6px 20px rgba(232,115,74,0.35);z-index:50;font-size:28px;font-weight:300;transition:transform .2s var(--spring);}
+.fab{position:fixed;right:20px;bottom:calc(var(--safe-b) + 20px);width:54px;height:54px;border-radius:18px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 6px 20px rgba(232,115,74,0.35);z-index:50;transition:transform .2s var(--spring);}
 .fab:active{transform:scale(0.85) rotate(90deg);}
-.ai-fab{position:fixed;right:20px;bottom:calc(var(--safe-b) + 84px);width:44px;height:44px;border-radius:16px;background:linear-gradient(135deg,#7C6FE8,#A78BFA);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 4px 14px rgba(124,111,232,0.3);z-index:50;font-size:16px;}
+.ai-fab{position:fixed;right:20px;bottom:calc(var(--safe-b) + 84px);width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,#7C6FE8,#A78BFA);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 4px 14px rgba(124,111,232,0.3);z-index:50;}
 .ai-fab:active{transform:scale(0.88);}
 .ai-panel{position:fixed;right:16px;bottom:calc(var(--safe-b) + 140px);width:320px;max-width:calc(100vw - 32px);max-height:70vh;background:rgba(255,255,255,0.97);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:60;overflow-y:auto;display:none;border:1px solid var(--line);}
 .ai-panel.show{display:block;}
@@ -172,8 +172,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 <div class="foot" style="text-align:center;padding:10px 0 80px;font-size:10px;color:var(--ink3);letter-spacing:2px;"><div style="width:40px;height:1px;background:var(--line);margin:0 auto 10px;"></div>TO BE CONTINUED</div>
 </div>
 
-<button class="fab" onclick="openAddModal()">+</button>
-<div class="ai-fab" onclick="toggleAI()">✦</div>
+<button class="fab" onclick="openAddModal()"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+<div class="ai-fab" onclick="toggleAI()"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg></div>
 <div class="ai-panel" id="aiPanel">
 <div class="ai-head"><div class="ai-title">✦ AI 饮食建议</div><button class="ai-close" onclick="toggleAI()">✕</button></div>
 <div class="ai-body" id="aiBody"></div>
@@ -191,7 +191,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 <div class="m-sec"><div class="m-label">吃了什么</div>
 <textarea class="m-input" id="addFoodInput" rows="3" placeholder="用逗号分隔，例如：米饭半碗，西兰花炒虾仁"></textarea>
 </div>
-<button class="m-btn" onclick="analyzeAddFood()">🔍 分析热量</button>
+<div class="m-sec"><div class="m-label">📷 拍照识别（选照片后AI自动识别）</div>
+<input type="file" id="addPhotoInput" accept="image/*" multiple style="display:none" onchange="addPreviewPhoto(this)">
+<button class="m-btn" style="margin:0;" onclick="document.getElementById('addPhotoInput').click()">📷 选照片或拍照</button>
+<div id="addPhotoThumb" style="display:none;margin-top:8px;"><img id="addPhotoImg" style="max-width:100%;max-height:140px;border-radius:10px;display:block;"></div>
+</div>
+<div class="m-sec" id="arkKeySec" style="display:none;">
+<div class="m-label">🔑 API Key（DeepSeek，仅存手机本地）</div>
+<input type="password" class="m-input" id="arkKeyInput" placeholder="sk-..." style="font-size:13px;">
+<div style="font-size:10px;color:var(--ink3);margin-top:6px;line-height:1.5;">Key 只保存在你的手机上，不会上传到任何服务器</div>
+</div>
+<button class="m-btn" id="addAnalyzeBtn" onclick="analyzeAddFood()">🔍 分析热量</button>
 <div class="result" id="addResult">
 <div id="addResultItems"></div>
 <div id="addResultTotal"></div>
@@ -217,6 +227,8 @@ advice:{good:["午餐蛋白质充足","菠菜补充纤维"],tips:["羊肉泡馍�
 meals:[{type:"早餐",time:"早上",kcal:5,items:[{name:"自制美式咖啡",portion:"1杯",kcal:5}]},{type:"午餐",time:"中午",kcal:530,items:[{name:"蒜苗芦笋炒肉",portion:"~100g",kcal:80},{name:"芹菜黄瓜凉拌",portion:"~80g",kcal:25},{name:"小白菜香菇",portion:"~100g",kcal:60},{name:"青椒香菇肉片",portion:"~80g",kcal:110},{name:"豌豆虾仁蛋",portion:"~80g",kcal:100},{name:"凉拌豆芽",portion:"~80g",kcal:20},{name:"蒸玉米",portion:"~1/2根",kcal:60},{name:"米饭",portion:"半拳头",kcal:75}]},{type:"加餐",time:"下午",kcal:140,items:[{name:"全麦面包",portion:"1片",kcal:75},{name:"菱角",portion:"2个",kcal:40},{name:"西红柿",portion:"1个",kcal:25}]}],
 summary:{totalKcal:675,protein:35,carbs:70,fat:18},
 advice:{good:["蔬菜6份很棒","碳水控制合理","美式咖啡好"],tips:["蛋白质偏少","菱角计入碳水","热量偏低正常吃","避免含糖饮料","多喝水2000ml+"],overall:"适合减重期，补足蛋白质和水分"}}];
+// 优先读取本机保存的记录（新增餐饮后持久化）
+try{var _sd=JSON.parse(localStorage.getItem("health_days")||"null");if(Array.isArray(_sd)&&_sd.length)DATA_DAYS=_sd;}catch(e){}
 var TODAY="2026-09-30";
 var FOOD_DB={"米饭":195,"面条":330,"馒头":110,"包子":230,"饺子":23,"面包":80,"全麦面包":75,"玉米":120,"红薯":150,"土豆":130,"燕麦":150,"鸡蛋":75,"鸡胸肉":133,"牛肉":250,"猪肉":200,"鱼肉":150,"虾":90,"虾仁":90,"豆腐":80,"牛奶":130,"酸奶":100,"豆浆":60,"美式":5,"咖啡":5,"拿铁":60,"苹果":80,"香蕉":90,"橙子":70,"西红柿":25,"黄瓜":25,"西兰花":35,"菠菜":25,"白菜":20,"生菜":15,"青椒":25,"豆芽":20,"芹菜":20,"茄子":40,"冬瓜":15,"南瓜":40,"香菇":30,"蘑菇":25,"花生":60,"饼干":50,"蛋糕":250,"巧克力":150,"可乐":100,"奶茶":350,"果汁":120,"披萨":280,"汉堡":500,"薯条":300,"炒饭":360,"炒面":320,"粥":90,"沙拉":150,"山药":80,"芋头":100,"菱角":50,"毛豆":65,"豌豆":55,"芦笋":20,"辣条":200,"冰淇淋":200};
 var mealIcons={"早餐":{icon:"🌅",cls:"breakfast"},"午餐":{icon:"☀️",cls:"lunch"},"晚餐":{icon:"🌙",cls:"dinner"},"加餐":{icon:"🍰",cls:"snack"}};
@@ -234,24 +246,23 @@ document.getElementById("stDays").textContent=DATA_DAYS.length;
 
 // Render journal
 var journal=document.getElementById("journal");
-console.log('Journal element found:', !!journal, 'DATA_DAYS length:', DATA_DAYS.length);
 DATA_DAYS.forEach(function(day,idx){
 var dw=day.weight;var wNum=dw.morning||dw.evening||"--";
-var cCls=dw.change>0?"up":(dw.change<0?"down":"");
-var cTxt=chgStr+"kg";
 var chg=safeNum(dw.morning,0)-safeNum(dw.baseline,0);
 var chgStr=(chg>0?'+':'')+chg.toFixed(1);
+var cCls=chg>0?"up":(chg<0?"down":"");
+var cTxt=chgStr+"kg";
 var diff=safeNum(dw.morning,0)-safeNum(dw.target,0);
 var pinTxt=day.date.slice(8);
 var weekEn={"周一":"MON","周二":"TUE","周三":"WED","周四":"THU","周五":"FRI","周六":"SAT","周日":"SUN"}[day.weekday]||"";
 var dietHtml="";
-day.diet.forEach(function(meal){
-var meta=mealIcons[meal.meal]||{icon:"🍽️",cls:"snack"};
+(day.meals||[]).forEach(function(meal){
+var meta=mealIcons[meal.type]||{icon:"🍽️",cls:"snack"};
 var sum=0,foods="";
 (meal.items||[]).forEach(function(item){
 sum+=safeNum(item.kcal,0);
 foods+='<div class="food-row"><span class="f-name">'+item.name+'<span class="f-p">'+(item.portion||"")+'</span></span><span class="f-kcal">'+safeNum(item.kcal,0)+' kcal</span></div>';});
-dietHtml+='<div class="meal-block"><div class="meal-head">'+meal.meal+'<span class="m-time">'+(meal.time||"")+'</span><span class="m-sum">'+sum+' kcal</span></div>'+foods+'</div>';});
+dietHtml+='<div class="meal-block"><div class="meal-head">'+meal.type+'<span class="m-time">'+(meal.time||"")+'</span><span class="m-sum">'+sum+' kcal</span></div>'+foods+'</div>';});
 var s=day.summary;
 var nutriHtml='<div class="nutri"><div class="nc"><div class="n-val total">'+safeNum(s.totalKcal,0)+'</div><div class="n-l">KCAL</div></div><div class="nc"><div class="n-val p">'+safeNum(s.protein,0)+'g</div><div class="n-l">蛋白</div></div><div class="nc"><div class="n-val c">'+safeNum(s.carbs,0)+'g</div><div class="n-l">碳水</div></div><div class="nc"><div class="n-val f">'+safeNum(s.fat,0)+'g</div><div class="n-l">脂肪</div></div></div>';
 var a=day.advice;
@@ -268,12 +279,70 @@ function showToast(msg){var t=document.getElementById("toast");t.textContent=msg
 var addSelMeal="早餐";
 var addFoodDB={"米饭":195,"面条":330,"馒头":110,"包子":230,"饺子":23,"面包":80,"全麦面包":75,"玉米":120,"红薯":150,"土豆":130,"燕麦":150,"鸡蛋":75,"鸡胸肉":133,"牛肉":250,"猪肉":200,"鱼肉":150,"虾":90,"虾仁":90,"豆腐":80,"牛奶":130,"酸奶":100,"豆浆":60,"美式":5,"咖啡":5,"拿铁":60,"苹果":80,"香蕉":90,"橙子":70,"西红柿":25,"黄瓜":25,"西兰花":35,"菠菜":25,"白菜":20,"生菜":15,"青椒":25,"豆芽":20,"芹菜":20,"茄子":40,"冬瓜":15,"南瓜":40,"香菇":30,"蘑菇":25,"花生":60,"饼干":50,"蛋糕":250,"巧克力":150,"可乐":100,"奶茶":350,"果汁":120,"披萨":280,"汉堡":500,"薯条":300,"炒饭":360,"炒面":320,"粥":90,"沙拉":150,"山药":80,"芋头":100,"菱角":50,"毛豆":65,"豌豆":55,"芦笋":20};
 document.querySelectorAll("#addMealPicker .mp").forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll("#addMealPicker .mp").forEach(function(x){x.classList.remove("active");});this.classList.add("active");addSelMeal=this.dataset.meal;});});
-function openAddModal(){document.getElementById("addMo").classList.add("show");document.getElementById("addResult").classList.remove("show");document.body.style.overflow="hidden";}
+function openAddModal(){document.getElementById("addMo").classList.add("show");document.getElementById("addResult").classList.remove("show");document.body.style.overflow="hidden";
+var ks=document.getElementById("arkKeySec");
+if(ks){var k=localStorage.getItem("ai_key")||"";ks.style.display=k.indexOf("sk-")===0?"none":"block";}}
+var addPhotos=[];
+var AI_API_URL="https://api.deepseek.com/chat/completions";
+var AI_MODEL="deepseek-chat";
+function addPreviewPhoto(input){
+addPhotos=[];
+var files=Array.from(input.files||[]);
+if(files.length===0){document.getElementById("addPhotoThumb").style.display="none";return;}
+files.forEach(function(f){var r=new FileReader();r.onload=function(e){addPhotos.push(e.target.result);};r.readAsDataURL(f);});
+var r0=new FileReader();
+r0.onload=function(e){var im=document.getElementById("addPhotoImg");im.src=e.target.result;document.getElementById("addPhotoThumb").style.display="block";};
+r0.readAsDataURL(files[0]);
+if(files.length>1)showToast("已选择 "+files.length+" 张照片");
+}
+function analyzeAddPhoto(){
+var apiKey=localStorage.getItem("ai_key")||"";
+var keyInput=document.getElementById("arkKeyInput");
+if(keyInput&&keyInput.value.trim()){apiKey=keyInput.value.trim();localStorage.setItem("ai_key",apiKey);}
+if(apiKey.indexOf("sk-")!==0){showToast("请先填入 sk- 开头的 API Key");return;}
+var btn=document.getElementById("addAnalyzeBtn");
+btn.disabled=true;btn.textContent="🌀 AI 识别中...";
+var prompt="识别这些图片中的所有食物。用中文回复，每行一个：食物名(分量) 热量kcal。只列食物。";
+var msgContent=[{type:"text",text:prompt}];
+addPhotos.forEach(function(p){msgContent.push({type:"image_url",image_url:{url:p}});});
+var xhr=new XMLHttpRequest();
+xhr.open("POST",AI_API_URL,true);
+xhr.setRequestHeader("Content-Type","application/json");
+xhr.setRequestHeader("Authorization","Bearer "+apiKey);
+xhr.timeout=60000;
+xhr.onload=function(){btn.disabled=false;btn.textContent="🔍 分析热量";
+try{
+var data=JSON.parse(xhr.responseText);
+var aiText=(data.choices&&data.choices[0].message.content)||"";
+if(!aiText)throw new Error("empty");
+showAddResultFromAI(aiText);
+}catch(e){showToast("AI 识别失败，可手动输入食物");}};
+xhr.onerror=xhr.ontimeout=function(){btn.disabled=false;btn.textContent="🔍 分析热量";showToast("AI 识别失败，可手动输入食物");};
+xhr.send(JSON.stringify({model:AI_MODEL,messages:[{role:"user",content:msgContent}],max_tokens:600}));
+}
+function showAddResultFromAI(aiText){
+var items=[],total=0;
+aiText.split(/\n/).forEach(function(line){
+line=line.trim();if(!line)return;
+var m=line.match(/^(.+?)[（(]([^)）]*)[)）]\s*(\d+)\s*k?cal/i);
+if(m){var kcal=parseInt(m[3],10)||0;items.push({name:m[1].trim(),detail:m[2]||"AI识别",kcal:kcal});total+=kcal;}
+else{var n=line.replace(/[≈~:]|\d+\s*k?cal/gi,"").trim();if(n)items.push({name:n,detail:"AI识别",kcal:0});}
+});
+if(!items.length){showToast("未能识别出食物，请手动输入");return;}
+var html="";
+items.forEach(function(it){html+="<div class='ar-item'><span>"+it.name+" ("+it.detail+")</span><span class='v'>"+(it.kcal>0?it.kcal+" kcal":"--")+"</span></div>";});
+html+="<div class='ar-total'><span>总计</span><span class='v'>"+total+" kcal</span></div>";
+document.getElementById("addResultItems").innerHTML=html;
+document.getElementById("addResultTotal").innerHTML="";
+document.getElementById("addResult").classList.add("show");
+window._addResult={items:items,total:total,meal:addSelMeal};
+}
 function closeAddModal(){document.getElementById("addMo").classList.remove("show");document.body.style.overflow="";}
 document.getElementById("addMo").addEventListener("click",function(e){if(e.target===e.currentTarget)closeAddModal();});
 function analyzeAddFood(){
 var text=document.getElementById("addFoodInput").value.trim();
-if(!text){showToast("请输入食物");return;}
+if(addPhotos.length>0){analyzeAddPhoto();return;}
+if(!text){showToast("请输入食物或选照片");return;}
 var lines=text.split(/[，,、;；\\n]/).filter(function(s){return s.trim();});
 var items=[],total=0;
 lines.forEach(function(line){line=line.trim();var matched=false;
@@ -294,11 +363,12 @@ function saveMeal(){
 if(!window._addResult)return;
 var now=new Date();var today=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
 var day=DATA_DAYS.find(function(d){return d.date===today;});
-if(!day){day={date:today,weekday:"周三",weight:{morning:0,evening:null,baseline:70,target:70},diet:[],summary:{totalKcal:0,protein:0,carbs:0,fat:0},advice:{good:[],tips:[],overall:""}};DATA_DAYS.unshift(day);}
-var existing=day.diet.find(function(m){return m.meal===addSelMeal;});
-if(!existing){day.diet.push({type:addSelMeal,time:"",kcal:window._addResult.total,items:window._addResult.items});}
+if(!day){day={date:today,weekday:"周三",weight:{morning:0,evening:null,baseline:70,target:70},meals:[],summary:{totalKcal:0,protein:0,carbs:0,fat:0},advice:{good:[],tips:[],overall:""}};DATA_DAYS.unshift(day);}
+var existing=day.meals.find(function(m){return m.type===addSelMeal;});
+if(!existing){day.meals.push({type:addSelMeal,time:"",kcal:window._addResult.total,items:window._addResult.items});}
 else{window._addResult.items.forEach(function(item){existing.items.push(item);});existing.kcal+=window._addResult.total;}
-day.summary.totalKcal=day.diet.reduce(function(s,m){return s+m.kcal;},0);
+day.summary.totalKcal=day.meals.reduce(function(s,m){return s+m.kcal;},0);
+try{localStorage.setItem("health_days",JSON.stringify(DATA_DAYS));}catch(e){}
 closeAddModal();showToast("已保存");
 setTimeout(function(){location.reload();},800);
 }
