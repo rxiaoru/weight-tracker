@@ -378,8 +378,8 @@ journal.appendChild(entry);
 checkLogin();
 if(loginNick()){
 var cb2=cloudBase();
-fetch(cb2.url+"/rest/v1/health_records?user_key=eq."+encodeURIComponent(loginNick())+"&select=data",{headers:{apikey:cb2.key}})
-.then(function(r){return r.json();})
+fetchCloud(cb2.url+"/rest/v1/health_records?user_key=eq."+encodeURIComponent(loginNick())+"&select=data",{headers:{apikey:cb2.key}})
+.then(jsonOrThrow)
 .then(function(rows){
 if(rows&&rows.length&&Array.isArray(rows[0].data)){
 DATA_DAYS=rows[0].data;
@@ -415,6 +415,19 @@ function cloudBase(){
 var url=DEFAULT_SB_URL,key=DEFAULT_SB_KEY;
 try{url=(localStorage.getItem("sb_url")||DEFAULT_SB_URL).replace(/\/+$/,"");key=localStorage.getItem("sb_key")||DEFAULT_SB_KEY;}catch(e){}
 return {url:url,key:key};
+}
+function jsonOrThrow(r){
+return r.text().then(function(t){
+var d=null;
+try{d=JSON.parse(t);}catch(e){throw new Error("网络响应异常("+r.status+")，请稍后重试");}
+if(!r.ok)throw new Error((d&&d.message)||("HTTP "+r.status));
+return d;
+});
+}
+function fetchCloud(url,opts){
+return fetch(url,opts).catch(function(e){
+return new Promise(function(res,rej){setTimeout(function(){fetch(url,opts).then(res,rej);},1200);});
+});
 }
 function loginNick(){try{return localStorage.getItem("login_user")||"";}catch(e){return"";}}
 function hashPwd(s){var h=5381;for(var i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0;}return"h"+(h>>>0).toString(36)+"_"+s.length;}
@@ -455,8 +468,8 @@ if(urow.budget)localStorage.setItem("cal_budget",String(urow.budget));
 }
 document.getElementById("loginMask").style.display="none";
 var cb=cloudBase();
-fetch(cb.url+"/rest/v1/health_records?user_key=eq."+encodeURIComponent(nick)+"&select=data",{headers:{apikey:cb.key}})
-.then(function(r){return r.json();})
+fetchCloud(cb.url+"/rest/v1/health_records?user_key=eq."+encodeURIComponent(nick)+"&select=data",{headers:{apikey:cb.key}})
+.then(jsonOrThrow)
 .then(function(rows){
 var cloudDays=(rows&&rows.length&&Array.isArray(rows[0].data))?rows[0].data:[];
 if(cloudDays.length){
