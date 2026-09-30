@@ -311,7 +311,7 @@ animation:flowGradient 40s ease infinite;}
 
 
 /* Stats view */
-.stat-card{background:rgba(255,255,255,0.4);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.35);border-radius:var(--r-md);padding:18px;margin-bottom:14px;animation:popUp .45s var(--ease-out) both;}
+.stat-card{background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.35);border-radius:var(--r-md);padding:18px;margin-bottom:14px;animation:popUp .45s var(--ease-out) both;}
 .sc-head{font-size:14px;font-weight:800;margin-bottom:14px;color:#0F0D0B;}
 .sc-grid{display:flex;justify-content:space-around;text-align:center;}
 .sc-item .sc-val{font-size:22px;font-weight:800;letter-spacing:-0.5px;font-variant-numeric:tabular-nums;color:var(--primary);}
@@ -516,7 +516,7 @@ animation:flowGradient 40s ease infinite;}
 <div class="pu" onclick="document.getElementById('pi').click()">
 <div class="pu-icon" style="color:var(--primary);"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div>
 <div class="pu-text">拍照或从相册选择（可多张）</div>
-<div class="pu-sub">选照片后填入API Key 即可AI识别</div>
+<div class="pu-sub">选照片后AI 自动识别热量</div>
 </div>
 <input type="file" id="pi" accept="image/*" multiple style="display:none" onchange="previewPhoto(this)">
 <img class="pp" id="pp">
@@ -550,8 +550,8 @@ animation:flowGradient 40s ease infinite;}
 
 <script>
 // ===== 硬编码 API Key（无需手动输入）=====
-var AI_API_KEY="94084939b5de4d25bb8447c2e6912012.ssfiRDzrBsM6GmnA";
-var AI_PROVIDER="zai";
+var AI_API_KEY="";
+var AI_PROVIDER="deepseek";
 
 // ===== Helpers =====
 function safeNum(v,fallback){fallback=fallback||0;var n=Number(v);return isNaN(n)||!isFinite(n)?fallback:n;}
@@ -781,7 +781,7 @@ document.getElementById("result").classList.remove("show");
 document.getElementById("ld").classList.remove("show");
 document.getElementById("ab").disabled=false;
 var keySec=document.getElementById("apiKeySec");
-if(keySec)keySec.style.display=localStorage.getItem("ai_key")?"none":"block";
+if(keySec)keySec.style.display="none";
 document.body.style.overflow="hidden";
 }
 function closeModal(){document.getElementById("mo").classList.remove("show");document.body.style.overflow="";}
@@ -837,32 +837,46 @@ var ld=document.getElementById("ld");ld.classList.add("show");
 document.getElementById("result").classList.remove("show");
 setTimeout(function(){
 var res;
-var apiKey=localStorage.getItem("ai_key")||"";
-var provider=localStorage.getItem("ai_provider")||"zai";
+var apiKey=AI_API_KEY||localStorage.getItem("ai_key")||"";
+var provider=AI_PROVIDER||localStorage.getItem("ai_provider")||"zai";
 if(photos.length>0&&apiKey){
 var prompt="识别这些图片中的所有食物。用中文回复，每行一个：食物名(分量) 热量kcal。只列食物。";
 var msgContent=[{type:"text",text:prompt}];
 photos.forEach(function(p){msgContent.push({type:"image_url",image_url:{url:p}});});
 var apiUrl,model;
-if(provider==="zai"){apiUrl="https://open.bigmodel.cn/api/paas/v4/chat/completions";model="glm-4v";}
+var isArk=false;
+
+else if(provider==="zai"){apiUrl="https://open.bigmodel.cn/api/paas/v4/chat/completions";model="glm-4v";}
 else if(provider==="qwen"){apiUrl="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";model="qwen-vl-plus";}
 else{apiUrl="https://api.openai.com/v1/chat/completions";model="gpt-4o-mini";}
 var xhr=new XMLHttpRequest();
 xhr.open("POST",apiUrl,true);
 xhr.setRequestHeader("Content-Type","application/json");
-xhr.setRequestHeader("Authorization","Bearer "+apiKey);
+
+else{xhr.setRequestHeader("Authorization","Bearer "+apiKey);}
 xhr.timeout=60000;
 xhr.onload=function(){
 try{
 var data=JSON.parse(xhr.responseText);
-var aiText=data.choices[0].message.content||"";
+var aiText=isArk?(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("\n"):(data.choices[0].message.content||"");
 res=analyzeText(aiText);res.aiUsed=true;
 showResult(res);
 }catch(e){res=analyzeText(text||"食物");res.aiError=true;showResult(res);}
 };
 xhr.onerror=function(){res=analyzeText(text||"食物");res.aiError=true;showResult(res);};
 xhr.ontimeout=function(){res=analyzeText(text||"食物");res.aiError=true;showResult(res);};
-xhr.send(JSON.stringify({model:model,messages:[{role:"user",content:msgContent}],max_tokens:600}));
+var reqBody;
+if(isArk){
+var content=[{type:"text",text:prompt}];
+photos.forEach(function(p){
+var i=p.indexOf(";base64,");
+content.push({type:"image",source:{type:"base64",media_type:p.slice(5,i),data:p.slice(i+8)}});
+});
+reqBody={model:model,max_tokens:2000,messages:[{role:"user",content:content}]};
+}else{
+reqBody={model:model,messages:[{role:"user",content:msgContent}],max_tokens:600};
+}
+xhr.send(JSON.stringify(reqBody));
 }else if(photos.length>0&&!apiKey){
 res={items:[{name:"需要 API Key",detail:"请填入 API Key 或复制发给AI 分析",kcal:0}],total:0,needKey:true};
 showResult(res);
