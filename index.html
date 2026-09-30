@@ -4,23 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>我的健康手账</title>
+<script>try{var _t=localStorage.getItem("theme");if(_t)document.documentElement.setAttribute("data-theme",_t);}catch(e){}</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
---bg:#F2EEE9;--bg2:#FFFFFF;--card:#FFFDF8;
+--bg:#F3F7FB;--bg2:#FFFFFF;--card:#FFFFFF;
 --ink:#2C2C2E;--ink2:#6B6B70;--ink3:#AEAEB2;
---line:#E8E4DE;--accent:#E8734A;
---sage:#7FB69E;--sage-l:#EEF6F2;
+--line:#DDE7F0;--accent:#3E8EC4;
+--sage:#9A8FD0;--sage-l:#F0EEFA;
 --blue:#6B9BC3;--blue-l:#EBF2F7;
---peach:#FF9F7C;--peach-l:#FFF3EE;
---lemon:#E5A84B;--lemon-l:#FEFAEC;
---rose:#D4979E;--rose-l:#FDF0ED;
+--peach:#7FB0DC;--peach-l:#EFF6FC;
+--lemon:#D9A845;--lemon-l:#FBF7EC;
+--rose:#C58BA0;--rose-l:#F8EFF3;
 --r-lg:24px;--r-md:18px;--r-sm:12px;
 --sh:0 4px 20px rgba(44,44,46,0.06),0 1px 3px rgba(44,44,46,0.04);
 --spring:cubic-bezier(.34,1.56,.64,1);
 --out:cubic-bezier(.16,1,.3,1);
 --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
+--accent-rgb:62,142,196;--line-rgb:221,231,240;--sage-rgb:154,143,208;--blue-rgb:107,155,195;
 }
+/* ===== 主题 ===== */
+html[data-theme="warm"]{--bg:#F2EEE9;--card:#FFFDF8;--ink:#2C2C2E;--ink2:#6B6B70;--ink3:#AEAEB2;--line:#E8E4DE;--line-rgb:232,228,222;--accent:#E8734A;--accent-rgb:232,115,74;--sage:#A78BDB;--sage-rgb:167,139,219;--sage-l:#F3EFFB;--blue:#6B9BC3;--blue-rgb:107,155,195;--blue-l:#EBF2F7;--peach:#FF9F7C;--peach-l:#FFF3EE;--lemon:#E5A84B;--lemon-l:#FEFAEC;--rose:#D4979E;--rose-l:#FDF0ED;}
+html[data-theme="kitty"]{--bg:#FFF0F5;--card:#FFFFFF;--ink:#4A2B36;--ink2:#8A6470;--ink3:#C9A3B3;--line:#F9D0DE;--line-rgb:249,208,222;--accent:#E7557F;--accent-rgb:231,85,127;--sage:#B48BE0;--sage-rgb:180,139,224;--sage-l:#F4EDFC;--blue:#7FA8E8;--blue-rgb:127,168,232;--blue-l:#EDF3FD;--peach:#F49AC1;--peach-l:#FDEBF3;--lemon:#F0A852;--lemon-l:#FEF4E7;--rose:#E58BB0;--rose-l:#FBE9F1;}
+html[data-theme="kitty"] .cover-badge::before{content:"🎀 ";}
+html[data-theme="kitty"] .cover-title em::after{background:#FBD9E5;}
+html[data-theme="kitty"] .foot::before{content:"🐱 ";}
+html[data-theme="peach"]{--bg:#FDF4EE;--card:#FFFDFA;--ink:#3D2E28;--ink2:#7E6A60;--ink3:#BCA69A;--line:#F2DFD2;--line-rgb:242,223,210;--accent:#E8836B;--accent-rgb:232,131,107;--sage:#B79AD1;--sage-rgb:183,154,209;--sage-l:#F5EFFA;--blue:#8FA8C8;--blue-rgb:143,168,200;--blue-l:#EEF3F9;--peach:#F4A883;--peach-l:#FDEFEA;--lemon:#D9A85C;--lemon-l:#FBF4E8;--rose:#D49AA6;--rose-l:#FAEFF1;}
+/* 换肤按钮 */
+.theme-btn{position:fixed;top:calc(var(--safe-t) + 12px);right:16px;width:40px;height:40px;border-radius:14px;background:var(--card);border:1px solid rgba(var(--line-rgb),0.8);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:70;font-size:18px;}
+.theme-panel{position:fixed;top:calc(var(--safe-t) + 60px);right:16px;background:var(--card);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);border:1px solid rgba(var(--line-rgb),0.8);padding:8px;z-index:70;display:none;min-width:150px;}
+.theme-panel.show{display:block;}
+.theme-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;font-size:13px;color:var(--ink);cursor:pointer;font-weight:600;}
+.theme-item:active{background:var(--bg);}
+.theme-item.on{background:var(--bg);}
+.theme-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--ink);min-height:100vh;user-select:none;-webkit-user-select:none;}
 .container{max-width:480px;margin:0 auto;padding:0 16px 40px;position:relative;}
 
@@ -30,10 +47,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 .cover-badge{display:inline-block;font-size:10px;letter-spacing:3px;color:var(--ink3);border:1px solid var(--line);border-radius:20px;padding:5px 16px;background:var(--card);margin-bottom:16px;}
 .cover-title{font-size:30px;font-weight:800;line-height:1.2;color:var(--ink);}
 .cover-title em{font-style:normal;color:var(--accent);position:relative;display:inline-block;}
-.cover-title em::after{content:"";position:absolute;left:-2px;right:-2px;bottom:3px;height:8px;background:var(--lemon-l);border-radius:3px;z-index:-1;transform:rotate(-1deg);}
+.cover-title em::after{content:"";position:absolute;left:-2px;right:-2px;bottom:3px;height:8px;background:var(--blue-l);border-radius:3px;z-index:-1;transform:rotate(-1deg);}
 .cover-sub{font-size:12px;color:var(--ink2);margin-top:8px;}
 .stamp-row{display:flex;justify-content:center;gap:12px;margin-top:24px;}
-.stamp{background:var(--card);border-radius:16px;padding:14px 18px;min-width:84px;box-shadow:var(--sh);border:1px solid rgba(232,228,222,0.7);}
+.stamp{background:var(--card);border-radius:16px;padding:14px 18px;min-width:84px;box-shadow:var(--sh);border:1px solid rgba(var(--line-rgb),0.7);}
 .stamp.tl{transform:rotate(-2deg);} .stamp.tr{transform:rotate(1.5deg);}
 .stamp .s-num{font-size:22px;font-weight:800;color:var(--ink);} .stamp .s-num .u{font-size:10px;color:var(--ink3);}
 .stamp .s-num.warn{color:var(--accent);} .stamp .s-num.ok{color:var(--sage);}
@@ -47,14 +64,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 .journal::before{content:"";position:absolute;left:34px;top:40px;bottom:60px;width:2px;background:repeating-linear-gradient(to bottom,var(--line) 0 8px,transparent 8px 14px);border-radius:1px;}
 .entry{position:relative;padding-left:40px;margin-bottom:32px;}
 
-.date-pin{position:absolute;left:0;top:2px;width:28px;height:28px;background:var(--accent);border-radius:50% 50% 50% 4px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;box-shadow:0 3px 8px rgba(232,115,74,0.3);z-index:2;}
-.entry:nth-child(2) .date-pin{background:var(--blue);box-shadow:0 3px 8px rgba(107,155,195,0.3);}
-.entry:nth-child(3) .date-pin{background:var(--sage);box-shadow:0 3px 8px rgba(127,155,118,0.3);}
+.date-pin{position:absolute;left:0;top:2px;width:28px;height:28px;background:var(--accent);border-radius:50% 50% 50% 4px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;box-shadow:0 3px 8px rgba(var(--accent-rgb),0.3);z-index:2;}
+.entry:nth-child(2) .date-pin{background:var(--blue);box-shadow:0 3px 8px rgba(var(--blue-rgb),0.3);}
+.entry:nth-child(3) .date-pin{background:var(--sage);box-shadow:0 3px 8px rgba(var(--sage-rgb),0.3);}
 
-.page-card{background:var(--card);border-radius:4px 18px 18px 18px;border:1px solid rgba(232,228,222,0.6);box-shadow:var(--sh);overflow:hidden;position:relative;}
-.page-card::before{content:"";position:absolute;top:-6px;right:24px;width:56px;height:16px;background:repeating-linear-gradient(45deg,rgba(232,115,74,0.12) 0 4px,rgba(232,115,74,0.06) 4px 8px);border-radius:1px;transform:rotate(3deg);z-index:3;}
-.entry:nth-child(2) .page-card::before{background:repeating-linear-gradient(45deg,rgba(107,155,195,0.12) 0 4px,rgba(107,155,195,0.06) 4px 8px);}
-.entry:nth-child(3) .page-card::before{background:repeating-linear-gradient(45deg,rgba(127,155,118,0.12) 0 4px,rgba(127,155,118,0.06) 4px 8px);}
+.page-card{background:var(--card);border-radius:4px 18px 18px 18px;border:1px solid rgba(var(--line-rgb),0.6);box-shadow:var(--sh);overflow:hidden;position:relative;}
+.page-card::before{content:"";position:absolute;top:-6px;right:24px;width:56px;height:16px;background:repeating-linear-gradient(45deg,rgba(var(--accent-rgb),0.12) 0 4px,rgba(var(--accent-rgb),0.06) 4px 8px);border-radius:1px;transform:rotate(3deg);z-index:3;}
+.entry:nth-child(2) .page-card::before{background:repeating-linear-gradient(45deg,rgba(var(--blue-rgb),0.12) 0 4px,rgba(var(--blue-rgb),0.06) 4px 8px);}
+.entry:nth-child(3) .page-card::before{background:repeating-linear-gradient(45deg,rgba(var(--sage-rgb),0.12) 0 4px,rgba(var(--sage-rgb),0.06) 4px 8px);}
 
 .pc-head{padding:14px 18px 10px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px dashed var(--line);}
 .pc-date{font-size:17px;font-weight:800;letter-spacing:-0.3px;color:var(--ink);}
@@ -71,14 +88,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 .sec-tag.tw .st{background:var(--blue);} .sec-tag.td .st{background:var(--lemon);} .sec-tag.ta .st{background:var(--sage);}
 
 .w-row{display:flex;gap:10px;}
-.w-box{flex:1;background:var(--bg);border-radius:12rpx;padding:12px;text-align:center;border:1px solid rgba(232,228,222,0.5);}
+.w-box{flex:1;background:var(--bg);border-radius:12rpx;padding:12px;text-align:center;border:1px solid rgba(var(--line-rgb),0.5);}
 .wb-i{font-size:15px;} .wb-l{font-size:10px;color:var(--ink3);} .wb-v{font-size:20px;font-weight:800;color:var(--ink);}
 .w-note{margin-top:8px;font-size:11px;color:var(--ink2);background:var(--bg);border-radius:10px;padding:8px 12px;text-align:center;border:1px dashed var(--line);}
 .baseline{margin-top:8px;padding:8px 14px;background:var(--bg);border-radius:10px;font-size:12px;color:var(--ink2);text-align:center;}
 .baseline b{color:var(--accent);font-weight:700;}
 .baseline .tgt{color:var(--sage);font-weight:700;}
 
-.nutri{display:flex;background:var(--bg);border-radius:12px;overflow:hidden;border:1px solid rgba(232,228,222,0.5);margin-bottom:14px;}
+.nutri{display:flex;background:var(--bg);border-radius:12px;overflow:hidden;border:1px solid rgba(var(--line-rgb),0.5);margin-bottom:14px;}
 .nc{flex:1;text-align:center;padding:12rpx 8rpx;position:relative;}
 .nc:not(:last-child)::after{content:"";position:absolute;right:0;top:25%;height:50%;width:1px;background:var(--line);}
 .n-val{font-size:16px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;}
@@ -94,16 +111,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 .food-row .f-name .f-p{font-size:10px;color:var(--ink3);margin-left:4px;}
 .food-row .f-kcal{font-size:12px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;}
 
-.adv-card{background:var(--sage-l);border-radius:14px;padding:14px;border:1px solid rgba(127,155,118,0.12);}
+.adv-card{background:var(--sage-l);border-radius:14px;padding:14px;border:1px solid rgba(var(--sage-rgb),0.12);}
 .adv-title{font-size:12px;font-weight:800;color:var(--sage);margin-bottom:10px;}
 .adv-good{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
 .g-tag{font-size:10px;font-weight:700;color:var(--sage);background:#fff;border-radius:10px;padding:4px 10px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .adv-tip{display:flex;gap:8px;padding:4px 0;font-size:11px;color:var(--ink2);line-height:1.6;}
 .adv-tip .dot{width:4px;height:4px;border-radius:50%;background:var(--sage);margin-top:7px;flex-shrink:0;opacity:0.5;}
-.adv-overall{margin-top:10px;font-size:11px;font-weight:600;color:var(--ink);background:rgba(255,255,255,0.7);border-radius:10px;padding:8px 12px;border:1px dashed rgba(127,155,118,0.2);}
+.adv-overall{margin-top:10px;font-size:11px;font-weight:600;color:var(--ink);background:rgba(255,255,255,0.7);border-radius:10px;padding:8px 12px;border:1px dashed rgba(var(--sage-rgb),0.2);}
 
 /* FAB */
-.fab{position:fixed;right:20px;bottom:calc(var(--safe-b) + 20px);width:54px;height:54px;border-radius:18px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 6px 20px rgba(232,115,74,0.35);z-index:50;transition:transform .2s var(--spring);}
+.fab{position:fixed;right:20px;bottom:calc(var(--safe-b) + 20px);width:54px;height:54px;border-radius:18px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 6px 20px rgba(var(--accent-rgb),0.35);z-index:50;transition:transform .2s var(--spring);}
 .fab:active{transform:scale(0.85) rotate(90deg);}
 .ai-fab{position:fixed;right:20px;bottom:calc(var(--safe-b) + 84px);width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,#7C6FE8,#A78BFA);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 4px 14px rgba(124,111,232,0.3);z-index:50;}
 .ai-fab:active{transform:scale(0.88);}
@@ -120,7 +137,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 .ai-mc.p .v{color:var(--sage);} .ai-mc.c .v{color:var(--accent);} .ai-mc.f .v{color:var(--rose);}
 .ai-sec{margin-bottom:14px;}
 .ai-sec-t{font-size:11px;font-weight:800;color:var(--ink3);margin-bottom:6px;text-transform:uppercase;}
-.ai-good{display:inline-flex;gap:4px;font-size:12px;font-weight:600;color:var(--sage);background:rgba(91,158,125,0.08);border-radius:12px;padding:5px 12px;margin:0 4px 6px 0;}
+.ai-good{display:inline-flex;gap:4px;font-size:12px;font-weight:600;color:var(--sage);background:rgba(var(--sage-rgb),0.08);border-radius:12px;padding:5px 12px;margin:0 4px 6px 0;}
 .ai-tip{display:flex;gap:8px;padding:4px 0;font-size:12px;color:var(--ink2);line-height:1.6;}
 .ai-tip::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);margin-top:7px;flex-shrink:0;}
 .ai-overall{font-size:12px;font-weight:600;color:var(--ink);background:var(--bg);border-radius:12px;padding:10px 14px;line-height:1.6;margin-top:8px;}
@@ -162,9 +179,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 <div class="cover-title">我的<em>健康手账</em></div>
 <div class="cover-sub" id="coverSub"></div>
 <div class="stamp-row">
-<div class="stamp tl"><div class="s-num" id="stWeight">--<span class="u">kg</span></div><div class="s-label">当前体重</div></div>
-<div class="stamp"><div class="s-num warn" id="stChange">--<span class="u">kg</span></div><div class="s-label">较基线</div></div>
-<div class="stamp tr"><div class="s-num" id="stDays">0</div><div class="s-label">已记录</div></div>
+<div class="stamp tl"><div class="s-num" id="stWeight">--<span class="u">kg</span></div><div class="s-label">⚖️ 当前体重</div></div>
+<div class="stamp"><div class="s-num warn" id="stChange">--<span class="u">kg</span></div><div class="s-label">📈 较基线</div></div>
+<div class="stamp tr"><div class="s-num" id="stDays">0</div><div class="s-label">📅 已记录</div></div>
 </div>
 </div>
 <div class="doodle-div"><div class="dd-line"></div><div class="dd-icon">🌱</div><div class="dd-line"></div></div>
@@ -172,6 +189,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 <div class="foot" style="text-align:center;padding:10px 0 80px;font-size:10px;color:var(--ink3);letter-spacing:2px;"><div style="width:40px;height:1px;background:var(--line);margin:0 auto 10px;"></div>TO BE CONTINUED</div>
 </div>
 
+<button class="theme-btn" onclick="toggleThemePanel(event)">🎨</button>
+<div class="theme-panel" id="themePanel">
+<div class="theme-item" data-t="salt" onclick="setTheme('salt')"><span class="theme-dot" style="background:linear-gradient(135deg,#3E8EC4,#E8F3EE);"></span>海盐蓝白</div>
+<div class="theme-item" data-t="warm" onclick="setTheme('warm')"><span class="theme-dot" style="background:linear-gradient(135deg,#E8734A,#FEFAEC);"></span>暖橘手账</div>
+<div class="theme-item" data-t="kitty" onclick="setTheme('kitty')"><span class="theme-dot" style="background:linear-gradient(135deg,#E7557F,#FDEBF3);"></span>Hello Kitty</div>
+<div class="theme-item" data-t="peach" onclick="setTheme('peach')"><span class="theme-dot" style="background:linear-gradient(135deg,#E8836B,#FDEFEA);"></span>蜜桃奶油</div>
+</div>
 <button class="fab" onclick="openAddModal()"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
 <div class="ai-fab" onclick="toggleAI()"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg></div>
 <div class="ai-panel" id="aiPanel">
@@ -189,7 +213,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 <button class="mp" data-meal="加餐">🍰 加餐</button>
 </div></div>
 <div class="m-sec"><div class="m-label">吃了什么</div>
-<textarea class="m-input" id="addFoodInput" rows="3" placeholder="用逗号分隔，例如：米饭半碗，西兰花炒虾仁"></textarea>
+<textarea class="m-input" id="addFoodInput" rows="3" placeholder="例如：米饭半碗，西兰花炒虾仁&#10;或记体重：昨晚73.2 / 今早72.8"></textarea>
 </div>
 <div class="m-sec"><div class="m-label">📷 拍照识别（选照片后AI自动识别）</div>
 <input type="file" id="addPhotoInput" accept="image/*" multiple style="display:none" onchange="addPreviewPhoto(this)">
@@ -262,14 +286,14 @@ var sum=0,foods="";
 (meal.items||[]).forEach(function(item){
 sum+=safeNum(item.kcal,0);
 foods+='<div class="food-row"><span class="f-name">'+item.name+'<span class="f-p">'+(item.portion||"")+'</span></span><span class="f-kcal">'+safeNum(item.kcal,0)+' kcal</span></div>';});
-dietHtml+='<div class="meal-block"><div class="meal-head">'+meal.type+'<span class="m-time">'+(meal.time||"")+'</span><span class="m-sum">'+sum+' kcal</span></div>'+foods+'</div>';});
+dietHtml+='<div class="meal-block"><div class="meal-head">'+meta.icon+' '+meal.type+'<span class="m-time">'+(meal.time||"")+'</span><span class="m-sum">'+sum+' kcal</span></div>'+foods+'</div>';});
 var s=day.summary;
 var nutriHtml='<div class="nutri"><div class="nc"><div class="n-val total">'+safeNum(s.totalKcal,0)+'</div><div class="n-l">KCAL</div></div><div class="nc"><div class="n-val p">'+safeNum(s.protein,0)+'g</div><div class="n-l">蛋白</div></div><div class="nc"><div class="n-val c">'+safeNum(s.carbs,0)+'g</div><div class="n-l">碳水</div></div><div class="nc"><div class="n-val f">'+safeNum(s.fat,0)+'g</div><div class="n-l">脂肪</div></div></div>';
 var a=day.advice;
 var advHtml='<div class="adv-card"><div class="adv-title">💡 AI 建议</div><div class="adv-good">'+a.good.map(function(g){return'<span class="g-tag">✓ '+g+'</span>';}).join("")+'</div>'+a.tips.map(function(t){return'<div class="adv-tip"><div class="dot"></div><div>'+t+'</div></div>';}).join("")+'<div class="adv-overall">📌 '+a.overall+'</div></div>';
 var entry=document.createElement("div");
 entry.className="entry";
-entry.innerHTML='<div class="date-pin">'+pinTxt+'</div><div class="page-card"><div class="pc-head"><div><div class="pc-date">'+day.date+'</div><div class="pc-week">'+day.weekday+' · '+weekEn+'</div></div><div class="pc-right"><span class="pc-w">'+wNum+'</span><span class="pc-u">kg</span><span class="pc-chg '+cCls+'">'+cTxt+'</span></div></div><div class="pc-body"><div class="sec"><div class="sec-tag tw"><span class="st"></span>WEIGHT · 体重</div><div class="w-row"><div class="w-box"><div class="wb-i">🌅</div><div class="wb-l">早上</div><div class="wb-v">'+safeNum(dw.morning,0)+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div><div class="w-box"><div class="wb-i">🌙</div><div class="wb-l">晚上</div><div class="wb-v">'+(dw.evening||"--")+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div></div>'+(dw.note?'<div class="w-note">💬 '+dw.note+'</div>':"")+'<div class="baseline">较基线(70kg): <b>'+(chg>0?"+":"")+chg.toFixed(1)+'kg</b> · 距目标: <span class="tgt">'+Math.abs(diff).toFixed(1)+'kg</span></div></div><div class="sec"><div class="sec-tag td"><span class="st"></span>MEALS · 饮食</div>'+nutriHtml+dietHtml+'</div><div class="sec"><div class="sec-tag ta"><span class="st"></span>NOTES · 建议</div>'+advHtml+'</div></div></div>';
+entry.innerHTML='<div class="date-pin">'+pinTxt+'</div><div class="page-card"><div class="pc-head"><div><div class="pc-date">'+day.date+'</div><div class="pc-week">'+day.weekday+' · '+weekEn+'</div></div><div class="pc-right"><span class="pc-w">'+wNum+'</span><span class="pc-u">kg</span><span class="pc-chg '+cCls+'">'+cTxt+'</span></div></div><div class="pc-body"><div class="sec"><div class="sec-tag tw"><span class="st"></span>⚖️ WEIGHT · 体重</div><div class="w-row"><div class="w-box"><div class="wb-i">🌅</div><div class="wb-l">早上</div><div class="wb-v">'+safeNum(dw.morning,0)+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div><div class="w-box"><div class="wb-i">🌙</div><div class="wb-l">晚上</div><div class="wb-v">'+(dw.evening||"--")+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div></div>'+(dw.note?'<div class="w-note">💬 '+dw.note+'</div>':"")+'<div class="baseline">较基线(70kg): <b>'+(chg>0?"+":"")+chg.toFixed(1)+'kg</b> · 距目标: <span class="tgt">'+Math.abs(diff).toFixed(1)+'kg</span></div></div><div class="sec"><div class="sec-tag td"><span class="st"></span>🍽️ MEALS · 饮食</div>'+nutriHtml+dietHtml+'</div><div class="sec"><div class="sec-tag ta"><span class="st"></span>💡 NOTES · 建议</div>'+advHtml+'</div></div></div>';
 journal.appendChild(entry);
 });
 
@@ -341,6 +365,7 @@ function closeAddModal(){document.getElementById("addMo").classList.remove("show
 document.getElementById("addMo").addEventListener("click",function(e){if(e.target===e.currentTarget)closeAddModal();});
 function analyzeAddFood(){
 var text=document.getElementById("addFoodInput").value.trim();
+if(text){var _w=parseWeightText(text);if(_w){showWeightResult(_w);return;}}
 if(addPhotos.length>0){analyzeAddPhoto();return;}
 if(!text){showToast("请输入食物或选照片");return;}
 var lines=text.split(/[，,、;；\\n]/).filter(function(s){return s.trim();});
@@ -359,7 +384,41 @@ document.getElementById("addResultItems").innerHTML=html;
 document.getElementById("addResult").classList.add("show");
 window._addResult={items:items,total:total,meal:addSelMeal};
 }
+function parseWeightText(text){
+if(!/体重|称|早上|早晨|今早|晚|夜里|睡前|kg|公斤/.test(text))return null;
+var m=text.match(/(\d{2,3}(?:\.\d{1,2})?)\s*(?:kg|公斤|斤)?/);
+if(!m)return null;
+var v=parseFloat(m[1]);
+if(v<30||v>200)return null;
+var isEvening=/晚上|晚间|夜里|睡前|昨晚/.test(text);
+var isMorning=/早上|早晨|今早|晨重/.test(text);
+if(!isEvening&&!isMorning)return null;
+var d=new Date();
+if(/前天/.test(text))d.setDate(d.getDate()-2);
+else if(/昨天|昨日|昨晚|昨早/.test(text))d.setDate(d.getDate()-1);
+var date=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+return{date:date,slot:isEvening?"evening":"morning",value:v};
+}
+function showWeightResult(w){
+var today=new Date();var tStr=today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+var dayLabel=w.date+(w.date===tStr?"(今天)":"");
+var slotTxt=w.slot==="evening"?"🌙 晚上":"🌅 早上";
+document.getElementById("addResultItems").innerHTML="<div class='ar-item'><span>⚖️ "+dayLabel+" "+slotTxt+"</span><span class='v'>"+w.value+" kg</span></div>";
+document.getElementById("addResultTotal").innerHTML="";
+document.getElementById("addResult").classList.add("show");
+window._addResult=null;window._weightResult=w;
+}
+function saveWeight(w){
+var day=DATA_DAYS.find(function(d){return d.date===w.date;});
+if(!day){var wd=["周日","周一","周二","周三","周四","周五","周六"][new Date(w.date.replace(/-/g,"/")).getDay()];day={date:w.date,weekday:wd,weight:{morning:0,evening:null,baseline:70,target:70},meals:[],summary:{totalKcal:0,protein:0,carbs:0,fat:0},advice:{good:[],tips:[],overall:""}};DATA_DAYS.unshift(day);}
+DATA_DAYS.sort(function(a,b){return a.date<b.date?1:-1;});
+day.weight[w.slot]=w.value;
+try{localStorage.setItem("health_days",JSON.stringify(DATA_DAYS));}catch(e){}
+closeAddModal();showToast("已记录 "+w.value+"kg");
+setTimeout(function(){location.reload();},800);
+}
 function saveMeal(){
+if(window._weightResult){var _wv=window._weightResult;window._weightResult=null;saveWeight(_wv);return;}
 if(!window._addResult)return;
 var now=new Date();var today=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
 var day=DATA_DAYS.find(function(d){return d.date===today;});
@@ -379,6 +438,12 @@ var t="帮我记录("+today+")"+addSelMeal+"：\\n"+window._addResult.items.map(
 if(navigator.share){navigator.share({text:t}).catch(function(){navigator.clipboard.writeText(t);});}
 else{navigator.clipboard.writeText(t).then(function(){showToast("已复制，去粘贴给AI");});}
 }
+// ===== 主题切换 =====
+function toggleThemePanel(e){if(e)e.stopPropagation();var p=document.getElementById("themePanel");if(p)p.classList.toggle("show");}
+function setTheme(t){document.documentElement.setAttribute("data-theme",t);try{localStorage.setItem("theme",t);}catch(e){}renderThemeDots();var p=document.getElementById("themePanel");if(p)p.classList.remove("show");}
+function renderThemeDots(){var cur=document.documentElement.getAttribute("data-theme")||"salt";document.querySelectorAll(".theme-item").forEach(function(el){el.classList.toggle("on",el.dataset.t===cur);});}
+(function(){var t=null;try{t=localStorage.getItem("theme");}catch(e){}document.documentElement.setAttribute("data-theme",t||"salt");renderThemeDots();})();
+document.addEventListener("click",function(e){var p=document.getElementById("themePanel");if(p&&p.classList.contains("show")&&e.target!==p&&!p.contains(e.target))p.classList.remove("show");});
 function toggleAI(){
 var panel=document.getElementById("aiPanel");
 if(!panel)return;
