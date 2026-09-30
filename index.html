@@ -2,1079 +2,620 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Kcal · 卡路里管家</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>我的健康手账</title>
+<script>
+// 体重追踪数据
+// 每天给我发吃的和体重，我会帮你更新这里
+const TRACKER_DATA = {
+  baseline: {
+    weight: 70.0,
+    label: "旅行前基线"
+  },
+  target: 70.0,
+  days: [
+    {
+      date: "2026-09-30",
+      weekday: "周三",
+      weight: {
+        morning: 72.4,
+        evening: null,
+        baseline: 70.0,
+        target: 70.0,
+        note: "昨晚羊肉泡馍，涨了0.4kg"
+      },
+      diet: [
+        { meal: "早餐", time: "早上", items: [
+          { name: "全麦面包", portion: "1片", kcal: 75 },
+          { name: "星巴克奶茶", portion: "1杯", kcal: 135 }
+        ]}
+      ],
+      summary: { totalKcal: 210, protein: 5, carbs: 30, fat: 6 },
+      advice: {
+        good: ["全麦面包是好的碳水选择"],
+        tips: ["昨晚泡馍热量较高", "今天午餐晚餐清淡一些", "奶茶含糖量高尽量少喝", "多喝水帮助代谢"],
+        overall: "短期波动，控制今天饮食即可恢复"
+      }
+    },
+    {
+      date: "2026-09-29",
+      weekday: "周二",
+      weight: {
+        morning: 72.0,
+        evening: null,
+        baseline: 70.0,
+        target: 70.0,
+        note: "比前天下降1.4kg"
+      },
+      diet: [
+        { meal: "早餐", time: "早上", items: [
+          { name: "美式咖啡+纯牛奶", portion: "1杯", kcal: 70 },
+          { name: "全麦面包", portion: "1片", kcal: 75 }
+        ]},
+        { meal: "午餐", time: "中午", items: [
+          { name: "煎蛋", portion: "1个", kcal: 90 },
+          { name: "煎牛肉", portion: "~100g", kcal: 200 },
+          { name: "虾仁", portion: "7-8个", kcal: 60 },
+          { name: "烤肠", portion: "1根", kcal: 180 },
+          { name: "鸡米花", portion: "5-6块", kcal: 220 },
+          { name: "菠菜", portion: "1份", kcal: 40 },
+          { name: "米饭", portion: "半碗", kcal: 100 }
+        ]},
+        { meal: "晚餐", time: "晚上", items: [
+          { name: "羊肉泡馍", portion: "1碗", kcal: 550 },
+          { name: "糖蒜", portion: "几瓣", kcal: 20 },
+          { name: "辣酱", portion: "适量", kcal: 30 }
+        ]}
+      ],
+      summary: { totalKcal: 1635, protein: 60, carbs: 150, fat: 55 },
+      advice: {
+        good: ["午餐蛋白质充足", "菠菜补充纤维"],
+        tips: ["羊肉泡馍热量较高(600kcal)", "鸡米花和烤肠是炸物", "多喝水帮助代谢"],
+        overall: "午餐蛋白质很棒，晚上泡馍热量偏高"
+      }
+    },
+    {
+      date: "2026-09-28",
+      weekday: "周一",
+      weight: {
+        morning: 73.4,
+        evening: 73.8,
+        baseline: 70.0,
+        target: 70.0,
+        note: "景德镇回来第一天，正在恢复"
+      },
+      diet: [
+        { meal: "早餐", time: "早上", items: [
+          { name: "自制美式咖啡", portion: "1杯", kcal: 5 }
+        ]},
+        { meal: "午餐", time: "中午", items: [
+          { name: "蒜苗芦笋炒肉", portion: "~100g", kcal: 80 },
+          { name: "芹菜黄瓜凉拌", portion: "~80g", kcal: 25 },
+          { name: "小白菜香菇", portion: "~100g", kcal: 60 },
+          { name: "青椒香菇肉片", portion: "~80g", kcal: 110 },
+          { name: "豌豆虾仁蛋", portion: "~80g", kcal: 100 },
+          { name: "凉拌豆芽", portion: "~80g", kcal: 20 },
+          { name: "蒸玉米", portion: "~1/2根", kcal: 60 },
+          { name: "米饭", portion: "半拳头", kcal: 75 }
+        ]},
+        { meal: "加餐", time: "下午", items: [
+          { name: "全麦面包", portion: "1片", kcal: 75 },
+          { name: "菱角", portion: "2个", kcal: 40 },
+          { name: "西红柿", portion: "1个", kcal: 25 }
+        ]}
+      ],
+      summary: { totalKcal: 675, protein: 35, carbs: 70, fat: 18 },
+      advice: {
+        good: ["蔬菜6份很棒", "碳水控制合理", "美式咖啡好"],
+        tips: ["蛋白质偏少", "菱角计入碳水", "热量偏低正常吃", "避免含糖饮料", "多喝水2000ml+"],
+        overall: "适合减重期，补足蛋白质和水分"
+      }
+    }
+  ]
+};
+
+</script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-:root{
---bg:#F5F3EE;--bg2:#FFFFFF;--card:#FFFFFF;
---ink:#111111;--ink2:#222222;--ink3:#444444;
---line:#E7E0D8;
---primary:#7C6FE8;--primary-light:rgba(124,111,232,0.15);
---green:#3D8B6E;--green-light:rgba(76,223,176,0.1);
---orange:#FF9F6C;--orange-light:rgba(255,159,108,0.1);
---blue:#6CB6FF;--blue-light:rgba(108,182,255,0.1);
---pink:#D4694A;--pink-light:rgba(255,143,171,0.1);
---red:#FF6B6B;
---yellow:#FFD93D;
---r-lg:20px;--r-md:14px;--r-sm:10px;
---sh-sm:0 2px 8px rgba(0,0,0,0.2);
---sh-md:0 4px 20px rgba(0,0,0,0.3);
---spring:cubic-bezier(.34,1.56,.64,1);
---out:cubic-bezier(.16,1,.3,1);
---smooth:cubic-bezier(.32,.72,.28,1);
---safe-t:env(safe-area-inset-top,0px);
---safe-b:env(safe-area-inset-bottom,0px);
+:root {
+  --paper: #FBF6EE;
+  --paper2: #F5EDE0;
+  --card: #FFFDF8;
+  --ink: #3E3A33;
+  --ink2: #6B6558;
+  --ink3: #A69E8F;
+  --line: #E8DFD0;
+  --accent: #E8734A;
+  --accent2: #D94F70;
+  --sage: #7A9B76;
+  --sage-l: #EDF3EC;
+  --sky: #6B9BC3;
+  --sky-l: #EBF2F7;
+  --butter: #E5A84B;
+  --butter-l: #FDF3E3;
+  --rose: #D94F70;
+  --rose-l: #FBEAEE;
 }
-html{font-size:16px;}
-body{line-height:1.5;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;text-rendering:optimizeLegibility;background:transparent;color:#111111;height:100vh;height:100dvh;overflow:hidden;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative;}
-::-webkit-scrollbar{display:none;scrollbar-width:none;}
-
-/* ===== Flowing gradient background ===== */
-.bg-flow{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;pointer-events:none;z-index:0;
-background:#F5F3EE;
-background-size:300% 300%;
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: "PingFang SC", -apple-system, "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-user-select:none; user-select:none;
 }
-@keyframes flowGradient{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-/* Soft floating orbs */
 
+/* ===== Cover / Hero ===== */
+.cover {
+  max-width: 480px; margin: 0 auto;
+  padding: 48px 24px 36px;
+  text-align: center;
+  position: relative;
+}
+.cover::before {
+  content:""; position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width: 1px; height: 100%;
+  background: repeating-linear-gradient(to bottom, transparent 0 6px, var(--line) 6px 7px);
+  z-index: 0;
+}
+.cover > * { position: relative; z-index: 1; }
+.cover-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size: 10px; letter-spacing: 3px; color: var(--ink3);
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  border-radius: 20px; padding: 5px 16px;
+  background: var(--card);
+  margin-bottom: 18px;
+}
+.cover-title {
+  font-size: 30px; font-weight: 800; letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+.cover-title em {
+  font-style: normal; color: var(--accent);
+  position: relative; display: inline-block;
+}
+.cover-title em::after {
+  content:""; position:absolute; left:-2px; right:-2px; bottom:3px;
+  height:8px; background: var(--butter-l);
+  border-radius: 3px; z-index:-1; transform: rotate(-1deg);
+}
+.cover-sub { font-size: 12px; color: var(--ink2); margin-top: 8px; line-height: 1.6; }
 
+/* Cover stamp */
+.stamp-row {
+  display:flex; justify-content:center; gap:14px; margin-top:26px;
+}
+.stamp {
+  background: var(--card);
+  border-radius: 16px; padding: 14px 18px;
+  min-width: 86px;
+  box-shadow: 0 2px 10px rgba(62,58,51,0.05), 0 1px 3px rgba(62,58,51,0.04);
+  border: 1px solid rgba(232,223,208,0.7);
+  transition: transform .25s cubic-bezier(.32,.72,.32,1);
+}
+.stamp:active { transform: scale(0.96) rotate(-1deg); }
+.stamp .s-num { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.stamp .s-num .u { font-size: 10px; font-weight: 500; color: var(--ink3); margin-left: 1px; }
+.stamp .s-num.warn { color: var(--accent); }
+.stamp .s-num.ok { color: var(--sage); }
+.stamp .s-label { font-size: 9px; color: var(--ink3); margin-top: 3px; letter-spacing: 1px; }
+.stamp.tilt-l { transform: rotate(-2deg); }
+.stamp.tilt-l:active { transform: rotate(-2deg) scale(0.96); }
+.stamp.tilt-r { transform: rotate(1.5deg); }
+.stamp.tilt-r:active { transform: rotate(1.5deg) scale(0.96); }
 
+/* Doodle divider */
+.doodle-div {
+  display:flex; align-items:center; gap:12px;
+  max-width:480px; margin: 8px auto 0; padding: 0 24px;
+}
+.doodle-div .dd-line { flex:1; height:1px; background: var(--line); }
+.doodle-div .dd-icon { font-size: 13px; opacity:0.5; }
 
+/* ===== Timeline ===== */
+.journal { max-width: 480px; margin: 0 auto; padding: 20px 20px 60px; position: relative; }
+.journal::before {
+  content:""; position:absolute; left: 34px; top: 40px; bottom: 60px;
+  width: 2px;
+  background: repeating-linear-gradient(to bottom, var(--line) 0 8px, transparent 8px 14px);
+  border-radius: 1px;
+}
 
+/* Day entry */
+.entry { position: relative; padding-left: 40px; margin-bottom: 36px; }
+.entry:last-child { margin-bottom: 0; }
 
+/* Date pin */
+.date-pin {
+  position: absolute; left: 0; top: 2px;
+  width: 28px; height: 28px;
+  background: var(--accent);
+  border-radius: 50% 50% 50% 4px;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size: 10px; font-weight: 800;
+  box-shadow: 0 3px 8px rgba(232,115,74,0.3);
+  z-index: 2;
+}
+.entry.e2 .date-pin { background: var(--sky); box-shadow: 0 3px 8px rgba(107,155,195,0.3); }
+.entry.e3 .date-pin { background: var(--sage); box-shadow: 0 3px 8px rgba(122,155,118,0.3); }
 
+/* Page card */
+.page-card {
+  background: var(--card);
+  border-radius: 4px 18px 18px 18px;
+  border: 1px solid rgba(232,223,208,0.6);
+  box-shadow: 0 4px 20px rgba(62,58,51,0.06), 0 1px 3px rgba(62,58,51,0.04);
+  overflow: hidden;
+  position: relative;
+}
+/* Washi tape */
+.page-card::before {
+  content:"";
+  position: absolute; top: -6px; right: 24px;
+  width: 58px; height: 16px;
+  background: repeating-linear-gradient(45deg, rgba(232,115,74,0.18) 0 4px, rgba(232,115,74,0.10) 4px 8px);
+  border-radius: 1px;
+  transform: rotate(3deg);
+  z-index: 3;
+}
+.entry.e2 .page-card::before {
+  background: repeating-linear-gradient(45deg, rgba(107,155,195,0.18) 0 4px, rgba(107,155,195,0.10) 4px 8px);
+}
+.entry.e3 .page-card::before {
+  background: repeating-linear-gradient(45deg, rgba(122,155,118,0.18) 0 4px, rgba(122,155,118,0.10) 4px 8px);
+}
 
-/* ===== Header ===== */
-.header{flex-shrink:0;padding:calc(var(--safe-t) + 12px) 20px 10px;width:100%;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2;}
-.h-left{display:flex;align-items:center;gap:11px;}
-.h-logo{width:42px;height:42px;border-radius:16px;background:#C4442A;display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;box-shadow:0 4px 14px rgba(255,159,124,0.35);transition:transform .3s var(--ease-spring);}
-.h-logo:active{transform:scale(0.9) rotate(-10deg);}
-.h-greeting{font-size:17px;font-weight:800;letter-spacing:-0.3px;color:#D4572E;}
-.h-date{font-size:11px;color:#EAEAEA;margin-top:1px;font-weight:500;}
-.h-right{display:flex;gap:8px;}
-.h-btn{width:38px;height:38px;border-radius:14px;background:rgba(255,255,255,0.85);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--sh-sm);transition:all .25s var(--ease-spring);color:#EAEAEA;}
-.h-btn svg{width:17px;height:17px;}
-.h-btn:active{transform:scale(0.85);box-shadow:var(--sh-md);}
+/* Card head */
+.pc-head {
+  padding: 16px 18px 12px;
+  display:flex; justify-content:space-between; align-items:flex-end;
+  border-bottom: 1px dashed var(--line);
+}
+.pc-head .pc-date { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+.pc-head .pc-week { font-size: 10px; color: var(--ink3); margin-top: 2px; }
+.pc-head .pc-weight {
+  text-align: right; display:flex; align-items: baseline; gap:3px;
+}
+.pc-head .pc-w-num { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+.pc-head .pc-w-unit { font-size: 10px; color: var(--ink3); font-weight: 500; }
+.pc-head .pc-w-chg {
+  font-size: 9px; font-weight: 700;
+  border-radius: 8px; padding: 2px 6px; margin-left: 5px;
+  align-self: center;
+}
+.pc-w-chg.up { color: var(--accent); background: var(--butter-l); }
+.pc-w-chg.down { color: var(--sage); background: var(--sage-l); }
+.pc-w-chg.same { color: var(--ink3); background: var(--paper2); }
 
-/* ===== Scroll content ===== */
-.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 20px calc(var(--safe-b) + 100px);scrollbar-width:none;position:relative;z-index:1;width:100%;}
-.content::-webkit-scrollbar{display:none;}
+.pc-body { padding: 14px 18px 18px; }
 
-/* ===== Stagger animations ===== */
-@keyframes popUp{from{opacity:0;transform:translateY(24px) scale(0.96);}to{opacity:1;transform:translateY(0) scale(1);}}
-.pop{}
-@keyframes slideLeft{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+/* Section */
+.sec { margin-bottom: 16px; }
+.sec:last-child { margin-bottom: 0; }
+.sec-tag {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--ink3); text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.sec-tag .st-line { width: 16px; height: 2px; border-radius: 1px; }
+.sec-tag.t-w .st-line { background: var(--sky); }
+.sec-tag.t-d .st-line { background: var(--butter); }
+.sec-tag.t-a .st-line { background: var(--sage); }
 
-/* ===== Calorie Hero ===== */
-.hero{margin-bottom:14px;position:relative;width:100%;}
-.hero-card{background:#FFFFFF;border-radius:var(--r-lg);padding:26px 22px;box-shadow:var(--sh-md);position:relative;overflow:hidden;}
+/* Weight tiles */
+.w-row { display:flex; gap:10px; }
+.w-box {
+  flex:1; background: var(--paper); border-radius: 12px;
+  padding: 12px 8px; text-align:center;
+  border: 1px solid rgba(232,223,208,0.5);
+}
+.w-box .wb-ico { font-size: 15px; margin-bottom: 2px; }
+.w-box .wb-label { font-size: 9px; color: var(--ink3); }
+.w-box .wb-val { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-top: 2px; }
+.w-box .wb-val .u { font-size: 10px; font-weight: 400; color: var(--ink3); }
+.w-note {
+  margin-top: 8px; font-size: 10px; color: var(--ink2);
+  background: var(--paper); border-radius: 10px; padding: 7px 12px;
+  text-align:center; border: 1px dashed var(--line);
+}
 
-.hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;position:relative;z-index:1;}
-.hero-label{font-size:12px;font-weight:700;color:#EAEAEA;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;gap:6px;}
-.hero-label .hl-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);}
-@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.3);opacity:0.6;}}
-.hero-nav{display:flex;align-items:center;gap:6px;}
-.date-nav{width:30px;height:30px;border-radius:11px;background:var(--bg);border:none;color:#EAEAEA;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s var(--ease-spring);box-shadow:var(--sh-sm);padding:0;}
-.date-nav svg{width:13px;height:13px;}
-.date-nav:active{transform:scale(0.8);background:var(--peach-l);color:var(--primary);}
-.date-nav:disabled{opacity:0.25;pointer-events:none;}
-.hero-date-chip{font-size:11px;font-weight:700;color:#EAEAEA;background:var(--bg);padding:6px 12px;border-radius:16px;box-shadow:var(--sh-sm);font-variant-numeric:tabular-nums;min-width:70px;text-align:center;}
-.hero-main{display:flex;align-items:center;gap:22px;position:relative;z-index:1;}
-.ring-wrap{position:relative;width:140px;height:140px;flex-shrink:0;}
-.ring-wrap svg{transform:rotate(-90deg);}
-.ring-bg{fill:none;stroke:#F5EAE2;stroke-width:11;}
-.ring-val{fill:none;stroke:url(#rgrad);stroke-width:11;stroke-linecap:round;stroke-dasharray:389;stroke-dashoffset:389;transition:stroke-dashoffset 1.4s var(--ease-out);}
-.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.ring-num{font-size:36px;font-weight:800;letter-spacing:-1.5px;color:#C4442A;font-variant-numeric:tabular-nums;color:#111111;line-height:1;}
-.ring-unit{font-size:9px;color:#222222;font-weight:600;letter-spacing:2px;margin-top:5px;}
-.hero-info{flex:1;display:flex;flex-direction:column;gap:0;}
-.hi-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;}
-.hi-row + .hi-row{border-top:1px dashed var(--line);}
-.hi-label{font-size:12px;color:#EAEAEA;font-weight:500;}
-.hi-val{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;transition:color .3s;}
-.hi-val.c1{color:#E85A8A;} .hi-val.c2{color:#2D6B4E;} .hi-val.c3{color:#D4899E;}
+/* Nutrition strip */
+.nutri {
+  display:flex; gap:0; background: var(--paper);
+  border-radius: 12px; overflow:hidden;
+  border: 1px solid rgba(232,223,208,0.5);
+  margin-bottom: 12px;
+}
+.nutri-cell {
+  flex:1; text-align:center; padding: 10px 4px;
+  position:relative;
+}
+.nutri-cell:not(:last-child)::after {
+  content:""; position:absolute; right:0; top:25%; height:50%;
+  width:1px; background: var(--line);
+}
+.nutri-cell .n-val { font-size: 15px; font-weight: 800; letter-spacing:-0.3px; }
+.nutri-cell .n-val.total { color: var(--accent); font-size: 17px; }
+.nutri-cell .n-val.p { color: var(--sky); }
+.nutri-cell .n-val.c { color: var(--butter); }
+.nutri-cell .n-val.f { color: var(--rose); }
+.nutri-cell .n-label { font-size: 8px; color: var(--ink3); margin-top: 2px; letter-spacing: 1px; }
 
-/* ===== Macros ===== */
-.macros{display:flex;gap:10px;margin-bottom:16px;width:100%;}
-.macro-card{flex:1;background:#FFFFFF;border-radius:var(--r-md);padding:16px 10px;text-align:center;box-shadow:var(--sh-sm);transition:all .3s var(--ease-spring);position:relative;overflow:hidden;}
-.macro-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;border-radius:4px 4px 0 0;transition:width 1s var(--ease-out);width:0%;}
-.macro-card.p::before{background:var(--sage);}
-.macro-card.c::before{background:var(--primary);}
-.macro-card.f::before{background:var(--lilac);}
-.macro-card:active{transform:scale(0.94) translateY(2px);box-shadow:var(--sh-md);}
-.mc-icon{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 9px;font-size:17px;transition:transform .3s var(--ease-spring);}
-.macro-card:active .mc-icon{transform:scale(1.15) rotate(8deg);}
-.mc-icon.p{background:var(--sage-l);color:var(--sage);} .mc-icon.c{background:var(--peach-l);color:var(--primary);} .mc-icon.f{background:var(--lilac-l);color:var(--lilac);}
-.mc-val{font-size:19px;font-weight:800;letter-spacing:-0.4px;font-variant-numeric:tabular-nums;}
-.mc-val.p{color:#2D6B4E;} .mc-val.c{color:#C43060;} .mc-val.f{color:#8B6914;}
-.mc-label{font-size:10px;color:#222222;margin-top:4px;font-weight:600;letter-spacing:0.3px;}
+/* Meal entries */
+.meal { display:flex; gap:12px; margin-bottom: 12px; }
+.meal:last-child { margin-bottom:0; }
+.meal-rail { display:flex; flex-direction:column; align-items:center; width:34px; flex-shrink:0; }
+.meal-rail .m-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 12px; flex-shrink: 0;
+  border: 2px solid var(--card);
+  box-shadow: 0 0 0 1.5px var(--line);
+}
+.meal-rail .m-line { flex:1; width:1.5px; background: var(--line); margin-top:3px; }
+.m-dot.morning { background: var(--butter-l); }
+.m-dot.noon { background: var(--sky-l); }
+.m-dot.snack { background: var(--rose-l); }
+.m-dot.night { background: #EDE9FE; }
+.meal-info { flex:1; min-width:0; }
+.meal-name { font-size: 12px; font-weight: 700; margin-bottom: 5px; display:flex; align-items:baseline; gap:6px; }
+.meal-name .m-time { font-size: 9px; color: var(--ink3); font-weight: 400; }
+.meal-name .m-sum { font-size: 9px; color: var(--accent); font-weight: 700; margin-left:auto; }
+.food-line {
+  display:flex; align-items:center; justify-content:space-between;
+  font-size: 11px; color: var(--ink2);
+  padding: 4px 0; border-bottom: 1px dashed rgba(232,223,208,0.6);
+}
+.food-line:last-child { border-bottom:none; }
+.food-line .f-name .f-port { font-size: 9px; color: var(--ink3); margin-left: 4px; }
+.food-line .f-kcal { font-size: 10px; font-weight: 700; color: var(--butter); }
 
-/* ===== Weight ===== */
-.weight-card{background:#FFFFFF;border-radius:var(--r-lg);padding:22px;margin-bottom:18px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
+/* Advice */
+.adv-card {
+  background: var(--sage-l);
+  border-radius: 14px; padding: 14px;
+  border: 1px solid rgba(122,155,118,0.15);
+}
+.adv-good { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+.adv-good .g-tag {
+  font-size: 9px; font-weight: 700;
+  background:#fff; color: var(--sage);
+  border-radius: 8px; padding: 4px 9px;
+  border: 1px solid rgba(122,155,118,0.25);
+}
+.adv-tip { display:flex; gap:7px; padding:3px 0; }
+.adv-tip .at-dot { width:4px; height:4px; border-radius:50%; background: var(--sage); margin-top:5.5px; flex-shrink:0; }
+.adv-tip .at-txt { font-size: 10.5px; color: var(--ink2); line-height:1.6; }
+.adv-final {
+  margin-top: 10px; font-size: 10.5px; font-weight: 600; color: var(--sage);
+  background: rgba(255,255,255,0.6); border-radius: 10px; padding: 8px 12px;
+  border: 1px dashed rgba(122,155,118,0.3);
+}
 
-.wc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.wc-title{font-size:12px;font-weight:700;color:#222222;text-transform:uppercase;letter-spacing:0.8px;}
-.wc-badge{font-size:11px;font-weight:800;padding:5px 12px;border-radius:20px;transition:all .3s var(--ease-spring);}
-.wc-badge.up{color:var(--primary);background:var(--orange-bg);animation:slideLeft .5s var(--ease-out) both;}
-.wc-badge.down{color:var(--sage);background:var(--sage-l);animation:slideLeft .5s var(--ease-out) both;}
-.wc-big{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
-.wc-num{font-size:44px;font-weight:800;letter-spacing:-1.5px;color:#C4442A;font-variant-numeric:tabular-nums;line-height:1;color:#111111;}
-.wc-unit{font-size:16px;color:#222222;font-weight:600;}
-.wc-sub{font-size:12px;color:#EAEAEA;display:flex;align-items:center;gap:6px;font-weight:500;}
-.wc-sub .dot{width:6px;height:6px;border-radius:50%;background:var(--sage);}
-/* mini chart */
-.mini-chart{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
-.mini-label{font-size:11px;color:#222222;font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;}
-.chart-svg{width:100%;height:64px;display:block;}
-.chart-line{fill:none;stroke:url(#cgrad);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:600;stroke-dashoffset:600;animation:drawLine 1.5s var(--ease-out) forwards;}
-@keyframes drawLine{to{stroke-dashoffset:0;}}
-.chart-dot{transition:all .3s var(--ease-spring);cursor:pointer;}
-.chart-dot:hover{r:6;}
+/* Footer */
+.foot {
+  text-align:center; padding: 10px 0 40px;
+  font-size: 10px; color: var(--ink3); letter-spacing: 2px;
+}
+.foot .f-line { width: 40px; height:1px; background: var(--line); margin: 0 auto 10px; }
 
-/* ===== Meals ===== */
-.section{margin-bottom:22px;}
-.sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 4px;}
-.sec-title{font-size:15px;font-weight:800;letter-spacing:-0.2px;display:flex;align-items:center;gap:8px;color:#111111;}
-.sec-more{font-size:13px;color:#C4442A;font-weight:700;cursor:pointer;transition:all .2s;}
-.sec-more:active{transform:scale(0.92);opacity:0.7;}
-.meal-card{background:#FFFFFF;border-radius:var(--r-md);margin-bottom:10px;box-shadow:var(--sh-sm);overflow:hidden;transition:all .3s var(--ease-spring);}
-.meal-card:active{transform:scale(0.97);box-shadow:var(--sh-md);}
-.meal-row{display:flex;align-items:center;padding:15px 18px;gap:14px;}
-.meal-icon{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;transition:transform .3s var(--ease-spring);}
-.meal-card:active .meal-icon{transform:scale(1.1) rotate(-5deg);}
-.meal-icon.breakfast{background:#FBF3E0;color:#C49A3F;}
-.meal-icon.lunch{background:#FDF1EA;color:var(--primary);}
-.meal-icon.dinner{background:#F5EDEA;color:#C43060;}
-.meal-icon.snack{background:#EBF3EE;color:var(--green);}
-.meal-info{flex:1;min-width:0;}
-.meal-name{font-size:15px;font-weight:700;margin-bottom:3px;color:#111111;}
-.meal-detail{font-size:11.5px;color:#222222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
-.meal-right{text-align:right;flex-shrink:0;}
-.meal-kcal{font-size:16px;font-weight:800;color:#C4442A;font-variant-numeric:tabular-nums;color:var(--primary);}
-.meal-kcal .u{font-size:10px;color:#222222;font-weight:600;}
-.meal-time{font-size:10px;color:#222222;margin-top:2px;font-weight:500;}
-
-/* Expandable meal items */
-.meal-items{max-height:0;overflow:hidden;transition:max-height .4s var(--ease-out);padding:0 18px;}
-.meal-items .mi-row{padding:7px 0;}
-.meal-card.open .meal-items{max-height:600px;padding-bottom:12px;}
-.mi-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-top:1px solid var(--line);animation:slideIn .3s var(--ease-out) both;}
-.mi-row .mi-name{font-size:12px;color:#EAEAEA;font-weight:400;}
-.mi-row .mi-name .mi-port{font-size:10px;color:#222222;margin-left:4px;font-weight:400;}
-.mi-row .mi-kcal{font-size:12px;font-weight:600;color:var(--primary);font-variant-numeric:tabular-nums;}
-.meal-card.open .chev{transform:rotate(180deg);}
-.chev{width:12px;height:12px;color:#222222;transition:transform .3s var(--ease-spring);flex-shrink:0;margin-left:4px;}
-@keyframes slideIn{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:translateX(0);}}
-.add-meal{width:100%;padding:16px;border-radius:var(--r-md);border:2px dashed var(--line);background:transparent;color:#222222;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .25s var(--ease-spring);}
-.add-meal:active{border-color:var(--primary);color:var(--primary);background:#FDF1EA;transform:scale(0.97);}
-.add-meal svg{width:16px;height:16px;transition:transform .3s var(--ease-spring);display:inline-block;vertical-align:middle;}
-.add-meal:active svg{transform:rotate(90deg);}
-
-/* ===== Advice ===== */
-.advice-card{background:linear-gradient(135deg,#EEF6F2,#FFFFFF 60%);border-radius:var(--r-lg);padding:20px;margin-bottom:16px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;}
-
-.adv-head{display:flex;align-items:center;gap:9px;margin-bottom:14px;position:relative;z-index:1;}
-.adv-icon{width:36px;height:36px;border-radius:12px;background:var(--sage);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;box-shadow:0 3px 10px rgba(127,182,158,0.3);}
-.adv-title{font-size:14px;font-weight:800;color:#C4442A;}
-.adv-good{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;position:relative;z-index:1;}
-.g-tag{font-size:11px;font-weight:700;color:var(--green);background:#fff;border-radius:16px;padding:5px 13px;box-shadow:var(--sh-sm);transition:all .25s var(--ease-spring);}
-.g-tag:active{transform:scale(0.92);}
-.adv-tip{display:flex;gap:9px;padding:5px 0;font-size:12.5px;color:#EAEAEA;line-height:1.7;font-weight:500;position:relative;z-index:1;}
-.adv-tip .at-d{width:5px;height:5px;border-radius:50%;background:var(--green);margin-top:8px;flex-shrink:0;opacity:0.5;}
-.adv-final{margin-top:14px;font-size:12.5px;font-weight:700;color:#111111;background:var(--bg2);border-radius:var(--r-sm);padding:12px 16px;line-height:1.7;box-shadow:var(--sh-sm);position:relative;z-index:1;}
-
-/* ===== Bottom Tab ===== */
-.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;justify-content:space-around;padding:10px 0 calc(var(--safe-b) + 10px);z-index:100;border-top:1px solid rgba(0,0,0,0.06);}
-.tab-item{color:#EAEAEA;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 18px;cursor:pointer;color:#222222;transition:all .3s var(--ease-spring);border:none;background:none;font-family:inherit;position:relative;}
-.tab-item svg{width:22px;height:22px;transition:transform .3s var(--ease-spring);}
-.tab-item span{font-size:10px;font-weight:600;letter-spacing:0.2px;}
-.tab-item.active{color:var(--primary);}
-.tab-item.active svg{transform:translateY(-3px) scale(1.1);}
-.tab-item:active{transform:scale(0.85);}
-
-/* ===== FAB ===== */
-.fab{position:fixed;right:calc(50% - 215px + 20px);bottom:calc(var(--safe-b) + 76px);width:58px;height:58px;border-radius:22px;background:#C4442A;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 6px 20px rgba(124,111,232,0.35);z-index:99;transition:all .3s var(--ease-spring);}
-@media(max-width:430px){.fab{right:20px;}}
-.fab:active{transform:scale(0.85) rotate(135deg);}
-.fab svg{width:26px;height:26px;}
-
-
-/* ===== Modal ===== */
-.mo{position:fixed;inset:0;background:rgba(44,44,46,0.3);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s ease;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
-.mo.show{opacity:1;pointer-events:auto;}
-.modal{background:var(--bg);border-radius:28px 28px 0 0;width:100%;max-width:430px;max-height:92vh;overflow-y:auto;padding:10px 20px calc(var(--safe-b) + 28px);transform:translateY(100%);transition:transform .5s var(--ease-out);scrollbar-width:none;border-top:1px solid rgba(255,255,255,0.85);}
-.modal::-webkit-scrollbar{display:none;}
-.mo.show .modal{transform:translateY(0);}
-.modal-grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 16px;}
-.m-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-.m-title{font-size:20px;font-weight:800;letter-spacing:-0.4px;}
-.m-close{width:36px;height:36px;border-radius:14px;background:var(--bg2);border:none;color:#EAEAEA;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--sh-sm);transition:all .25s var(--ease-spring);}
-.m-close:active{transform:scale(0.85) rotate(90deg);}
-.m-close svg{width:14px;height:14px;}
-.m-sec{margin-bottom:20px;}
-.m-label{font-size:13px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.m-label .ml-e{font-size:15px;}
-.meal-picker{display:flex;gap:10px;}
-.mp{flex:1;padding:14px 4px;border-radius:var(--r-md);border:2px solid transparent;background:var(--bg2);font-size:12px;font-weight:700;color:#EAEAEA;cursor:pointer;transition:all .3s var(--ease-spring);font-family:inherit;text-align:center;box-shadow:var(--sh-sm);}
-.mp .mp-i{display:block;font-size:20px;margin-bottom:5px;transition:transform .3s var(--ease-spring);}
-.mp:active{transform:scale(0.93);}
-.mp.active{border-color:var(--primary);color:var(--primary);background:var(--peach-l);box-shadow:0 4px 14px rgba(255,159,124,0.2);}
-.mp.active .mp-i{transform:scale(1.15);}
-.m-input{width:100%;padding:16px;border-radius:var(--r-md);border:none;font-size:15px;font-family:inherit;background:var(--bg2);color:#111111;outline:none;transition:all .3s;line-height:1.7;resize:vertical;box-shadow:var(--sh-sm);}
-.m-input:focus{box-shadow:var(--sh-md),0 0 0 3px var(--peach-l);}
-.m-input::placeholder{color:#222222;}
-.pu{border:2.5px dashed var(--line);border-radius:var(--r-md);padding:28px;text-align:center;cursor:pointer;transition:all .3s var(--ease-spring);background:var(--bg2);}
-.pu:active{border-color:var(--primary);background:var(--peach-l);transform:scale(0.97);}
-.pu-icon{font-size:36px;margin-bottom:8px;transition:transform .3s var(--ease-spring);}
-.pu:active .pu-icon{transform:scale(1.2);}
-.pu-text{font-size:14px;font-weight:800;}
-.pu-sub{font-size:11px;color:#222222;margin-top:4px;font-weight:500;}
-.pp{max-width:100%;border:2px solid var(--line);border-radius:var(--r-md);margin-top:12px;display:none;box-shadow:var(--sh-md);animation:popUp .4s var(--ease-out);}
-.pp.show{display:block;}
-.an-btn{width:100%;padding:17px;border-radius:var(--r-md);border:none;background:#C4442A;color:#fff;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 6px 20px rgba(255,138,128,0.35);transition:all .3s var(--ease-spring);display:flex;align-items:center;justify-content:center;gap:8px;}
-.an-btn:active{transform:scale(0.96);}
-.an-btn:disabled{opacity:0.5;pointer-events:none;}
-.an-btn svg{width:18px;height:18px;}
-.loading{text-align:center;padding:30px;display:none;}
-.loading.show{display:block;}
-.ld-icon{font-size:40px;animation:spin 1s linear infinite;display:inline-block;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.ld-text{font-size:13px;color:#222222;margin-top:12px;font-weight:600;}
-.result{margin-top:16px;padding:20px;background:var(--bg2);border-radius:var(--r-md);display:none;animation:popUp .5s var(--ease-spring);box-shadow:var(--sh-md);}
-.result.show{display:block;}
-.ar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-.ar-title{font-size:16px;font-weight:800;}
-.ar-badge{font-size:10px;font-weight:800;padding:4px 12px;border-radius:14px;background:var(--sage-l);color:var(--sage);}
-.ar-item{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px dashed var(--line);}
-.ar-item .k{font-size:14px;color:#111111;font-weight:600;}
-.ar-item .kd{font-size:11px;color:#222222;display:block;margin-top:2px;font-weight:500;}
-.ar-item .v{font-weight:800;color:var(--primary);font-variant-numeric:tabular-nums;font-size:15px;}
-.ar-total{display:flex;justify-content:space-between;align-items:center;padding:16px 0 4px;font-size:15px;font-weight:800;}
-.ar-total .v{color:var(--primary);font-size:22px;font-variant-numeric:tabular-nums;}
-.ar-sum{font-size:12px;color:#EAEAEA;margin-top:12px;line-height:1.7;padding:14px;background:var(--sage-l);border-radius:var(--r-sm);font-weight:500;}
-.ar-actions{display:flex;gap:10px;margin-top:18px;}
-.ar-actions button{flex:1;padding:15px;border-radius:var(--r-md);border:none;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .25s var(--ease-spring);display:flex;align-items:center;justify-content:center;gap:6px;}
-.ar-actions button:active{transform:scale(0.94);}
-.ar-save{background:#C4442A;color:#fff;box-shadow:0 4px 14px rgba(255,138,128,0.3);}
-.ar-copy{background:var(--bg2);color:#EAEAEA;box-shadow:var(--sh-sm);}
+/* Float TOC button */
+.toc-btn {
+  position: fixed; right: 16px; bottom: 20px;
+  width: 44px; height: 44px; border-radius: 14px;
+  background: var(--ink); color: var(--paper);
+  display:flex; align-items:center; justify-content:center;
+  font-size: 18px; cursor:pointer;
+  box-shadow: 0 4px 16px rgba(62,58,51,0.25);
+  border: none; z-index: 50;
+  transition: transform .2s;
+}
+.toc-btn:active { transform: scale(0.9); }
 
 /* Toast */
-.toast{position:fixed;bottom:calc(var(--safe-b) + 92px);left:50%;transform:translateX(-50%) translateY(20px) scale(0.9);background:var(--ink);color:#fff;font-size:13px;font-weight:700;padding:12px 24px;border-radius:28px;opacity:0;pointer-events:none;transition:all .4s var(--ease-spring);z-index:300;white-space:nowrap;box-shadow:var(--sh-lg);max-width:85vw;text-align:center;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
+.toast {
+  position: fixed; bottom: 80px; left:50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--ink); color: var(--paper);
+  font-size: 12px; padding: 8px 18px; border-radius: 20px;
+  opacity:0; pointer-events:none;
+  transition: all .3s cubic-bezier(.32,.72,.32,1);
+  z-index: 100;
+}
+.toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
 
-/* Views */
-.view{display:none;flex-direction:column;flex:1;min-height:0;}
-.view.active{display:flex;}
-.view .content::-webkit-scrollbar{display:none;}
-.view .content{padding:0 20px calc(var(--safe-b) + 100px);flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-.view .content::-webkit-scrollbar{display:none;}
+/* Entry animations */
+.entry { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.32,.72,.32,1); }
+.entry.visible { opacity: 1; transform: translateY(0); }
 
-/* Body Analysis */
-.body-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;margin-bottom:16px;}
-.bc-head{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;margin-bottom:16px;color:#111111;}
-.bc-icon{width:32px;height:32px;border-radius:10px;background:var(--orange-bg);display:flex;align-items:center;justify-content:center;font-size:15px;}
-.bc-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);}
-.bc-row:last-child{border:none;}
-.bc-l{font-size:13px;color:#EAEAEA;font-weight:600;width:40px;flex-shrink:0;}
-.bc-input{flex:1;padding:8px 12px;border:1.5px solid var(--line);border-radius:var(--r-sm);font-size:15px;font-family:inherit;background:var(--bg);color:#111111;outline:none;transition:all .25s;font-variant-numeric:tabular-nums;-moz-appearance:textfield;}
-.bc-input::-webkit-inner-spin-button{-webkit-appearance:none;}
-.bc-input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(232,115,74,0.08);}
-.bc-u{font-size:12px;color:#222222;font-weight:600;width:24px;flex-shrink:0;}
-.bc-gender{display:flex;gap:8px;flex:1;}
-.g-btn{flex:1;padding:9px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--bg);font-size:13px;font-weight:700;color:#EAEAEA;cursor:pointer;transition:all .25s var(--ease-spring);font-family:inherit;}
-.g-btn.active{border-color:var(--primary);color:var(--primary);background:#FDF1EA;}
-.g-btn:active{transform:scale(0.95);}
-
-/* Journal */
-.journal-entry{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:16px;margin-bottom:12px;position:relative;transition:all .25s;}
-.journal-entry:active{transform:scale(0.98);}
-.je-date{font-size:10px;font-weight:700;color:#222222;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
-.je-type{font-size:9px;font-weight:800;padding:2px 8px;border-radius:8px;}
-.je-type.travel{background:rgba(123,163,204,0.12);color:var(--blue);}
-.je-type.feast{background:rgba(232,115,74,0.1);color:var(--primary);}
-.je-type.milestone{background:var(--green-bg);color:var(--green);}
-.je-type.other{background:var(--line);color:#EAEAEA;}
-.je-title{font-size:14px;font-weight:800;margin-bottom:5px;color:#111111;}
-.je-desc{font-size:12px;color:#EAEAEA;line-height:1.7;}
-.je-impact{margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r-sm);font-size:11px;color:#EAEAEA;line-height:1.6;border-left:3px solid var(--primary);}
-.je-impact b{color:var(--primary);}
-.add-event-card{background:var(--card);border:2px dashed var(--line);border-radius:var(--r-md);padding:24px;text-align:center;cursor:pointer;transition:all .25s var(--ease-spring);margin-top:8px;}
-.add-event-card:active{border-color:var(--primary);background:#FDF1EA;transform:scale(0.97);}
-
-
-/* User background */
-.bg-user{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;pointer-events:none;z-index:0;}
-.bg-user img{width:100%;height:100%;object-fit:cover;}
-.bg-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.15);}
-/* Hidden file input */
-#bgInput{display:none;}
-
-
-/* Stats view */
-.stat-card{background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.06);border-radius:var(--r-md);padding:18px;margin-bottom:14px;}
-.sc-head{font-size:14px;font-weight:800;margin-bottom:14px;color:#111111;}
-.sc-grid{display:flex;justify-content:space-around;text-align:center;}
-.sc-item .sc-val{font-size:22px;font-weight:800;letter-spacing:-0.5px;font-variant-numeric:tabular-nums;color:var(--primary);}
-.sc-item .sc-l{font-size:10px;color:#222222;margin-top:3px;font-weight:600;}
-.sc-tip{font-size:12px;color:#EAEAEA;padding:8px 0;line-height:1.7;display:flex;align-items:flex-start;gap:6px;}
-.sc-tip b{color:#111111;font-weight:700;}
-.sc-tip.warn{color:var(--orange);}
-.sc-tip.ok{color:var(--green);}
-.sc-tip::before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor;margin-top:8px;flex-shrink:0;opacity:0.4;}
-.sc-note{font-size:10px;color:#222222;margin-top:6px;padding:6px 10px;background:var(--bg);border-radius:8px;font-weight:500;}
-.stat-card.more{border:1px solid rgba(0,0,0,0.06);}
-.stat-card.less{border:1px solid rgba(0,0,0,0.06);}
-.stat-card.rec{border:1px solid rgba(0,0,0,0.06);}
-
-
-.body-link{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:6px 14px;border-radius:20px;background:var(--blue-light);color:var(--blue);font-size:11px;font-weight:700;border:none;cursor:pointer;transition:all .2s var(--spring);font-family:inherit;}
-.body-link:active{transform:scale(0.95);}
-
-
-/* Cat decorations */
-.cat-deco{position:fixed;pointer-events:none;z-index:0;opacity:0.3;}
-.whisker{position:absolute;background:#E8B4C8;height:2px;width:40px;border-radius:2px;}
-.w1{transform:rotate(-8deg);width:35px;}
-.w2{transform:rotate(8deg);width:35px;margin-top:10px;margin-left:5px;}
-.ear{position:absolute;width:0;height:0;}
-.e1{border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:18px solid rgba(255,143,171,0.15);transform:rotate(-15deg);}
-.e2{border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:18px solid rgba(255,143,171,0.15);transform:rotate(15deg);margin-left:18px;}
-
-/* Cat face on hero */
-.hero-face{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(196,68,42,0.3);font-weight:700;letter-spacing:1px;}
-
-/* Refine meal cards - no left border */
-.meal-card{border-left:none!important;border-right:none!important;}
-
-/* Cleaner borders - no colored left borders */
-.stat-card,.stat-card.more,.stat-card.less,.stat-card.rec{border-left:1px solid rgba(0,0,0,0.06)!important;border-right:1px solid rgba(0,0,0,0.06)!important;}
-
-/* Unified single card */
-.main-card{background:rgba(255,255,255,0.85);border-radius:var(--r-lg);padding:0;position:relative;overflow:hidden;margin-bottom:20px;}
-.main-card .mc-head{padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.05);}
-.main-card .mc-date{font-size:17px;font-weight:800;color:#111111;letter-spacing:-0.3px;}
-.main-card .mc-week{font-size:11px;color:#222222;font-weight:500;margin-top:2px;}
-.main-card .mc-weight{text-align:right;display:flex;align-items:baseline;gap:3px;}
-.main-card .mc-w-num{font-size:26px;font-weight:800;color:#111111;letter-spacing:-1px;font-variant-numeric:tabular-nums;}
-.main-card .mc-w-unit{font-size:11px;color:#222222;font-weight:500;}
-.main-card .mc-body{padding:16px 20px 20px;}
-.mc-section{margin-bottom:18px;}
-.mc-section:last-child{margin-bottom:0;}
-.mc-sec-tag{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#222222;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.mc-sec-tag .st-dot{display:none;}
-.mc-sec-tag.t-weight .st-dot{background:#C4442A;}
-.mc-sec-tag.t-meals .st-dot{background:#8B6914;}
-.mc-sec-tag.t-notes .st-dot{background:#0A6B4E;}
-/* Inner sections transparent - no separate cards */
-.mc-section .hero-card,.mc-section .weight-card,.mc-section .advice-card{background:transparent!important;border:none!important;box-shadow:none!important;border-radius:0!important;padding:0!important;margin:0!important;}
-.mc-section .macro-card{background:rgba(255,255,255,0.05);border-radius:var(--r-sm);}
-.mc-section .meal-card{background:rgba(255,255,255,0.04);border-radius:var(--r-sm);}
-
-.quick-actions{display:flex;gap:10px;padding:0 20px 16px;justify-content:center;}
-.qa-btn{padding:10rpx 28rpx;border-radius:20rpx;background:rgba(255,255,255,0.85);color:#EAEAEA;font-size:13px;font-weight:600;cursor:pointer;border:1px solid rgba(0,0,0,0.06);text-align:center;}
-.qa-btn:active{transform:scale(0.95);}
-.qa-btn.active{background:var(--primary);color:#fff;}
-
+/* Top progress */
+.read-progress {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--rose));
+  z-index: 60; transition: width .1s linear;
+  border-radius: 0 2px 2px 0;
+}
 </style>
 </head>
 <body>
 
-<div class="bg-flow" id="bgFlow"></div>
-<div class="bg-user" id="bgUser" style="display:none;"><img id="bgImg" style="width:100%;height:100%;object-fit:cover;"><div class="bg-overlay"></div></div>
+<div class="read-progress" id="progress"></div>
 
-<div class="header">
-<div class="h-left">
-<div class="h-logo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
-<div><div class="h-greeting" id="greeting">Hi</div><div class="h-date" id="todayDate"></div></div>
-</div>
-<div class="h-right">
-<button class="h-btn" onclick="openBgUpload()" title="更换背景"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></button>
+<!-- Cover -->
+<div class="cover">
+  <div class="cover-badge">📖 Health Journal</div>
+  <div class="cover-title">我的<em>健康手账</em></div>
+  <div class="cover-sub">记录体重与饮食 · 慢慢变好<br><span id="coverDate"></span></div>
 
-</div>
-</div>
-
-<div class="view active" id="viewHome"><div class="content" id="content">
-<!-- Single unified card -->
-<div class="main-card">
-<div class="mc-head">
-<div><div class="mc-date" id="mcDate">--</div><div class="mc-week" id="mcWeek">--</div></div>
-<div class="mc-weight"><span class="mc-w-num" id="mcWeight">--</span><span class="mc-w-unit">kg</span></div>
-</div>
-<div class="mc-body">
-
-<!-- Calories section -->
-<div class="mc-section">
-<div class="mc-sec-tag"><span class="st-dot" style="background:#C4442A;"></span>CALORIES · 热量</div>
-
-<div class="hero pop">
-<div class="hero-card">
-<div class="hero-top">
-<div class="hero-label"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#C4442A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><span id="heroLabel">今日热量</span></div>
-<div class="hero-nav">
-<button class="date-nav" onclick="navDay(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-<div class="hero-date-chip" id="heroDate"></div>
-<button class="date-nav" id="btnNextDay" onclick="navDay(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-</div>
-</div>
-<div class="hero-main">
-<div class="ring-wrap">
-<svg width="140" height="140" viewBox="0 0 140 140">
-<defs><linearGradient id="rgrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#D4572E"/><stop offset="100%" stop-color="#C47D6A"/></linearGradient></defs>
-<circle class="ring-bg" cx="70" cy="70" r="62"/>
-<circle class="ring-val" id="ringVal" cx="70" cy="70" r="62"/>
-</svg>
-<div class="ring-center"><div class="ring-num" id="ringNum">0</div><div class="ring-unit">/ 2000 KCAL</div></div>
-</div>
-<div class="hero-info">
-<div class="hi-row"><span class="hi-label">已摄入</span><span class="hi-val c1" id="hiEaten">--</span></div>
-<div class="hi-row"><span class="hi-label">还能吃</span><span class="hi-val c2" id="hiLeft">--</span></div>
-<div class="hi-row"><span class="hi-label">蛋白质</span><span class="hi-val c3" id="hiProtein">--</span></div>
-</div>
-</div>
-</div>
+  <div class="stamp-row">
+    <div class="stamp tilt-l">
+      <div class="s-num" id="stWeight">--<span class="u">kg</span></div>
+      <div class="s-label">当前体重</div>
+    </div>
+    <div class="stamp">
+      <div class="s-num warn" id="stChange">--<span class="u">kg</span></div>
+      <div class="s-label">较基线</div>
+    </div>
+    <div class="stamp tilt-r">
+      <div class="s-num" id="stDays">--</div>
+      <div class="s-label">已记录</div>
+    </div>
+  </div>
 </div>
 
-<div class="macros pop" style="animation-delay:.1s;">
-<div class="macro-card p"><div class="mc-icon p"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 2 1.5 3.5 3 4.5 1.5 3-1 5.5-1 5.5h11c2 0 4-2 4-5.5 0-3.5-1-8-3-11.5z"/></svg></div><div class="mc-val p" id="macroP">--</div><div class="mc-label">蛋白质</div></div>
-<div class="macro-card c"><div class="mc-icon c"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M4 20V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div><div class="mc-val c" id="macroC">--</div><div class="mc-label">碳水</div></div>
-<div class="macro-card f"><div class="mc-icon f"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C7 2 3 7 3 13s4 9 9 9 9-3 9-9-4-11-9-11z"/><circle cx="12" cy="13" r="3"/></svg></div><div class="mc-val f" id="macroF">--</div><div class="mc-label">脂肪</div></div>
+<div class="doodle-div"><div class="dd-line"></div><div class="dd-icon">🌱</div><div class="dd-line"></div></div>
+
+<!-- Journal entries -->
+<div class="journal" id="journal"></div>
+
+<div class="foot">
+  <div class="f-line"></div>
+  TO BE CONTINUED · 明天继续记录
 </div>
 
-</div>
-<div class="mc-section">
-<div class="mc-sec-tag"><span class="st-dot" style="background:#C4442A;"></span>WEIGHT · 体重</div>
-<div class="weight-card pop" style="animation-delay:.15s;">
-<div class="wc-top"><div class="wc-title" style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--ink2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22c4.5 0 8-3.5 8-8s-3.5-8-8-8-8 3.5-8 8 3.5 8 8 8z"/><path d="M12 14l3-3"/></svg> 体重记录</div><div class="wc-badge" id="wcBadge">--</div></div>
-<div class="wc-big"><span class="wc-num" id="wcNum">--</span><span class="wc-unit">kg</span></div>
-<div class="wc-sub"><span class="dot"></span><span id="wcSub">--</span></div>
-<button class="body-link" onclick="openBody()">📏 填写身高·体型分析</button>
-<div class="mini-chart"><div class="mini-label"><span>体重趋势</span><span id="chartRange"></span></div><div id="chartArea"></div></div>
-</div>
-
-<div class="section pop" style="animation-delay:.2s;">
-<div class="sec-head"><div class="sec-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#C4442A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18l-2 9H5l-2-9z"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> <span id="mealsTitle">今日饮食</span></div><div class="sec-more" onclick="openModal()">+ 记录</div></div>
-<div id="mealList"></div>
-</div>
-
-</div>
-<div class="mc-section">
-<div class="mc-sec-tag"><span class="st-dot" style="background:#0A6B4E;"></span>NOTES · 建议</div>
-<div class="advice-card pop" style="animation-delay:.25s;">
-<div class="adv-head"><div class="adv-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></div><div class="adv-title">AI 小助手</div></div>
-<div class="adv-good" id="advGood"></div>
-<div id="advTips"></div>
-<div class="adv-final" id="advFinal"></div>
-</div>
-</div></div>
-
-<!-- ===== Body Analysis View ===== -->
-<div class="view" id="viewBody">
-<div class="content">
-<div class="sec-head" style="padding-top:8px;"><div class="sec-title">📷 体型分析</div></div>
-<div class="body-card">
-<div class="bc-head"><div class="bc-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#C4442A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M6 12V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/><path d="M4 12v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></div><div>基本信息</div></div>
-<div class="bc-row"><span class="bc-l">身高</span><input class="bc-input" id="inpHeight" type="number" placeholder="170" oninput="saveProfile()"><span class="bc-u">cm</span></div>
-<div class="bc-row"><span class="bc-l">体重</span><input class="bc-input" id="inpWeight" type="number" step="0.1" placeholder="72.0" oninput="saveProfile()"><span class="bc-u">kg</span></div>
-<div class="bc-row"><span class="bc-l">年龄</span><input class="bc-input" id="inpAge" type="number" placeholder="25" oninput="saveProfile()"><span class="bc-u">岁</span></div>
-<div class="bc-row"><span class="bc-l">性别</span><div class="bc-gender"><button class="g-btn active" onclick="setGender(0,this)">男</button><button class="g-btn" onclick="setGender(1,this)">女</button></div></div>
-</div>
-<div class="body-card">
-<div class="bc-head"><div class="bc-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#C4442A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div><div>全身照分析</div></div>
-<div class="pu" onclick="document.getElementById('bodyPhoto').click()" style="border:1.5px dashed var(--line);border-radius:var(--r-md);padding:28px;text-align:center;cursor:pointer;">
-<div style="font-size:32px;margin-bottom:8px;color:#222222;">📷</div>
-<div style="font-size:14px;font-weight:700;">拍一张全身照</div>
-<div style="font-size:11px;color:#222222;margin-top:4px;">正面站立，穿贴身衣物效果最好</div>
-</div>
-<input type="file" id="bodyPhoto" accept="image/*" style="display:none" onchange="previewBody(this)">
-<img class="pp" id="bodyPreview" style="max-width:100%;border-radius:16px;margin-top:12px;display:none;">
-<div id="bodyResult" class="result" style="margin-top:16px;"></div>
-</div>
-<button class="an-btn" onclick="analyzeBody()">🔍 分析体型 + 给出建议</button>
-</div>
-</div>
-
-<!-- ===== Stats/Analysis View ===== -->
-<div id="statsSection" style="display:none;padding:0 20px calc(var(--safe-b) + 100px);">
-<div class="sec-head" style="padding-top:8px;"><div class="sec-title">📊 近两天饮食分析</div></div>
-<div id="statsContent"><div class="stat-card"><div class="sc-head">📋 正在加载...</div></div></div>
-</div>
-</div>
-
-<!-- ===== Journal View ===== -->
-<div id="journalSection" style="display:none;padding:0 20px calc(var(--safe-b) + 100px);">
-<div class="sec-head" style="padding-top:8px;"><div class="sec-title">📖 我的日记</div><div class="sec-more" onclick="addEvent()">+ 记录</div></div>
-<div id="journalTimeline"><div class="journal-entry"><div class="je-date">2026-09-25 <span class="je-type travel">旅行</span></div><div class="je-title">去了景德镇玩3天</div><div class="je-desc">中秋假期去了景德镇，来回吃了泡面，中间3天吃了江西菜，喝了超级多的水和饮料。</div><div class="je-impact">体重从 ~70kg 涨到 73.8kg，胖了约 6斤</div></div></div>
-<div class="add-event-card" onclick="addEvent()" id="addEventBtn">
-<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-<div style="font-size:13px;font-weight:700;">记录一个事件</div>
-<div style="font-size:10px;color:#222222;margin-top:3px;">旅行、聚餐、减肥里程碑...</div>
-</div>
-</div>
-</div>
-
-<!-- Add Event Modal -->
-<div class="mo" id="eventMo">
-<div class="modal">
-<div class="modal-grab"></div>
-<div class="m-head"><div class="m-title">记录事件</div><button class="m-close" onclick="closeEvent()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-<div class="m-sec"><div class="m-label">日期</div><input type="date" class="m-input" id="evtDate" style="min-height:auto;padding:12px 14px;"></div>
-<div class="m-sec"><div class="m-label">标题</div><input class="m-input" id="evtTitle" placeholder="例：去了景德镇玩了3天"></div>
-<div class="m-sec"><div class="m-label">描述</div><textarea class="m-input" id="evtDesc" rows="3" placeholder="发生了什么？吃了什么？对体重有什么影响？"></textarea></div>
-<div class="m-sec"><div class="m-label">类型</div><div class="meal-picker" id="evtType">
-<button class="mp" data-type="travel">✈️ 旅行</button>
-<button class="mp" data-type="feast">🎉 聚餐</button>
-<button class="mp active" data-type="milestone">🎯 里程碑</button>
-<button class="mp" data-type="other">📝 其他</button>
-</div></div>
-<button class="m-btn" onclick="saveEvent()">保存到日记</button>
-</div>
-</div>
-
-<div class="quick-actions">
-<view class="qa-btn" onclick="toggleSection('statsSection',this)"><text>📊 分析</text></view>
-<view class="qa-btn" onclick="toggleSection('journalSection',this)"><text>📖 日记</text></view>
-</div>
-<button class="fab" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-
-
-
-<div class="mo" id="mo">
-<div class="modal">
-<div class="modal-grab"></div>
-<div class="m-head"><div class="m-title">记录饮食</div><button class="m-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-<div class="m-sec"><div class="m-label">餐次</div><div class="meal-picker" id="mp">
-<button class="mp active" data-meal="早餐"><span class="mp-i"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13c0 2 1 4 3 4 1.5 0 2.5-1 3.5-2.5"/><path d="M22 13c0 2-1 4-3 4-1.5 0-2.5-1-3.5-2.5"/><path d="M8.5 14.5C8.5 11 10 8 12 8s3.5 3 3.5 6.5c0 1.5-.5 2.5-1 3.5h-5c-.5-1-1-2-1-3.5z"/></svg></span>早餐</button>
-<button class="mp" data-meal="午餐"><span class="mp-i"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="12" x2="12" y2="21"/></svg></span>午餐</button>
-<button class="mp" data-meal="晚餐"><span class="mp-i"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>晚餐</button>
-<button class="mp" data-meal="加餐"><span class="mp-i"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-1.06 0-2.07.3-3 .8-.48.27-1.04.4-1.6.44-.25.02-.5.02-.8 0-.56-.04-1.12-.17-1.6-.44-.93-.5-1.94-.8-3-.8a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06z"/><path d="M9 5c0-1.5.5-2.5 2-3"/></svg></span>加餐</button>
-</div></div>
-<div class="m-sec"><div class="m-label">记录食物</div><textarea class="m-input" id="fi" rows="3" placeholder="用逗号分隔，例如：&#10;米饭半碗，西兰花炒虾仁，一个苹果"></textarea></div>
-<div class="m-sec"><div class="m-label">拍照识别</div>
-<div class="pu" onclick="document.getElementById('pi').click()">
-<div class="pu-icon" style="color:var(--primary);"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div>
-<div class="pu-text">拍照或从相册选择（可多张）</div>
-<div class="pu-sub">首次填入API Key，之后AI 自动识别</div>
-</div>
-<input type="file" id="pi" accept="image/*" multiple style="display:none" onchange="previewPhoto(this)">
-<img class="pp" id="pp">
-</div>
-<div class="m-sec" id="apiKeySec" style="display:none;">
-<div class="m-label">🔑 API Key（火山方舟，仅存手机本地）</div>
-<input type="password" class="m-input" id="apiKeyInput" placeholder="ark-..." style="font-size:13px;">
-<div style="font-size:10px;color:#222222;margin-top:6px;line-height:1.5;">Key 只保存在你的手机上，不会上传到任何服务器</div>
-</div>
-<button class="an-btn" id="ab" onclick="analyze()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>分析热量</button>
-<div class="loading" id="ld"><div class="ld-icon">🌀</div><div class="ld-text">AI 正在分析...</div></div>
-<div class="result" id="result">
-<div class="ar-head"><div class="ar-title">📊 分析结果</div><div class="ar-badge" id="arBadge">AI 识别</div></div>
-<div id="ri"></div>
-<div id="rs"></div>
-<div class="ar-actions">
-<button class="ar-save" onclick="saveLocal()">💾 保存</button>
-<button class="ar-copy" onclick="copyRes()">💬 发给AI</button>
-</div>
-</div>
-</div>
-</div>
+<button class="toc-btn" id="tocBtn" onclick="scrollTop()">↑</button>
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== 硬编码 API Key（无需手动输入）=====
-var AI_API_KEY="";
-var AI_PROVIDER="ark";
+const D = TRACKER_DATA;
 
-// ===== Helpers =====
-function safeNum(v,fallback){fallback=fallback||0;var n=Number(v);return isNaN(n)||!isFinite(n)?fallback:n;}
-function loadEntriesSafe(){try{var d=JSON.parse(localStorage.getItem("health_entries")||"{}");return(typeof d==="object"&&d)?d:{};}catch(e){return{};}}
-try{var _old=localStorage.getItem("health_entries");if(_old&&(_old.indexOf("NaN")>=0||_old.indexOf("undefined")>=0))localStorage.removeItem("health_entries");}catch(e){}
+// Cover
+const L = D.days[0];
+const lw = L.weight;
+document.getElementById("coverDate").textContent = `开始于 ${D.days[D.days.length-1].date} · 已有 ${D.days.length} 篇`;
+document.getElementById("stWeight").innerHTML = `${lw.morning || lw.evening || "--"}<span class="u">kg</span>`;
+const chg = lw.change || 0;
+document.getElementById("stChange").innerHTML = `${chg>0?'+':''}${chg}<span class="u">kg</span>`;
+document.getElementById("stDays").textContent = D.days.length;
 
-// ===== Food DB =====
-var FOOD_DB={"米饭":{kcal:130,def:195},"面条":{kcal:110,def:330},"馒头":{kcal:220,def:110},"包子":{kcal:230,def:230},"饺子":{kcal:230,def:23},"面包":{kcal:280,def:80},"全麦面包":{kcal:250,def:75},"玉米":{kcal:110,def:120},"红薯":{kcal:100,def:150},"土豆":{kcal:80,def:130},"燕麦":{kcal:370,def:150},"鸡蛋":{kcal:145,def:75},"鸡胸肉":{kcal:133,def:133},"牛肉":{kcal:250,def:250},"猪肉":{kcal:400,def:200},"鱼肉":{kcal:150,def:150},"虾":{kcal:90,def:90},"虾仁":{kcal:90,def:90},"豆腐":{kcal:80,def:80},"牛奶":{kcal:65,def:130},"酸奶":{kcal:70,def:100},"豆浆":{kcal:30,def:60},"美式":{kcal:2,def:5},"咖啡":{kcal:2,def:5},"拿铁":{kcal:40,def:60},"苹果":{kcal:52,def:80},"香蕉":{kcal:90,def:90},"橙子":{kcal:47,def:70},"西红柿":{kcal:20,def:25},"黄瓜":{kcal:15,def:25},"西兰花":{kcal:35,def:35},"菠菜":{kcal:25,def:25},"白菜":{kcal:15,def:20},"生菜":{kcal:15,def:15},"萝卜":{kcal:20,def:25},"青椒":{kcal:20,def:25},"豆芽":{kcal:20,def:20},"芹菜":{kcal:15,def:20},"韭菜":{kcal:25,def:30},"茄子":{kcal:25,def:40},"冬瓜":{kcal:12,def:15},"南瓜":{kcal:25,def:40},"香菇":{kcal:30,def:30},"蘑菇":{kcal:25,def:25},"花生":{kcal:570,def:60},"核桃":{kcal:650,def:45},"饼干":{kcal:450,def:50},"蛋糕":{kcal:350,def:250},"巧克力":{kcal:550,def:150},"可乐":{kcal:45,def:100},"奶茶":{kcal:250,def:350},"果汁":{kcal:50,def:120},"披萨":{kcal:270,def:280},"汉堡":{kcal:250,def:500},"薯条":{kcal:310,def:300},"炒饭":{kcal:180,def:360},"炒面":{kcal:160,def:320},"粥":{kcal:45,def:90},"沙拉":{kcal:80,def:150},"山药":{kcal:55,def:80},"芋头":{kcal:80,def:100},"菱角":{kcal:100,def:50},"毛豆":{kcal:130,def:65},"豌豆":{kcal:110,def:55},"芦笋":{kcal:20,def:20},"西瓜":{kcal:30,def:60},"葡萄":{kcal:70,def:70},"草莓":{kcal:30,def:35},"蓝莓":{kcal:55,def:55},"桃子":{kcal:40,def:70},"梨":{kcal:50,def:80},"柚子":{kcal:40,def:100},"火龙果":{kcal:55,def:110},"猕猴桃":{kcal:60,def:40},"芒果":{kcal:60,def:100},"菠萝":{kcal:45,def:60},"辣条":{kcal:400,def:200},"冰淇淋":{kcal:200,def:200}};
-
-// ===== Data =====
-var DATA_DAYS=[
-{date:"2026-09-30",weekday:"周三",weight:{morning:72.4,evening:null,baseline:70.0,target:70.0,note:"昨晚羊肉泡馍，涨了0.4kg"},
-meals:[{type:"早餐",time:"早上",kcal:210,items:[{name:"全麦面包",portion:"1片",kcal:75},{name:"星巴克奶茶",portion:"1杯",kcal:135}]}],
-summary:{totalKcal:210,protein:5,carbs:30,fat:6},
-advice:{good:["全麦面包是好的碳水"],tips:["昨晚羊肉泡馍热量较高","今天午餐晚餐清淡一些","奶茶含糖量高尽量少喝","多喝水帮助代谢"],overall:"羊肉泡馍导致短期波动，控制今天饮食即可恢复"}},
-{date:"2026-09-29",weekday:"周二",weight:{morning:72.0,evening:null,baseline:70.0,target:70.0,note:"比昨天下降1.4kg，水分回落中"},
-meals:[{type:"早餐",time:"早上",kcal:145,items:[{name:"美式咖啡+纯牛奶",portion:"自制拿铁",kcal:70},{name:"全麦面包",portion:"1片",kcal:75}]},{type:"晚餐",time:"晚上",kcal:600,items:[{name:"羊肉泡馍",portion:"1碗",kcal:550},{name:"糖蒜",portion:"几瓣",kcal:20},{name:"辣酱",portion:"适量",kcal:30}]},{type:"午餐",time:"中午",kcal:900,items:[{name:"煎蛋",portion:"1个",kcal:90},{name:"煎牛肉",portion:"~100g",kcal:200},{name:"虾仁",portion:"7-8个",kcal:60},{name:"烤肠",portion:"1根",kcal:180},{name:"鸡米花",portion:"5-6块",kcal:220},{name:"菠菜",portion:"1份",kcal:40},{name:"米饭",portion:"半碗",kcal:100}]}],
-summary:{totalKcal:1635,protein:48,carbs:95,fat:38},
-advice:{good:["体重回落(↓1.4kg)","午餐蛋白质充足(蛋+牛肉+虾)","菠菜补充纤维"],tips:["鸡米花和烤肠热量较高(400kcal)","午餐总热量偏高(~900kcal)","晚餐建议清淡：蔬菜+少量蛋白","今天总热量约1035，晚餐控制在300-400","多喝水帮助代谢"],overall:"午餐蛋白质很棒，但炸物偏多，晚餐吃清淡点就好"}},
-{date:"2026-09-28",weekday:"周一",weight:{morning:73.4,evening:73.8,baseline:70.0,target:70.0,note:"景德镇回来第一天，正在恢复"},
-meals:[{type:"早餐",time:"早上",kcal:5,items:[{name:"自制美式咖啡",portion:"1杯",kcal:5}]},{type:"午餐",time:"中午",kcal:530,items:[{name:"蒜苗芦笋炒肉",portion:"~100g",kcal:80},{name:"芹菜黄瓜凉拌",portion:"~80g",kcal:25},{name:"小白菜香菇",portion:"~100g",kcal:60},{name:"青椒香菇肉片",portion:"~80g",kcal:110},{name:"豌豆虾仁蛋",portion:"~80g",kcal:100},{name:"凉拌豆芽",portion:"~80g",kcal:20},{name:"蒸玉米",portion:"~1/2根",kcal:60},{name:"米饭",portion:"半拳头",kcal:75}]},{type:"加餐",time:"下午",kcal:140,items:[{name:"全麦面包",portion:"1片",kcal:75},{name:"菱角",portion:"2个",kcal:40},{name:"西红柿",portion:"1个",kcal:25}]}],
-summary:{totalKcal:675,protein:35,carbs:70,fat:18},
-advice:{good:["蔬菜6份很棒","碳水控制合理","美式咖啡好"],tips:["蛋白质偏少","菱角计入碳水","热量偏低正常吃","避免含糖饮料","多喝水2000ml+"],overall:"适合减重期，补足蛋白质和水分"}}
-];
-var TODAY="2026-09-30";
-var dayIdx=0; // today
-var photos=[];
-var selMeal="早餐";
-var lastRes=null;
-var mealIcons={"早餐":{icon:"croissant",cls:"breakfast"},"午餐":{icon:"bento",cls:"lunch"},"晚餐":{icon:"moon",cls:"dinner"},"加餐":{icon:"apple",cls:"snack"}};
-var dayEn={"周一":"MON","周二":"TUE","周三":"WED","周四":"THU","周五":"FRI","周六":"SAT","周日":"SUN"};
-var svgCroissant='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13c0 2 1 4 3 4 1.5 0 2.5-1 3.5-2.5"/><path d="M22 13c0 2-1 4-3 4-1.5 0-2.5-1-3.5-2.5"/><path d="M8.5 14.5C8.5 11 10 8 12 8s3.5 3 3.5 6.5c0 1.5-.5 2.5-1 3.5h-5c-.5-1-1-2-1-3.5z"/><path d="M5 13c-1-1.5-1-3.5 0-5 1.5-2 4-3 7-3s5.5 1 7 3c1 1.5 1 3.5 0 5"/></svg>';
-var svgBento='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="12" x2="12" y2="21"/></svg>';
-var svgMoon='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-var svgApple='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-1.06 0-2.07.3-3 .8-.48.27-1.04.4-1.6.44-.25.02-.5.02-.8 0-.56-.04-1.12-.17-1.6-.44-.93-.5-1.94-.8-3-.8a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06z"/><path d="M9 5c0-1.5.5-2.5 2-3"/></svg>';
-var svgChevron='<svg class="chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
-var svgPlus='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
-
-// ===== Init =====
-(function(){
-var now=new Date();var hour=now.getHours();
-var greet=hour<5?"夜深了":hour<12?"早上好":hour<14?"中午好":hour<18?"下午好":"晚上好";
-var greetEl=document.getElementById("greeting");if(greetEl)greetEl.textContent=greet;
-})();
-
-// ===== Navigation =====
-function navDay(dir){
-var n=dayIdx-dir;
-if(n<0){showToast("已经是今天");return;}
-if(n>=DATA_DAYS.length){showToast("已经是第一天");return;}
-dayIdx=n;renderDay();
-showToast(dayIdx===0?"回到今天":"查看 "+DATA_DAYS[dayIdx].date);
-}
-
-// ===== Render Day =====
-function renderDay(){
-var D=DATA_DAYS[dayIdx];
-var isToday=D.date===TODAY;
-var el;
-el=document.getElementById("todayDate");if(el)el.textContent=D.date+" "+D.weekday+" · "+(dayEn[D.weekday]||"");
-el=document.getElementById("heroDate");if(el)el.textContent=D.date.slice(5)+" "+D.weekday;
-el=document.getElementById("heroLabel");if(el)el.textContent=isToday?"今日热量":D.weekday+"热量";
-var btnNext=document.getElementById("btnNextDay");if(btnNext)btnNext.disabled=isToday;
-el=document.getElementById("mealsTitle");if(el)el.textContent=isToday?"今日饮食":D.weekday+"饮食";
-
-// Ring
-var total=safeNum(D.summary.totalKcal,0),goal=2000;
-var offset=389*(1-Math.min(total/goal,1));
-var rv=document.getElementById("ringVal");if(rv)rv.style.strokeDashoffset=offset;
-var rn=document.getElementById("ringNum");if(rn)rn.textContent=total;
-el=document.getElementById("hiEaten");if(el)el.textContent=total+" kcal";
-el=document.getElementById("hiLeft");if(el)el.textContent=Math.max(goal-total,0)+" kcal";
-el=document.getElementById("hiProtein");if(el)el.textContent=safeNum(D.summary.protein,0)+"g";
-el=document.getElementById("macroP");if(el)el.textContent=safeNum(D.summary.protein,0)+"g";
-el=document.getElementById("macroC");if(el)el.textContent=safeNum(D.summary.carbs,0)+"g";
-el=document.getElementById("macroF");if(el)el.textContent=safeNum(D.summary.fat,0)+"g";
-
-// Weight
-var w=D.weight;
-el=document.getElementById("wcNum");if(el)el.textContent=safeNum(w.morning,0).toFixed(1);
-var chg=safeNum(w.morning,0)-safeNum(w.baseline,0);
-var badge=document.getElementById("wcBadge");
-if(badge){
-if(chg>0){badge.textContent="↑ +"+chg.toFixed(1)+"kg";badge.className="wc-badge up";}
-else if(chg<0){badge.textContent="↓ "+Math.abs(chg).toFixed(1)+"kg";badge.className="wc-badge down";}
-else{badge.textContent="— 基线";badge.className="wc-badge";}}
-var diff=safeNum(w.morning,0)-safeNum(w.target,0);
-el=document.getElementById("wcSub");if(el)el.textContent=diff>0?"第一阶段 "+w.target+"kg · 还差 "+diff.toFixed(1)+"kg":"已达成第一阶段目标！";
-
-// Chart
-var weights=DATA_DAYS.map(function(d){return safeNum(d.weight.morning,0);}).reverse();
-var dates=DATA_DAYS.map(function(d){return d.date.slice(5);}).reverse();
-if(weights.length>=2){
-var wMin=Math.min.apply(null,weights)-0.5,wMax=Math.max.apply(null,weights)+0.5,wR=wMax-wMin||1;
-var CW=320,CH=56,CP=8;
-var pts=weights.map(function(v,i){return[CP+(i/(weights.length-1))*(CW-2*CP),CP+(1-(v-wMin)/wR)*(CH-2*CP)];});
-var line=pts.map(function(p){return p.join(",");}).join(" ");
-var area=CP+","+(CH-CP)+" "+line+" "+(CW-CP)+","+(CH-CP);
-var actI=weights.length-1-dayIdx;
-var chartHtml="<svg class='chart-svg' viewBox='0 0 "+CW+" "+CH+"' preserveAspectRatio='none'><defs><linearGradient id='cgrad' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='#7C6FE8' stop-opacity='0.08'/><stop offset='100%' stop-color='#7C6FE8' stop-opacity='0'/></linearGradient></defs><polygon points='"+area+"' fill='url(#cgrad)'/><polyline points='"+line+"' fill='none' stroke='#7C6FE8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/>";
-pts.forEach(function(p,i){chartHtml+="<circle cx='"+p[0]+"' cy='"+p[1]+"' r='"+(i===actI?6:4)+"' fill='"+(i===actI?"#D4572E":"#D4CFC8")+"' stroke='#fff' stroke-width='2.5'/>";});
-chartHtml+="</svg><div style='display:flex;justify-content:space-between;font-size:9px;color:#222222;margin-top:6px;font-weight:600;'>";
-dates.forEach(function(d,i){chartHtml+="<span style='"+(i===actI?"color:var(--primary);font-weight:800;":"")+"'>"+d+"</span>";});
-chartHtml+="</div>";
-el=document.getElementById("chartArea");if(el)el.innerHTML=chartHtml;
-el=document.getElementById("chartRange");if(el)el.textContent=weights.length+" 天";
-}
-
-// Meals
-var iconMap={"croissant":svgCroissant,"bento":svgBento,"moon":svgMoon,"apple":svgApple};
-var userEntries=loadEntriesSafe()[D.date]||[];
-var allMeals=D.meals.concat(userEntries);
-var mealsHtml="";
-allMeals.forEach(function(meal,i){
-var mi=mealIcons[meal.type]||{icon:"apple",cls:"snack"};
-var iconSvg=iconMap[mi.icon]||svgApple;
-var sum=0,foods="",itemsHtml="";
-var detail=meal.items.map(function(x){return x.name;}).join("、");
-meal.items.forEach(function(item,j){
-sum+=safeNum(item.kcal,0);
-foods+="<div class='food'><span>"+item.name+"<span class='f-p'>"+(item.portion||"")+"</span></span><span class='f-k'>"+safeNum(item.kcal,0)+"</span></div>";
-itemsHtml+="<div class='mi-row' style='animation-delay:"+(j*0.04)+"s'><span class='mi-name'>"+item.name+"<span class='mi-port'>"+(item.portion||"")+"</span></span><span class='mi-kcal'>"+safeNum(item.kcal,0)+" kcal</span></div>";
-});
-mealsHtml+="<div class='meal-card' style='animation-delay:"+(i*0.08)+"s' onclick='toggleMeal(this)'><div class='meal-row'><div class='meal-icon "+mi.cls+"'>"+iconSvg+"</div><div class='meal-info'><div class='meal-name'>"+meal.type+"</div><div class='meal-detail'>"+detail+"</div></div><div class='meal-right'><div class='meal-kcal'>"+sum+"<span class='u'> kcal</span></div><div class='meal-time'>"+(meal.time||"")+"</div></div>"+svgChevron+"</div><div class='meal-items'>"+itemsHtml+"</div></div>";
-});
-if(isToday)mealsHtml+="<button class='add-meal' onclick='openModal()'>"+svgPlus+" 添加饮食记录</button>";
-el=document.getElementById("mealList");if(el)el.innerHTML=mealsHtml;
-
-// Advice
-var a=D.advice;
-el=document.getElementById("advGood");if(el)el.innerHTML=a.good.map(function(g){return"<span class='g-tag'>✓ "+g+"</span>";}).join("");
-el=document.getElementById("advTips");if(el)el.innerHTML=a.tips.map(function(t){return"<div class='a-tip'><div class='at-d'></div><div>"+t+"</div></div>";}).join("");
-el=document.getElementById("advFinal");if(el)el.textContent=a.overall;
-
-var contentEl=document.getElementById("content");if(contentEl)contentEl.scrollTop=0;
-}
-
-function toggleMeal(card){card.classList.toggle("open");}
-
-// ===== Tab =====
-function switchTab(idx,el){
-var tabs=document.querySelectorAll(".tab-item");
-for(var i=0;i<tabs.length;i++)tabs[i].classList.remove("active");
-el.classList.add("active");
-var vh=document.getElementById("viewHome");if(vh)vh.classList.toggle("active",idx===0);
-var vs=document.getElementById("viewStats");if(vs)vs.classList.toggle("active",idx===2);
-var vj=document.getElementById("viewJournal");if(vj)vj.classList.toggle("active",idx===3);
-var vb=document.getElementById("viewBody");if(vb)vb.classList.toggle("active",idx===4);
-if(idx===0){var c=document.getElementById("content");if(c)c.scrollTop=0;}
-if(idx===2)renderStats();
-if(idx===3)renderJournal();
-var fab=document.querySelector(".fab");if(fab)fab.style.display=idx===0?"flex":"none";
-}
-
-// ===== Stats =====
-function renderStats(){
-var el=document.getElementById("statsContent");if(!el)return;
-var days=DATA_DAYS.slice(0,2);
-var foodCount={},foodKcal={};
-days.forEach(function(d){d.meals.forEach(function(m){m.items.forEach(function(item){foodCount[item.name]=(foodCount[item.name]||0)+1;foodKcal[item.name]=(foodKcal[item.name]||0)+safeNum(item.kcal,0);});});});
-var vegK=["西兰花","菠菜","白菜","生菜","萝卜","青椒","豆芽","芹菜","茄子","冬瓜","南瓜","香菇","芦笋","黄瓜","西红柿"];
-var proK=["鸡胸肉","鸡蛋","牛肉","鱼肉","虾","虾仁","豆腐","牛奶","酸奶"];
-var carbK=["米饭","面条","馒头","包子","饺子","面包","全麦面包","玉米","红薯","土豆","燕麦","炒饭","粥"];
-var junkK=["薯片","蛋糕","巧克力","可乐","奶茶","辣条","冰淇淋","披萨","汉堡"];
-var vegC=0,proC=0,carbC=0,junkC=0;var vegE=[],proE=[],carbE=[],junkE=[];
-Object.keys(foodCount).forEach(function(k){
-var isV=vegK.some(function(v){return k.indexOf(v)>=0;});
-var isP=proK.some(function(v){return k.indexOf(v)>=0;});
-var isC=carbK.some(function(v){return k.indexOf(v)>=0;});
-var isJ=junkK.some(function(v){return k.indexOf(v)>=0;});
-if(isV){vegC+=foodCount[k];vegE.push(k);}else if(isP){proC+=foodCount[k];proE.push(k);}else if(isC){carbC+=foodCount[k];carbE.push(k);}else if(isJ){junkC+=foodCount[k];junkE.push(k);}
-});
-var totalK=days.reduce(function(s,d){return s+safeNum(d.summary.totalKcal,0);},0);
-var avgK=Math.round(totalK/days.length);
-var totalP=days.reduce(function(s,d){return s+safeNum(d.summary.protein,0);},0);
-var ws=days.map(function(d){return safeNum(d.weight.morning,0);});
-var wc=ws.length>=2?(ws[0]-ws[1]).toFixed(1):null;
-var html="";
-html+="<div class='stat-card'><div class='sc-head'>📋 两天总览</div><div class='sc-grid'><div class='sc-item'><div class='sc-val'>"+avgK+"</div><div class='sc-l'>日均热量</div></div><div class='sc-item'><div class='sc-val'>"+totalP.toFixed(0)+"g</div><div class='sc-l'>总蛋白</div></div><div class='sc-item'><div class='sc-val'>"+(wc||"--")+"</div><div class='sc-l'>体重变化</div></div></div></div>";
-html+="<div class='stat-card more'><div class='sc-head' style='color:var(--green)'>✓ 多吃这些</div>";
-if(proC<3)html+="<div class='sc-tip'>🥩 <b>蛋白质不够</b> — 两天只吃了"+proC+"次，建议每天至少1份</div>";
-if(vegC<4)html+="<div class='sc-tip'>🥬 <b>蔬菜偏少</b> — 只吃了"+vegC+"份，建议每天至少2-3份</div>";
-if(proE.length)html+="<div class='sc-note'>已吃蛋白："+proE.join("、")+"</div>";
-if(vegE.length)html+="<div class='sc-note'>已吃蔬菜："+vegE.join("、")+"</div>";
-html+="</div>";
-html+="<div class='stat-card less'><div class='sc-head' style='color:var(--orange)'>⚠ 少吃这些</div>";
-if(carbC>6)html+="<div class='sc-tip warn'>🍚 <b>碳水偏多</b> — 两天"+carbC+"次，可以适当减量</div>";
-if(junkC>0)html+="<div class='sc-tip warn'>🚫 <b>垃圾食品</b> — "+junkE.join("、")+"，减重期尽量避免</div>";
-if(junkC===0&&carbC<=6)html+="<div class='sc-tip ok'>👍 碳水控制得不错，继续保持</div>";
-html+="</div>";
-html+="<div class='stat-card obs'><div class='sc-head'>🔍 具体观察</div>";
-var obs=[];
-if(foodCount["米饭"])obs.push("米饭吃了"+foodCount["米饭"]+"次，量控制得不错");
-if(foodCount["美式咖啡+纯牛奶"])obs.push("咖啡选择很好，避免含糖饮料");
-if(foodCount["菱角"])obs.push("菱角属淀粉类，吃了要减少其他主食");
-if(foodCount["全麦面包"])obs.push("全麦面包比白面包好 ✓");
-if(wc&&parseFloat(wc)<0)obs.push("体重在下降("+wc+"kg)，方法有效");
-obs.forEach(function(o){html+="<div class='sc-tip'>• "+o+"</div>";});
-html+="</div>";
-html+="<div class='stat-card rec'><div class='sc-head' style='color:var(--primary)'>💡 明天建议</div><div class='sc-tip'>🍳 早餐加一个<b>水煮蛋</b></div><div class='sc-tip'>🥗 午餐保证<b>2份蔬菜</b></div><div class='sc-tip'>🍚 晚餐<b>减少主食</b></div><div class='sc-tip'>💧 喝水<b>2000ml+</b></div><div class='sc-tip'>🚶 饭后散步<b>20分钟</b></div></div>";
-el.innerHTML=html;
-}
-
-// ===== Journal =====
-var INITIAL_EVENTS=[
-{date:"2026-09-25",type:"travel",title:"去了景德镇玩3天",desc:"中秋假期去了景德镇，来回吃了泡面，中间3天吃了江西菜，喝了超级多的水和饮料。",impact:"体重从 ~70kg 涨到 73.8kg，胖了约 6斤"},
-{date:"2026-09-27",type:"milestone",title:"开始记录体重",desc:"从景德镇回来后开始认真记录体重，目标是回到70kg。"},
-{date:"2026-09-29",type:"milestone",title:"体重降到72.0kg",desc:"比昨天早上降了1.4kg，水分在消退。",impact:"距离第一阶段目标 70kg 还差 2kg"}
-];
-function loadEvents(){try{var s=JSON.parse(localStorage.getItem("journal_events")||"null");if(s&&Array.isArray(s)&&s.length>0)return s;}catch(e){}return INITIAL_EVENTS;}
-function renderJournal(){
-var events=loadEvents();
-var tl={travel:"旅行",feast:"聚餐",milestone:"里程碑",other:"事件"};
-var tc={travel:"travel",feast:"feast",milestone:"milestone",other:"other"};
-var el=document.getElementById("journalTimeline");if(!el)return;
-var html="";
-events.forEach(function(e,i){
-html+="<div class='journal-entry' style='animation-delay:"+(i*0.06)+"s'><div class='je-date'>"+e.date+" <span class='je-type "+(tc[e.type]||"other")+"'>"+(tl[e.type]||tl.other)+"</span></div><div class='je-title'>"+e.title+"</div>"+(e.desc?"<div class='je-desc'>"+e.desc+"</div>":"")+(e.impact?"<div class='je-impact'>"+e.impact+"</div>":"")+"</div>";
-});
-el.innerHTML=html;
-}
-
-// ===== Modal =====
-function openModal(){
-document.getElementById("mo").classList.add("show");
-document.getElementById("result").classList.remove("show");
-document.getElementById("ld").classList.remove("show");
-document.getElementById("ab").disabled=false;
-var keySec=document.getElementById("apiKeySec");
-var savedKey=localStorage.getItem("ai_key")||"";
-if(keySec)keySec.style.display=savedKey.indexOf("ark-")===0?"none":"block";
-document.body.style.overflow="hidden";
-}
-function closeModal(){document.getElementById("mo").classList.remove("show");document.body.style.overflow="";}
-function previewPhoto(input){
-photos=[];
-var files=Array.from(input.files);
-if(files.length===0)return;
-var pp=document.getElementById("pp");
-var loaded=0;
-files.forEach(function(f,i){
-var r=new FileReader();
-r.onload=function(e){
-photos.push(e.target.result);
-loaded++;
-if(loaded===1){pp.src=e.target.result;pp.style.display="block";}
-if(loaded===files.length&&files.length>1)showToast(files.length+" 张照片已选择");
+// Meal meta
+const mealMeta = {
+  "早餐": { icon:"🍳", cls:"morning" },
+  "午餐": { icon:"🍜", cls:"noon" },
+  "晚餐": { icon:"🌙", cls:"night" },
+  "加餐": { icon:"🍓", cls:"snack" }
 };
-r.readAsDataURL(f);
+const pinColors = ["", "e2", "e3"];
+const dayNames = { "周一":"MON","周二":"TUE","周三":"WED","周四":"THU","周五":"FRI","周六":"SAT","周日":"SUN" };
+
+// Build entries
+const journal = document.getElementById("journal");
+D.days.forEach((day, idx) => {
+  const dw = day.weight;
+  const wNum = dw.morning || dw.evening || "--";
+  const cCls = dw.change > 0 ? "up" : (dw.change < 0 ? "down" : "same");
+  const cTxt = dw.change > 0 ? `+${dw.change}kg` : (dw.change < 0 ? `${dw.change}kg` : "—");
+  const pinTxt = day.date.slice(8); // day number
+  const weekEn = dayNames[day.weekday] || "";
+  const colorCls = pinColors[idx % 3];
+
+  // Diet
+  let dietHtml = "";
+  day.diet.forEach(meal => {
+    const meta = mealMeta[meal.meal] || { icon:"🍽️", cls:"snack" };
+    let mealSum = 0;
+    let foods = "";
+    meal.items.forEach(item => {
+      mealSum += item.kcal;
+      foods += `<div class="food-line"><span class="f-name">${item.name}<span class="f-port">${item.portion}</span></span><span class="f-kcal">${item.kcal}</span></div>`;
+    });
+    dietHtml += `
+      <div class="meal">
+        <div class="meal-rail">
+          <div class="m-dot ${meta.cls}">${meta.icon}</div>
+          <div class="m-line"></div>
+        </div>
+        <div class="meal-info">
+          <div class="meal-name">${meal.meal}<span class="m-time">${meal.time}</span><span class="m-sum">${mealSum} kcal</span></div>
+          ${foods}
+        </div>
+      </div>`;
+  });
+
+  // Nutrition
+  const s = day.summary;
+  const nutriHtml = `
+    <div class="nutri">
+      <div class="nutri-cell"><div class="n-val total">${s.totalKcal}</div><div class="n-label">KCAL</div></div>
+      <div class="nutri-cell"><div class="n-val p">${s.protein}</div><div class="n-label">蛋白</div></div>
+      <div class="nutri-cell"><div class="n-val c">${s.carbs}</div><div class="n-label">碳水</div></div>
+      <div class="nutri-cell"><div class="n-val f">${s.fat}</div><div class="n-label">脂肪</div></div>
+    </div>`;
+
+  // Advice
+  const a = day.advice;
+  const advHtml = `
+    <div class="adv-card">
+      <div class="adv-good">${a.good.map(g => `<span class="g-tag">✓ ${g}</span>`).join("")}</div>
+      ${a.tips.map(t => `<div class="adv-tip"><div class="at-dot"></div><div class="at-txt">${t}</div></div>`).join("")}
+      <div class="adv-final">📌 ${a.overall}</div>
+    </div>`;
+
+  const entry = document.createElement("div");
+  entry.className = `entry ${colorCls}`;
+  entry.innerHTML = `
+    <div class="date-pin">${pinTxt}</div>
+    <div class="page-card">
+      <div class="pc-head">
+        <div>
+          <div class="pc-date">${day.date}</div>
+          <div class="pc-week">${day.weekday} · ${weekEn}</div>
+        </div>
+        <div class="pc-weight">
+          <span class="pc-w-num">${wNum}</span><span class="pc-w-unit">kg</span>
+          <span class="pc-w-chg ${cCls}">${cTxt}</span>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="sec">
+          <div class="sec-tag t-w"><span class="st-line"></span>WEIGHT · 体重</div>
+          <div class="w-row">
+            <div class="w-box"><div class="wb-ico">🌅</div><div class="wb-label">早上</div><div class="wb-val">${dw.morning || "--"}<span class="u">kg</span></div></div>
+            <div class="w-box"><div class="wb-ico">🌙</div><div class="wb-label">晚上</div><div class="wb-val">${dw.evening || "--"}<span class="u">kg</span></div></div>
+          </div>
+          ${dw.note ? `<div class="w-note">💬 ${dw.note}</div>` : ""}
+        </div>
+        <div class="sec">
+          <div class="sec-tag t-d"><span class="st-line"></span>MEALS · 饮食</div>
+          ${nutriHtml}
+          ${dietHtml}
+        </div>
+        <div class="sec">
+          <div class="sec-tag t-a"><span class="st-line"></span>NOTES · 建议</div>
+          ${advHtml}
+        </div>
+      </div>
+    </div>`;
+  journal.appendChild(entry);
 });
+
+// Scroll animations
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+}, { threshold: 0.08 });
+document.querySelectorAll(".entry").forEach(el => io.observe(el));
+
+// Progress bar
+window.addEventListener("scroll", () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById("progress").style.width = pct + "%";
+}, { passive: true });
+
+function scrollTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  showToast("回到顶部 ☝️");
 }
 
-// ===== Analysis =====
-function analyzeText(text){
-var lines=text.split(/[，,、;；\n]/).filter(function(s){return s.trim();});
-var items=[],total=0;
-lines.forEach(function(line){
-line=line.trim();
-var matched=false;
-for(var key in FOOD_DB){
-if(line.indexOf(key)>=0){
-var p=FOOD_DB[key].def;
-var q=line.match(/(\d+(?:\.\d+)?)\s*(个|碗|杯|片|根|块|份|把|包)/);
-var h=line.match(/半\s*(个|碗|杯|片|根|块|份)/);
-if(q)p=Math.round(FOOD_DB[key].def*parseFloat(q[1]));
-else if(h)p=Math.round(FOOD_DB[key].def*0.5);
-items.push({name:key,detail:line,kcal:p});total+=p;matched=true;break;
-}}
-if(!matched){items.push({name:line,detail:"估算",kcal:80});total+=80;}
-});
-return{items:items,total:total};
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 1500);
 }
-
-function analyze(){
-var text=document.getElementById("fi").value.trim();
-var btn=document.getElementById("ab");
-var apiKeyInput=document.getElementById("apiKeyInput");
-if(apiKeyInput&&apiKeyInput.value.trim())localStorage.setItem("ai_key",apiKeyInput.value.trim());
-var provBtn=document.querySelector("#providerPicker .mp.active");
-if(provBtn)localStorage.setItem("ai_provider",provBtn.dataset.provider);
-if(!text&&(!photos||photos.length===0)){showToast("请输入食物或拍照");return;}
-btn.disabled=true;
-var ld=document.getElementById("ld");ld.classList.add("show");
-document.getElementById("result").classList.remove("show");
-setTimeout(function(){
-var res;
-var apiKey=AI_API_KEY||localStorage.getItem("ai_key")||"";
-var provider=AI_PROVIDER||localStorage.getItem("ai_provider")||"zai";
-if(photos.length>0&&apiKey){
-var prompt="识别这些图片中的所有食物。用中文回复，每行一个：食物名(分量) 热量kcal。只列食物。";
-var msgContent=[{type:"text",text:prompt}];
-photos.forEach(function(p){msgContent.push({type:"image_url",image_url:{url:p}});});
-var apiUrl,model;
-var isArk=provider==="ark";
-if(isArk){apiUrl="https://ark.cn-beijing.volces.com/api/coding/v1/messages";model="glm-5.3-flash";}
-else if(provider==="zai"){apiUrl="https://open.bigmodel.cn/api/paas/v4/chat/completions";model="glm-4v";}
-else if(provider==="qwen"){apiUrl="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";model="qwen-vl-plus";}
-else{apiUrl="https://api.openai.com/v1/chat/completions";model="gpt-4o-mini";}
-var xhr=new XMLHttpRequest();
-xhr.open("POST",apiUrl,true);
-xhr.setRequestHeader("Content-Type","application/json");
-if(isArk){xhr.setRequestHeader("x-api-key",apiKey);xhr.setRequestHeader("anthropic-version","2023-06-01");}
-else{xhr.setRequestHeader("Authorization","Bearer "+apiKey);}
-xhr.timeout=60000;
-xhr.onload=function(){
-try{
-var data=JSON.parse(xhr.responseText);
-var aiText=isArk?(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("\n"):(data.choices[0].message.content||"");
-res=analyzeText(aiText);res.aiUsed=true;
-showResult(res);
-}catch(e){res=analyzeText(text||"食物");res.aiError=true;showResult(res);}
-};
-xhr.onerror=function(){res=analyzeText(text||"食物");res.aiError=true;showResult(res);};
-xhr.ontimeout=function(){res=analyzeText(text||"食物");res.aiError=true;showResult(res);};
-var reqBody;
-if(isArk){
-var content=[{type:"text",text:prompt}];
-photos.forEach(function(p){
-var i=p.indexOf(";base64,");
-content.push({type:"image",source:{type:"base64",media_type:p.slice(5,i),data:p.slice(i+8)}});
-});
-reqBody={model:model,max_tokens:2000,messages:[{role:"user",content:content}]};
-}else{
-reqBody={model:model,messages:[{role:"user",content:msgContent}],max_tokens:600};
-}
-xhr.send(JSON.stringify(reqBody));
-}else if(photos.length>0&&!apiKey){
-res={items:[{name:"需要 API Key",detail:"请填入 API Key 或复制发给AI 分析",kcal:0}],total:0,needKey:true};
-showResult(res);
-}else{
-res=analyzeText(text);
-showResult(res);
-}
-},300);
-}
-
-function showResult(res){
-document.getElementById("ld").classList.remove("show");
-document.getElementById("ab").disabled=false;
-lastRes=res;
-var badge=document.getElementById("arBadge");
-if(badge){
-if(res.aiUsed){badge.textContent="AI 识图";badge.style.cssText="display:inline;background:var(--green-bg);color:var(--green);";}
-else if(res.aiError){badge.textContent="识别失败";badge.style.cssText="display:inline;background:rgba(239,68,68,0.1);color:var(--red);";}
-else if(res.needKey){badge.textContent="需要API Key";badge.style.cssText="display:inline;background:var(--orange-bg);color:var(--orange);";}
-else{badge.textContent="本地估算";badge.style.cssText="display:inline;background:var(--blue-bg);color:var(--blue);";}
-}
-var ri=document.getElementById("ri");if(!ri)return;
-var html="";
-res.items.forEach(function(it,i){
-html+="<div class='ar-item'><span class='k'>"+it.name+(it.detail!==it.name?"<span class='kd'>"+it.detail+"</span>":"")+"</span><span class='v'>"+(it.kcal>0?it.kcal+" kcal":"--")+"</span></div>";
-});
-if(res.total>0)html+="<div class='ar-total'><span>总计</span><span class='v'>"+res.total+" kcal</span></div>";
-ri.innerHTML=html;
-var rs=document.getElementById("rs");
-if(rs)rs.innerHTML="<div class='ar-sum'>"+getSummary(res.total)+"</div>";
-document.getElementById("result").classList.add("show");
-}
-
-function getSummary(k){
-if(k<100)return"热量很低，适合加餐或轻食";
-if(k<300)return"热量适中，一顿不错的餐食";
-if(k<600)return"热量偏高，注意主食和油脂的量";
-return"热量较高，建议减少主食或增加运动";
-}
-
-function copyRes(){
-if(!lastRes)return;
-var curDate=DATA_DAYS[dayIdx].date;
-var t;
-if(lastRes.total===0||!lastRes.items||lastRes.items.length===0){
-t="请帮我识别今天("+curDate+")"+selMeal+"吃了什么，并估算热量。我拍了照片，请列出每种食物、分量和热量。";
-}else{
-t="帮我记录("+curDate+")的饮食：\n"+lastRes.items.map(function(i){return"• "+i.name+"("+i.detail+") ≈ "+i.kcal+" kcal";}).join("\n")+"\n总计约 "+lastRes.total+" kcal\n请分析并给建议";
-}
-if(navigator.share){navigator.share({text:t}).catch(function(){navigator.clipboard.writeText(t).then(function(){showToast("已复制");});});}
-else{navigator.clipboard.writeText(t).then(function(){showToast("已复制，去粘贴给AI");});}
-}
-
-function saveLocal(){
-if(!lastRes||lastRes.total===0)return;
-var curDate=DATA_DAYS[dayIdx].date;
-var entries=loadEntriesSafe();
-if(!entries[curDate])entries[curDate]=[];
-entries[curDate].push({type:selMeal,time:new Date().getHours()<12?"早上":new Date().getHours()<18?"下午":"晚上",kcal:lastRes.total,items:lastRes.items.map(function(i){return{name:i.name,portion:i.detail,kcal:i.kcal};})});
-localStorage.setItem("health_entries",JSON.stringify(entries));
-closeModal();showToast("已保存");
-setTimeout(function(){location.reload();},800);
-}
-
-// ===== Toast =====
-function showToast(msg){
-var t=document.getElementById("toast");if(!t)return;
-t.textContent=msg;t.classList.add("show");
-clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove("show");},1800);
-}
-
-// ===== BG upload =====
-function openBgUpload(){
-var input=document.createElement("input");
-input.type="file";input.accept="image/*";
-input.onchange=function(e){
-var f=e.target.files[0];if(!f)return;
-var r=new FileReader();
-r.onload=function(ev){
-var bgUser=document.getElementById("bgUser");
-if(bgUser){document.getElementById("bgImg").src=ev.target.result;bgUser.style.display="block";}
-var flow=document.getElementById("bgFlow");if(flow)flow.style.display="none";
-try{var c=document.createElement("canvas");var img=new Image();img.onload=function(){var mw=800;var w=img.width,h=img.height;if(w>mw){h=h*(mw/w);w=mw;}c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);try{localStorage.setItem("user_bg",c.toDataURL("image/jpeg",0.7));}catch(e2){}};img.src=ev.target.result;}catch(e3){}
-showToast("背景已更换");
-};
-r.readAsDataURL(f);
-};
-input.click();
-}
-function loadBg(){try{var s=localStorage.getItem("user_bg");if(s){var bi=document.getElementById("bgImg");if(bi){bi.src=s;var bu=document.getElementById("bgUser");if(bu)bu.style.display="block";}var fl=document.getElementById("bgFlow");if(fl)fl.style.display="none";}}catch(e){}}
-
-// ===== Event modal =====
-function addEvent(){
-var d=document.getElementById("evtDate");if(d)d.value=TODAY;
-var t=document.getElementById("evtTitle");if(t)t.value="";
-var de=document.getElementById("evtDesc");if(de)de.value="";
-document.getElementById("eventMo").classList.add("show");
-document.body.style.overflow="hidden";
-}
-function closeEvent(){document.getElementById("eventMo").classList.remove("show");document.body.style.overflow="";}
-function saveEvent(){
-var title=document.getElementById("evtTitle").value.trim();
-if(!title){showToast("请输入标题");return;}
-var events=loadEvents();
-var typeBtn=document.querySelector("#evtType .mp.active");
-events.push({date:document.getElementById("evtDate").value||TODAY,type:typeBtn?typeBtn.dataset.type:"other",title:title,desc:document.getElementById("evtDesc").value.trim(),impact:""});
-localStorage.setItem("journal_events",JSON.stringify(events));
-closeEvent();renderJournal();showToast("已记录");
-}
-
-// ===== Scroll progress =====
-window.addEventListener("scroll",function(){
-var views=document.querySelectorAll(".view.active .content");
-if(views.length<1)return;
-var h=views[0];
-var pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
-var p=document.getElementById("progress");if(p)p.style.width=pct+"%";
-},{passive:true});
-
-// ===== Init =====
-var now=new Date();var hour=now.getHours();
-var greetEl=document.getElementById("greeting");
-if(greetEl)greetEl.textContent=hour<5?"夜深了":hour<12?"早上好":hour<14?"中午好":hour<18?"下午好":"晚上好";
-var _cb=document.getElementById("countBadge");if(_cb)_cb.textContent=DATA_DAYS.length+" 天记录";
-var L=DATA_DAYS[0];var lw=L.weight;var chg=safeNum(lw.morning,0)-safeNum(lw.baseline,0);
-var statsEl=document.getElementById("stats");
-if(statsEl)statsEl.innerHTML="<div class='stat'><div class='sa-num'>"+safeNum(lw.morning,0)+"<span class='u'>kg</span></div><div class='sa-label'>当前体重</div></div><div class='stat'><div class='sa-num "+(chg>0?"warn":"ok")+"'>"+(chg>0?"+":"")+chg+"<span class='u'>kg</span></div><div class='sa-label'>较基线</div></div><div class='stat'><div class='sa-num ok'>"+(safeNum(lw.morning,0)-70).toFixed(1)+"<span class='u'>kg</span></div><div class='sa-label'>距目标</div></div><div class='stat'><div class='sa-num'>70<span class='u'>kg</span></div><div class='sa-label'>第一阶段</div></div>";
-
-function openBody(){
-var vh=document.getElementById("viewHome");if(vh)vh.classList.remove("active");
-var vs=document.getElementById("viewStats");if(vs)vs.classList.remove("active");
-var vj=document.getElementById("viewJournal");if(vj)vj.classList.remove("active");
-var vb=document.getElementById("viewBody");if(vb)vb.classList.add("active");
-var fab=document.querySelector(".fab");if(fab)fab.style.display="none";
-// Deactivate all tabs
-var tabs=document.querySelectorAll(".tab-item");
-for(var i=0;i<tabs.length;i++)tabs[i].classList.remove("active");
-loadProfile();
-}
-
-// Update main card header in renderDay
-var _origRenderDay = renderDay;
-renderDay = function(){
-_origRenderDay();
-var D=DATA_DAYS[dayIdx];
-var mcDate=document.getElementById("mcDate");
-var mcWeek=document.getElementById("mcWeek");
-var mcWeight=document.getElementById("mcWeight");
-if(mcDate)mcDate.textContent=D.date;
-if(mcWeek)mcWeek.textContent=D.weekday+" · "+(dayEn[D.weekday]||"");
-if(mcWeight)mcWeight.textContent=safeNum(D.weight.morning,0).toFixed(1);
-};
-renderDay();
-loadBg();
-
-function toggleSection(id,btn){
-var el=document.getElementById(id);
-if(!el)return;
-var isVisible=el.style.display!=="none";
-el.style.display=isVisible?"none":"block";
-if(!isVisible&&id==="statsSection")renderStats();
-if(!isVisible&&id==="journalSection")renderJournal();
-btn.classList.toggle("active",!isVisible);
-}
-
-
 </script>
 </body>
 </html>
