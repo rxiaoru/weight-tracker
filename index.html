@@ -443,6 +443,10 @@ animation:flowGradient 40s ease infinite;}
 <div class="wc-top"><div class="wc-title" style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--ink2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22c4.5 0 8-3.5 8-8s-3.5-8-8-8-8 3.5-8 8 3.5 8 8 8z"/><path d="M12 14l3-3"/></svg> 体重记录</div><div class="wc-badge" id="wcBadge">--</div></div>
 <div class="wc-big"><span class="wc-num" id="wcNum">--</span><span class="wc-unit">kg</span></div>
 <div class="wc-sub"><span class="dot"></span><span id="wcSub">--</span></div>
+<div style="margin-top:8px;padding:8px 12px;background:rgba(0,0,0,0.03);border-radius:10px;font-size:12px;color:#111;">
+<span style="font-weight:600;">较基线(70kg): </span><span id="wcBaseline" style="font-weight:800;color:#C4442A;">+2.4kg</span>
+<span style="margin-left:16px;font-weight:600;">距目标: </span><span id="wcToTarget" style="font-weight:800;color:#3D8B6E;">2.4kg</span>
+</div>
 <button class="body-link" onclick="openBody()">📏 填写身高·体型分析</button>
 <div class="mini-chart"><div class="mini-label"><span>体重趋势</span><span id="chartRange"></span></div><div id="chartArea"></div></div>
 </div>
@@ -701,11 +705,15 @@ el=document.getElementById("wcNum");if(el)el.textContent=safeNum(w.morning,0).to
 var chg=safeNum(w.morning,0)-safeNum(w.baseline,0);
 var badge=document.getElementById("wcBadge");
 if(badge){
-if(chg>0){badge.textContent="↑ +"+chg.toFixed(1)+"kg";badge.className="wc-badge up";}
-else if(chg<0){badge.textContent="↓ "+Math.abs(chg).toFixed(1)+"kg";badge.className="wc-badge down";}
-else{badge.textContent="— 基线";badge.className="wc-badge";}}
+badge.textContent=(chg>0?"↑ +":chg<0?"↓ ":"")+Math.abs(chg).toFixed(1)+"kg";
+badge.className="wc-badge "+(chg>0?"up":chg<0?"down":"same");
+badge.title="较基线"+(chg>0?"+":"")+chg.toFixed(1)+"kg";}
 var diff=safeNum(w.morning,0)-safeNum(w.target,0);
 el=document.getElementById("wcSub");if(el)el.textContent=diff>0?"第一阶段 "+w.target+"kg · 还差 "+diff.toFixed(1)+"kg":"已达成第一阶段目标！";
+var baseEl=document.getElementById("wcBaseline");
+if(baseEl)baseEl.textContent=(chg>0?"+":"")+chg.toFixed(1)+"kg";
+var targetEl=document.getElementById("wcToTarget");
+if(targetEl)targetEl.textContent=Math.abs(diff).toFixed(1)+"kg";
 
 // Chart
 var weights=DATA_DAYS.map(function(d){return safeNum(d.weight.morning,0);}).reverse();
@@ -1053,7 +1061,7 @@ var now=new Date();var hour=now.getHours();
 var greetEl=document.getElementById("greeting");
 if(greetEl)greetEl.textContent=hour<5?"夜深了":hour<12?"早上好":hour<14?"中午好":hour<18?"下午好":"晚上好";
 var _cb=document.getElementById("countBadge");if(_cb)_cb.textContent=DATA_DAYS.length+" 天记录";
-var L=DATA_DAYS[0];var lw=L.weight;var chg=safeNum(lw.morning,0)-safeNum(lw.baseline,0);
+var L=DATA_DAYS[0];var lw=L.weight;var chg=safeNum(lw.morning,0)-safeNum(lw.baseline,70);
 var statsEl=document.getElementById("stats");
 if(statsEl)statsEl.innerHTML="<div class='stat'><div class='sa-num'>"+safeNum(lw.morning,0)+"<span class='u'>kg</span></div><div class='sa-label'>当前体重</div></div><div class='stat'><div class='sa-num "+(chg>0?"warn":"ok")+"'>"+(chg>0?"+":"")+chg+"<span class='u'>kg</span></div><div class='sa-label'>较基线</div></div><div class='stat'><div class='sa-num ok'>"+(safeNum(lw.morning,0)-70).toFixed(1)+"<span class='u'>kg</span></div><div class='sa-label'>距目标</div></div><div class='stat'><div class='sa-num'>70<span class='u'>kg</span></div><div class='sa-label'>第一阶段</div></div>";
 
