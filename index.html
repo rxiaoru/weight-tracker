@@ -26,7 +26,7 @@
 --safe-b:env(safe-area-inset-bottom,0px);
 }
 html{font-size:16px;}
-body{line-height:1.5;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;text-rendering:optimizeLegibility;background:transparent;color:var(--ink);height:100vh;height:100dvh;overflow:hidden;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative;}
+body{line-height:1.5;text-shadow:0 1px 3px rgba(255,255,255,0.8),0 0 1px rgba(255,255,255,0.5);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;text-rendering:optimizeLegibility;background:transparent;color:var(--ink);height:100vh;height:100dvh;overflow:hidden;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative;}
 ::-webkit-scrollbar{display:none;scrollbar-width:none;}
 
 /* ===== Flowing gradient background ===== */
@@ -49,7 +49,7 @@ animation:flowGradient 40s ease infinite;}
 .h-left{display:flex;align-items:center;gap:11px;}
 .h-logo{width:42px;height:42px;border-radius:16px;background:linear-gradient(135deg,#D4572E,#C47D6A);display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;box-shadow:0 4px 14px rgba(255,159,124,0.35);transition:transform .3s var(--ease-spring);}
 .h-logo:active{transform:scale(0.9) rotate(-10deg);}
-.h-greeting{font-size:17px;font-weight:800;letter-spacing:-0.3px;text-shadow:0 1px 4px rgba(255,255,255,0.8);}
+.h-greeting{font-size:17px;font-weight:800;letter-spacing:-0.3px;color:#D4572E;text-shadow:0 1px 4px rgba(255,255,255,0.8);}
 .h-date{font-size:11px;color:var(--ink2);margin-top:1px;font-weight:500;}
 .h-right{display:flex;gap:8px;}
 .h-btn{width:38px;height:38px;border-radius:14px;background:rgba(255,255,255,0.6);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--sh-sm);transition:all .25s var(--ease-spring);color:var(--ink2);}
@@ -85,14 +85,14 @@ animation:flowGradient 40s ease infinite;}
 .ring-bg{fill:none;stroke:#F5EAE2;stroke-width:11;}
 .ring-val{fill:none;stroke:url(#rgrad);stroke-width:11;stroke-linecap:round;stroke-dasharray:389;stroke-dashoffset:389;transition:stroke-dashoffset 1.4s var(--ease-out);}
 .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.ring-num{font-size:36px;font-weight:800;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1;}
+.ring-num{font-size:36px;font-weight:800;letter-spacing:-1.5px;color:#E8557B;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1;}
 .ring-unit{font-size:9px;color:var(--ink3);font-weight:600;letter-spacing:2px;margin-top:5px;}
 .hero-info{flex:1;display:flex;flex-direction:column;gap:0;}
 .hi-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;}
 .hi-row + .hi-row{border-top:1px dashed var(--line);}
 .hi-label{font-size:12px;color:var(--ink2);font-weight:500;}
 .hi-val{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;transition:color .3s;}
-.hi-val.c1{color:var(--primary);} .hi-val.c2{color:var(--green);} .hi-val.c3{color:#B87A5E;}
+.hi-val.c1{color:#E85A8A;} .hi-val.c2{color:#4CAF9E;} .hi-val.c3{color:#D4899E;}
 
 /* ===== Macros ===== */
 .macros{display:flex;gap:10px;margin-bottom:16px;width:100%;}
@@ -106,7 +106,7 @@ animation:flowGradient 40s ease infinite;}
 .macro-card:active .mc-icon{transform:scale(1.15) rotate(8deg);}
 .mc-icon.p{background:var(--sage-l);color:var(--sage);} .mc-icon.c{background:var(--peach-l);color:var(--primary);} .mc-icon.f{background:var(--lilac-l);color:var(--lilac);}
 .mc-val{font-size:19px;font-weight:800;letter-spacing:-0.4px;font-variant-numeric:tabular-nums;}
-.mc-val.p{color:var(--green);} .mc-val.c{color:var(--primary);} .mc-val.f{color:#B87A5E;}
+.mc-val.p{color:#6CB4A0;} .mc-val.c{color:#E8638C;} .mc-val.f{color:#C48DB8;}
 .mc-label{font-size:10px;color:var(--ink3);margin-top:4px;font-weight:600;letter-spacing:0.3px;}
 
 /* ===== Weight ===== */
@@ -118,7 +118,7 @@ animation:flowGradient 40s ease infinite;}
 .wc-badge.up{color:var(--primary);background:var(--orange-bg);animation:slideLeft .5s var(--ease-out) both;}
 .wc-badge.down{color:var(--sage);background:var(--sage-l);animation:slideLeft .5s var(--ease-out) both;}
 .wc-big{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
-.wc-num{font-size:44px;font-weight:800;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;line-height:1;color:var(--ink);}
+.wc-num{font-size:44px;font-weight:800;letter-spacing:-1.5px;color:#E8557B;font-variant-numeric:tabular-nums;line-height:1;color:var(--ink);}
 .wc-unit{font-size:16px;color:var(--ink3);font-weight:600;}
 .wc-sub{font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:6px;font-weight:500;}
 .wc-sub .dot{width:6px;height:6px;border-radius:50%;background:var(--sage);}
@@ -135,7 +135,7 @@ animation:flowGradient 40s ease infinite;}
 .section{margin-bottom:22px;}
 .sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 4px;}
 .sec-title{font-size:15px;font-weight:800;letter-spacing:-0.2px;display:flex;align-items:center;gap:8px;color:var(--ink);}
-.sec-more{font-size:13px;color:var(--primary);font-weight:700;cursor:pointer;transition:all .2s;}
+.sec-more{font-size:13px;color:#E8557B;font-weight:700;cursor:pointer;transition:all .2s;}
 .sec-more:active{transform:scale(0.92);opacity:0.7;}
 .meal-card{background:#FFFFFF;border-radius:var(--r-md);margin-bottom:10px;box-shadow:var(--sh-sm);overflow:hidden;transition:all .3s var(--ease-spring);animation:popUp .5s var(--ease-out) both;}
 .meal-card:active{transform:scale(0.97);box-shadow:var(--sh-md);}
@@ -150,7 +150,7 @@ animation:flowGradient 40s ease infinite;}
 .meal-name{font-size:15px;font-weight:700;margin-bottom:3px;color:var(--ink);}
 .meal-detail{font-size:11.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
 .meal-right{text-align:right;flex-shrink:0;}
-.meal-kcal{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--primary);}
+.meal-kcal{font-size:16px;font-weight:800;color:#E8557B;font-variant-numeric:tabular-nums;color:var(--primary);}
 .meal-kcal .u{font-size:10px;color:var(--ink3);font-weight:600;}
 .meal-time{font-size:10px;color:var(--ink3);margin-top:2px;font-weight:500;}
 
@@ -175,7 +175,7 @@ animation:flowGradient 40s ease infinite;}
 
 .adv-head{display:flex;align-items:center;gap:9px;margin-bottom:14px;position:relative;z-index:1;}
 .adv-icon{width:36px;height:36px;border-radius:12px;background:var(--sage);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;box-shadow:0 3px 10px rgba(127,182,158,0.3);}
-.adv-title{font-size:14px;font-weight:800;color:var(--green);}
+.adv-title{font-size:14px;font-weight:800;color:#E8557B;}
 .adv-good{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;position:relative;z-index:1;}
 .g-tag{font-size:11px;font-weight:700;color:var(--green);background:#fff;border-radius:16px;padding:5px 13px;box-shadow:var(--sh-sm);transition:all .25s var(--ease-spring);animation:popUp .4s var(--ease-out) both;}
 .g-tag:active{transform:scale(0.92);}
@@ -193,7 +193,7 @@ animation:flowGradient 40s ease infinite;}
 .tab-item:active{transform:scale(0.85);}
 
 /* ===== FAB ===== */
-.fab{position:fixed;right:calc(50% - 215px + 20px);bottom:calc(var(--safe-b) + 76px);width:58px;height:58px;border-radius:22px;background:linear-gradient(135deg,#D4572E,#C47D6A);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 6px 20px rgba(232,115,74,0.3);z-index:99;transition:all .3s var(--ease-spring);}
+.fab{position:fixed;right:calc(50% - 215px + 20px);bottom:calc(var(--safe-b) + 76px);width:58px;height:58px;border-radius:22px;background:linear-gradient(135deg,#D4572E,#C47D6A);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 6px 20px rgba(255,105,180,0.35);z-index:99;transition:all .3s var(--ease-spring);}
 @media(max-width:430px){.fab{right:20px;}}
 .fab:active{transform:scale(0.85) rotate(135deg);}
 .fab svg{width:26px;height:26px;}
@@ -305,13 +305,13 @@ animation:flowGradient 40s ease infinite;}
 /* User background */
 .bg-user{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;pointer-events:none;z-index:0;}
 .bg-user img{width:100%;height:100%;object-fit:cover;}
-.bg-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.10);}
+.bg-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.15);}
 /* Hidden file input */
 #bgInput{display:none;}
 
 
 /* Stats view */
-.stat-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:18px;margin-bottom:14px;animation:popUp .45s var(--ease-out) both;}
+.stat-card{background:rgba(255,255,255,0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.35);border-radius:var(--r-md);padding:18px;margin-bottom:14px;animation:popUp .45s var(--ease-out) both;}
 .sc-head{font-size:14px;font-weight:800;margin-bottom:14px;color:var(--ink);}
 .sc-grid{display:flex;justify-content:space-around;text-align:center;}
 .sc-item .sc-val{font-size:22px;font-weight:800;letter-spacing:-0.5px;font-variant-numeric:tabular-nums;color:var(--primary);}
@@ -322,9 +322,9 @@ animation:flowGradient 40s ease infinite;}
 .sc-tip.ok{color:var(--green);}
 .sc-tip::before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor;margin-top:8px;flex-shrink:0;opacity:0.4;}
 .sc-note{font-size:10px;color:var(--ink3);margin-top:6px;padding:6px 10px;background:var(--bg);border-radius:8px;font-weight:500;}
-.stat-card.more{border-left:3px solid var(--green);}
-.stat-card.less{border-left:3px solid var(--orange);}
-.stat-card.rec{border-left:3px solid var(--primary);}
+.stat-card.more{border-left:3px solid #FF69B4;}
+.stat-card.less{border-left:3px solid #FF8FAB;}
+.stat-card.rec{border-left:3px solid #FF69B4;}
 
 
 .body-link{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:6px 14px;border-radius:20px;background:var(--blue-light);color:var(--blue);font-size:11px;font-weight:700;border:none;cursor:pointer;transition:all .2s var(--spring);font-family:inherit;}
@@ -352,7 +352,7 @@ animation:flowGradient 40s ease infinite;}
 <div class="hero pop">
 <div class="hero-card">
 <div class="hero-top">
-<div class="hero-label"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><span id="heroLabel">今日热量</span></div>
+<div class="hero-label"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#E8557B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><span id="heroLabel">今日热量</span></div>
 <div class="hero-nav">
 <button class="date-nav" onclick="navDay(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
 <div class="hero-date-chip" id="heroDate"></div>
@@ -392,7 +392,7 @@ animation:flowGradient 40s ease infinite;}
 </div>
 
 <div class="section pop" style="animation-delay:.2s;">
-<div class="sec-head"><div class="sec-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18l-2 9H5l-2-9z"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> <span id="mealsTitle">今日饮食</span></div><div class="sec-more" onclick="openModal()">+ 记录</div></div>
+<div class="sec-head"><div class="sec-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#E8557B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18l-2 9H5l-2-9z"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> <span id="mealsTitle">今日饮食</span></div><div class="sec-more" onclick="openModal()">+ 记录</div></div>
 <div id="mealList"></div>
 </div>
 
@@ -409,14 +409,14 @@ animation:flowGradient 40s ease infinite;}
 <div class="content">
 <div class="sec-head" style="padding-top:8px;"><div class="sec-title">📷 体型分析</div></div>
 <div class="body-card">
-<div class="bc-head"><div class="bc-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M6 12V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/><path d="M4 12v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></div><div>基本信息</div></div>
+<div class="bc-head"><div class="bc-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#E8557B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M6 12V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/><path d="M4 12v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></div><div>基本信息</div></div>
 <div class="bc-row"><span class="bc-l">身高</span><input class="bc-input" id="inpHeight" type="number" placeholder="170" oninput="saveProfile()"><span class="bc-u">cm</span></div>
 <div class="bc-row"><span class="bc-l">体重</span><input class="bc-input" id="inpWeight" type="number" step="0.1" placeholder="72.0" oninput="saveProfile()"><span class="bc-u">kg</span></div>
 <div class="bc-row"><span class="bc-l">年龄</span><input class="bc-input" id="inpAge" type="number" placeholder="25" oninput="saveProfile()"><span class="bc-u">岁</span></div>
 <div class="bc-row"><span class="bc-l">性别</span><div class="bc-gender"><button class="g-btn active" onclick="setGender(0,this)">男</button><button class="g-btn" onclick="setGender(1,this)">女</button></div></div>
 </div>
 <div class="body-card">
-<div class="bc-head"><div class="bc-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div><div>全身照分析</div></div>
+<div class="bc-head"><div class="bc-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#E8557B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div><div>全身照分析</div></div>
 <div class="pu" onclick="document.getElementById('bodyPhoto').click()" style="border:1.5px dashed var(--line);border-radius:var(--r-md);padding:28px;text-align:center;cursor:pointer;">
 <div style="font-size:32px;margin-bottom:8px;color:var(--ink3);">📷</div>
 <div style="font-size:14px;font-weight:700;">拍一张全身照</div>
@@ -506,7 +506,7 @@ animation:flowGradient 40s ease infinite;}
 <button class="mp" data-provider="qwen">通义千问</button>
 </div>
 <div class="m-label" style="margin-top:12px;">🔑 API Key（仅存手机本地）</div>
-<input type="password" class="m-input" id="apiKeyInput" value="sk-5e62489240a2494da1d67546d184cfeb" placeholder="sk-..." style="font-size:13px;">
+<input type="password" class="m-input" id="apiKeyInput" placeholder="sk-..." style="font-size:13px;">
 <div style="font-size:10px;color:var(--ink3);margin-top:6px;line-height:1.5;">Key 只保存在你的手机上，不会上传到任何服务器</div>
 </div>
 <button class="an-btn" id="ab" onclick="analyze()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>分析热量</button>
@@ -526,8 +526,8 @@ animation:flowGradient 40s ease infinite;}
 
 <script>
 // ===== 硬编码 API Key（无需手动输入）=====
-var AI_API_KEY="94084939b5de4d25bb8447c2e6912012.ssfiRDzrBsM6GmnA";
-var AI_PROVIDER="zai";
+var AI_API_KEY="";
+var AI_PROVIDER="ark";
 
 // ===== Helpers =====
 function safeNum(v,fallback){fallback=fallback||0;var n=Number(v);return isNaN(n)||!isFinite(n)?fallback:n;}
@@ -627,7 +627,7 @@ var pts=weights.map(function(v,i){return[CP+(i/(weights.length-1))*(CW-2*CP),CP+
 var line=pts.map(function(p){return p.join(",");}).join(" ");
 var area=CP+","+(CH-CP)+" "+line+" "+(CW-CP)+","+(CH-CP);
 var actI=weights.length-1-dayIdx;
-var chartHtml="<svg class='chart-svg' viewBox='0 0 "+CW+" "+CH+"' preserveAspectRatio='none'><defs><linearGradient id='cgrad' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='#D4572E' stop-opacity='0.12'/><stop offset='100%' stop-color='#D4572E' stop-opacity='0'/></linearGradient></defs><polygon points='"+area+"' fill='url(#cgrad)'/><polyline points='"+line+"' fill='none' stroke='#D4572E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/>";
+var chartHtml="<svg class='chart-svg' viewBox='0 0 "+CW+" "+CH+"' preserveAspectRatio='none'><defs><linearGradient id='cgrad' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='#D4572E' stop-opacity='0.12'/><stop offset='100%' stop-color='#D4572E' stop-opacity='0'/></linearGradient></defs><polygon points='"+area+"' fill='url(#cgrad)'/><polyline points='"+line+"' fill='none' stroke='#FF69B4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/>";
 pts.forEach(function(p,i){chartHtml+="<circle cx='"+p[0]+"' cy='"+p[1]+"' r='"+(i===actI?6:4)+"' fill='"+(i===actI?"#D4572E":"#D4CFC8")+"' stroke='#fff' stroke-width='2.5'/>";});
 chartHtml+="</svg><div style='display:flex;justify-content:space-between;font-size:9px;color:var(--ink3);margin-top:6px;font-weight:600;'>";
 dates.forEach(function(d,i){chartHtml+="<span style='"+(i===actI?"color:var(--primary);font-weight:800;":"")+"'>"+d+"</span>";});
@@ -817,28 +817,42 @@ var apiKey=AI_API_KEY||localStorage.getItem("ai_key")||"";
 var provider=AI_PROVIDER||localStorage.getItem("ai_provider")||"zai";
 if(photos.length>0&&apiKey){
 var prompt="识别这些图片中的所有食物。用中文回复，每行一个：食物名(分量) 热量kcal。只列食物。";
-var msgContent=[{type:"text",text:prompt}];
-photos.forEach(function(p){msgContent.push({type:"image_url",image_url:{url:p}});});
 var apiUrl,model;
-if(provider==="zai"){apiUrl="https://open.bigmodel.cn/api/paas/v4/chat/completions";model="glm-4v";}
+if(provider==="ark"){apiUrl="https://ark.cn-beijing.volces.com/api/coding/v1/messages";model="glm-5.3-flash";}
+else if(provider==="zai"){apiUrl="https://open.bigmodel.cn/api/paas/v4/chat/completions";model="glm-4v";}
 else if(provider==="qwen"){apiUrl="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";model="qwen-vl-plus";}
 else{apiUrl="https://api.openai.com/v1/chat/completions";model="gpt-4o-mini";}
+var isArk=provider==="ark";
 var xhr=new XMLHttpRequest();
 xhr.open("POST",apiUrl,true);
 xhr.setRequestHeader("Content-Type","application/json");
-xhr.setRequestHeader("Authorization","Bearer "+apiKey);
-xhr.timeout=30000;
+if(isArk){xhr.setRequestHeader("x-api-key",apiKey);xhr.setRequestHeader("anthropic-version","2023-06-01");}
+else{xhr.setRequestHeader("Authorization","Bearer "+apiKey);}
+xhr.timeout=60000;
 xhr.onload=function(){
 try{
 var data=JSON.parse(xhr.responseText);
-var aiText=data.choices[0].message.content||"";
+var aiText=isArk?(data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("\n"):(data.choices[0].message.content||"");
 res=analyzeText(aiText);res.aiUsed=true;
 showResult(res);
 }catch(e){res=analyzeText(text||"食物");res.aiError=true;showResult(res);}
 };
 xhr.onerror=function(){res=analyzeText(text||"食物");res.aiError=true;showResult(res);};
 xhr.ontimeout=function(){res=analyzeText(text||"食物");res.aiError=true;showResult(res);};
-xhr.send(JSON.stringify({model:model,messages:[{role:"user",content:msgContent}],max_tokens:600}));
+var reqBody;
+if(isArk){
+var content=[{type:"text",text:prompt}];
+photos.forEach(function(p){
+var i=p.indexOf(";base64,");
+content.push({type:"image",source:{type:"base64",media_type:p.slice(5,i),data:p.slice(i+8)}});
+});
+reqBody={model:model,max_tokens:2000,messages:[{role:"user",content:content}]};
+}else{
+var msgContent=[{type:"text",text:prompt}];
+photos.forEach(function(p){msgContent.push({type:"image_url",image_url:{url:p}});});
+reqBody={model:model,messages:[{role:"user",content:msgContent}],max_tokens:600};
+}
+xhr.send(JSON.stringify(reqBody));
 }else if(photos.length>0&&!apiKey){
 res={items:[{name:"需要 API Key",detail:"请填入 API Key 或复制发给AI 分析",kcal:0}],total:0,needKey:true};
 showResult(res);
