@@ -32,6 +32,7 @@ html[data-theme="kitty"] .foot::before{content:"🐱 ";}
 html[data-theme="peach"]{--bg:#FDF4EE;--card:#FFFDFA;--ink:#3D2E28;--ink2:#7E6A60;--ink3:#BCA69A;--line:#F2DFD2;--line-rgb:242,223,210;--accent:#E8836B;--accent-rgb:232,131,107;--sage:#B79AD1;--sage-rgb:183,154,209;--sage-l:#F5EFFA;--blue:#8FA8C8;--blue-rgb:143,168,200;--blue-l:#EEF3F9;--peach:#F4A883;--peach-l:#FDEFEA;--lemon:#D9A85C;--lemon-l:#FBF4E8;--rose:#D49AA6;--rose-l:#FAEFF1;}
 /* 换肤按钮 */
 .theme-btn{position:fixed;top:calc(var(--safe-t) + 12px);right:16px;width:40px;height:40px;border-radius:14px;background:var(--card);border:1px solid rgba(var(--line-rgb),0.8);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:70;font-size:18px;}
+.profile-btn{position:fixed;top:calc(var(--safe-t) + 60px);right:16px;width:40px;height:40px;border-radius:14px;background:var(--card);border:1px solid rgba(var(--line-rgb),0.8);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:70;font-size:18px;}
 .theme-panel{position:fixed;top:calc(var(--safe-t) + 60px);right:16px;background:var(--card);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);border:1px solid rgba(var(--line-rgb),0.8);padding:8px;z-index:70;display:none;min-width:150px;}
 .theme-panel.show{display:block;}
 .theme-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;font-size:13px;color:var(--ink);cursor:pointer;font-weight:600;}
@@ -206,6 +207,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 </div>
 
 <button class="theme-btn" onclick="toggleThemePanel(event)">🎨</button>
+<button class="profile-btn" onclick="openProfileModal()">⚖️</button>
 <div class="theme-panel" id="themePanel">
 <div class="theme-item" data-t="salt" onclick="setTheme('salt')"><span class="theme-dot" style="background:linear-gradient(135deg,#3E8EC4,#E8F3EE);"></span>海盐蓝白</div>
 <div class="theme-item" data-t="warm" onclick="setTheme('warm')"><span class="theme-dot" style="background:linear-gradient(135deg,#E8734A,#FEFAEC);"></span>暖橘手账</div>
