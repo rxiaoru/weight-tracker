@@ -102,6 +102,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 .n-val.total{color:var(--accent);font-size:18px;} .n-val.p{color:var(--blue);} .n-val.c{color:var(--lemon);} .n-val.f{color:var(--rose);}
 .n-l{font-size:9px;color:var(--ink3);margin-top:2px;letter-spacing:1px;font-weight:600;}
 
+.bgt{background:var(--bg);border:1px solid rgba(var(--line-rgb),0.5);border-radius:12px;padding:12px;margin-bottom:14px;}
+.bgt-top{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--ink3);font-weight:600;margin-bottom:8px;}
+.bgt-top b{color:var(--accent);font-size:13px;}
+.bgt-edit{font-size:10px;color:var(--ink3);text-decoration:underline;cursor:pointer;font-weight:400;}
+.bgt-bar{height:8px;border-radius:6px;background:rgba(var(--line-rgb),0.8);overflow:hidden;}
+.bgt-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .4s;}
+.bgt-fill.over{background:linear-gradient(90deg,var(--rose),#e67e22);}
+.bgt-msg{font-size:11px;margin-top:8px;line-height:1.6;}
+.bgt-msg .good{color:var(--sage);font-weight:700;}
+.bgt-msg .bad{color:var(--rose);font-weight:700;}
+
 .meal-block{margin-bottom:14px;} .meal-block:last-child{margin-bottom:0;}
 .meal-head{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;color:var(--ink);}
 .meal-head .m-time{font-size:10px;color:var(--ink3);font-weight:400;}
@@ -300,11 +311,24 @@ foods+='<div class="food-row"><span class="f-name">'+item.name+'<span class="f-p
 dietHtml+='<div class="meal-block"><div class="meal-head">'+meta.icon+' '+meal.type+'<span class="m-time">'+(meal.time||"")+'</span><span class="m-sum">'+sum+' kcal</span></div>'+foods+'</div>';});
 var s=day.summary;
 var nutriHtml='<div class="nutri"><div class="nc"><div class="n-val total">'+safeNum(s.totalKcal,0)+'</div><div class="n-l">KCAL</div></div><div class="nc"><div class="n-val p">'+safeNum(s.protein,0)+'g</div><div class="n-l">蛋白</div></div><div class="nc"><div class="n-val c">'+safeNum(s.carbs,0)+'g</div><div class="n-l">碳水</div></div><div class="nc"><div class="n-val f">'+safeNum(s.fat,0)+'g</div><div class="n-l">脂肪</div></div></div>';
+var bgtHtml=(function(){
+var intake=safeNum(s.totalKcal,0);
+var budget=getBudget();
+var pct=Math.min(Math.round(intake/budget*100),100);
+var gap=budget-intake; // 正=缺口(瘦) 负=盈余(胖)
+var jin=Math.abs(gap)/3850; // 1斤脂肪≈3850 kcal
+var weekJin=jin*7;
+var msg;
+if(gap>0){msg='<span class="good">🔥 缺口 '+gap+' kcal · 预计明天瘦 '+jin.toFixed(2)+' 斤</span><br>坚持一周约瘦 '+weekJin.toFixed(1)+' 斤';}
+else if(gap<0){msg='<span class="bad">⚠ 超出 '+(-gap)+' kcal · 预计明天胖 '+jin.toFixed(2)+' 斤</span><br>一周约胖 '+weekJin.toFixed(1)+' 斤';}
+else{msg='刚好持平，体重预计不变';}
+return '<div class="bgt"><div class="bgt-top"><span>已吃 <b>'+intake+'</b> / 预算 <b>'+budget+'</b> kcal</span><span class="bgt-edit" onclick="editBudget()">✏️ 改预算</span></div><div class="bgt-bar"><div class="bgt-fill'+(gap<0?' over':'')+'" style="width:'+pct+'%"></div></div><div class="bgt-msg">'+msg+'</div></div>';
+})();
 var a=day.advice;
 var advHtml='<div class="adv-card"><div class="adv-title">💡 AI 建议</div><div class="adv-good">'+a.good.map(function(g){return'<span class="g-tag">✓ '+g+'</span>';}).join("")+'</div>'+a.tips.map(function(t){return'<div class="adv-tip"><div class="dot"></div><div>'+t+'</div></div>';}).join("")+'<div class="adv-overall">📌 '+a.overall+'</div></div>';
 var entry=document.createElement("div");
 entry.className="entry";
-entry.innerHTML='<div class="date-pin">'+pinTxt+'</div><div class="page-card"><div class="pc-head"><div><div class="pc-date">'+day.date+'</div><div class="pc-week">'+day.weekday+' · '+weekEn+'</div></div><div class="pc-right"><span class="pc-w">'+wNum+'</span><span class="pc-u">kg</span><span class="pc-chg '+cCls+'">'+cTxt+'</span></div></div><div class="pc-body"><div class="sec"><div class="sec-tag tw"><span class="st"></span>⚖️ WEIGHT · 体重</div><div class="w-row"><div class="w-box"><div class="wb-i">🌅</div><div class="wb-l">早上</div><div class="wb-v">'+safeNum(dw.morning,0)+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div><div class="w-box"><div class="wb-i">🌙</div><div class="wb-l">晚上</div><div class="wb-v">'+(dw.evening||"--")+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div></div>'+(dw.note?'<div class="w-note">💬 '+dw.note+'</div>':"")+'<div class="baseline">较基线(70kg): <b>'+(chg>0?"+":"")+chg.toFixed(1)+'kg</b> · 距目标: <span class="tgt">'+Math.abs(diff).toFixed(1)+'kg</span></div></div><div class="sec"><div class="sec-tag td"><span class="st"></span>🍽️ MEALS · 饮食</div>'+nutriHtml+dietHtml+'</div><div class="sec"><div class="sec-tag ta"><span class="st"></span>💡 NOTES · 建议</div>'+advHtml+'</div></div></div>';
+entry.innerHTML='<div class="date-pin">'+pinTxt+'</div><div class="page-card"><div class="pc-head"><div><div class="pc-date">'+day.date+'</div><div class="pc-week">'+day.weekday+' · '+weekEn+'</div></div><div class="pc-right"><span class="pc-w">'+wNum+'</span><span class="pc-u">kg</span><span class="pc-chg '+cCls+'">'+cTxt+'</span></div></div><div class="pc-body"><div class="sec"><div class="sec-tag tw"><span class="st"></span>⚖️ WEIGHT · 体重</div><div class="w-row"><div class="w-box"><div class="wb-i">🌅</div><div class="wb-l">早上</div><div class="wb-v">'+safeNum(dw.morning,0)+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div><div class="w-box"><div class="wb-i">🌙</div><div class="wb-l">晚上</div><div class="wb-v">'+(dw.evening||"--")+'<span class="u" style="font-size:10px;color:var(--ink3)">kg</span></div></div></div>'+(dw.note?'<div class="w-note">💬 '+dw.note+'</div>':"")+'<div class="baseline">较基线(70kg): <b>'+(chg>0?"+":"")+chg.toFixed(1)+'kg</b> · 距目标: <span class="tgt">'+Math.abs(diff).toFixed(1)+'kg</span></div></div><div class="sec"><div class="sec-tag td"><span class="st"></span>🍽️ MEALS · 饮食</div>'+nutriHtml+bgtHtml+dietHtml+'</div><div class="sec"><div class="sec-tag ta"><span class="st"></span>💡 NOTES · 建议</div>'+advHtml+'</div></div></div>';
 journal.appendChild(entry);
 });
 }
@@ -313,6 +337,19 @@ document.getElementById("journal").addEventListener("click",function(e){
 var t=e.target;
 if(t&&t.classList&&t.classList.contains("f-del"))delFood(t.dataset.d,t.dataset.t,parseInt(t.dataset.i,10));
 });
+function getBudget(){
+var v=parseInt(localStorage.getItem("cal_budget"),10);
+return (!v||v<800||v>6000)?1600:v;
+}
+function editBudget(){
+var v=prompt("每日热量预算（kcal）\n建议：减脂为每日消耗的 70~85%，一般女生 1200~1600，男生 1600~2200",getBudget());
+if(v===null)return;
+v=parseInt(v,10);
+if(!v||v<800||v>6000){showToast("请输入 800~6000 之间的数值");return;}
+try{localStorage.setItem("cal_budget",String(v));}catch(e){}
+renderJournal();
+showToast("预算已更新："+v+" kcal");
+}
 function delFood(date,type,idx){
 var day=DATA_DAYS.find(function(d){return d.date===date;});
 if(!day)return;
