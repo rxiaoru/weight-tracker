@@ -221,8 +221,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 <div id="addPhotoThumb" style="display:none;margin-top:8px;"><img id="addPhotoImg" style="max-width:100%;max-height:140px;border-radius:10px;display:block;"></div>
 </div>
 <div class="m-sec" id="arkKeySec" style="display:none;">
-<div class="m-label">🔑 API Key（DeepSeek，仅存手机本地）</div>
-<input type="password" class="m-input" id="arkKeyInput" placeholder="sk-..." style="font-size:13px;">
+<div class="m-label">🔑 API Key（智谱 glm-4v-flash 免费，仅存手机本地）</div>
+<input type="password" class="m-input" id="arkKeyInput" placeholder="xxxxxxxx.xxxxxx" style="font-size:13px;">
 <div style="font-size:10px;color:var(--ink3);margin-top:6px;line-height:1.5;">Key 只保存在你的手机上，不会上传到任何服务器</div>
 </div>
 <button class="m-btn" id="addAnalyzeBtn" onclick="analyzeAddFood()">🔍 分析热量</button>
@@ -305,10 +305,10 @@ var addFoodDB={"米饭":195,"面条":330,"馒头":110,"包子":230,"饺子":23,"
 document.querySelectorAll("#addMealPicker .mp").forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll("#addMealPicker .mp").forEach(function(x){x.classList.remove("active");});this.classList.add("active");addSelMeal=this.dataset.meal;});});
 function openAddModal(){document.getElementById("addMo").classList.add("show");document.getElementById("addResult").classList.remove("show");document.body.style.overflow="hidden";
 var ks=document.getElementById("arkKeySec");
-if(ks){var k=localStorage.getItem("ai_key")||"";ks.style.display=k.indexOf("sk-")===0?"none":"block";}}
+if(ks){var k=localStorage.getItem("ai_key")||"";ks.style.display=k.indexOf(".")>0?"none":"block";}}
 var addPhotos=[];
-var AI_API_URL="https://api.deepseek.com/chat/completions";
-var AI_MODEL="deepseek-chat";
+var AI_API_URL="https://open.bigmodel.cn/api/paas/v4/chat/completions";
+var AI_MODEL="glm-4v-flash";
 function addPreviewPhoto(input){
 addPhotos=[];
 var files=Array.from(input.files||[]);
@@ -323,7 +323,7 @@ function analyzeAddPhoto(){
 var apiKey=localStorage.getItem("ai_key")||"";
 var keyInput=document.getElementById("arkKeyInput");
 if(keyInput&&keyInput.value.trim()){apiKey=keyInput.value.trim();localStorage.setItem("ai_key",apiKey);}
-if(apiKey.indexOf("sk-")!==0){showToast("请先填入 sk- 开头的 API Key");return;}
+if(apiKey.indexOf(".")<0){showToast("请先填入 API Key（智谱格式 xxxxx.xxxxx）");return;}
 var btn=document.getElementById("addAnalyzeBtn");
 btn.disabled=true;btn.textContent="🌀 AI 识别中...";
 var prompt="识别这些图片中的所有食物。用中文回复，每行一个：食物名(分量) 热量kcal。只列食物。";
