@@ -226,6 +226,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 <div style="font-size:10px;color:var(--ink3);margin-top:6px;line-height:1.5;">Key 只保存在你的手机上，不会上传到任何服务器</div>
 </div>
 <button class="m-btn" id="addAnalyzeBtn" onclick="analyzeAddFood()">🔍 分析热量</button>
+<div style="text-align:center;margin-top:4px;"><span style="font-size:11px;color:var(--ink3);text-decoration:underline;cursor:pointer;" onclick="showKeyInput()">🔑 更换 API Key</span></div>
 <div class="result" id="addResult">
 <div id="addResultItems"></div>
 <div id="addResultTotal"></div>
@@ -304,6 +305,7 @@ var addSelMeal="早餐";
 var addFoodDB={"米饭":195,"面条":330,"馒头":110,"包子":230,"饺子":23,"面包":80,"全麦面包":75,"玉米":120,"红薯":150,"土豆":130,"燕麦":150,"鸡蛋":75,"鸡胸肉":133,"牛肉":250,"猪肉":200,"鱼肉":150,"虾":90,"虾仁":90,"豆腐":80,"牛奶":130,"酸奶":100,"豆浆":60,"美式":5,"咖啡":5,"拿铁":60,"苹果":80,"香蕉":90,"橙子":70,"西红柿":25,"黄瓜":25,"西兰花":35,"菠菜":25,"白菜":20,"生菜":15,"青椒":25,"豆芽":20,"芹菜":20,"茄子":40,"冬瓜":15,"南瓜":40,"香菇":30,"蘑菇":25,"花生":60,"饼干":50,"蛋糕":250,"巧克力":150,"可乐":100,"奶茶":350,"果汁":120,"披萨":280,"汉堡":500,"薯条":300,"炒饭":360,"炒面":320,"粥":90,"沙拉":150,"山药":80,"芋头":100,"菱角":50,"毛豆":65,"豌豆":55,"芦笋":20};
 document.querySelectorAll("#addMealPicker .mp").forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll("#addMealPicker .mp").forEach(function(x){x.classList.remove("active");});this.classList.add("active");addSelMeal=this.dataset.meal;});});
 function openAddModal(){document.getElementById("addMo").classList.add("show");document.getElementById("addResult").classList.remove("show");document.body.style.overflow="hidden";
+window._weightResult=null;
 var ks=document.getElementById("arkKeySec");
 if(ks){var k=localStorage.getItem("ai_key")||"";ks.style.display=k.indexOf(".")>0?"none":"block";}}
 var addPhotos=[];
@@ -313,11 +315,25 @@ function addPreviewPhoto(input){
 addPhotos=[];
 var files=Array.from(input.files||[]);
 if(files.length===0){document.getElementById("addPhotoThumb").style.display="none";return;}
-files.forEach(function(f){var r=new FileReader();r.onload=function(e){addPhotos.push(e.target.result);};r.readAsDataURL(f);});
-var r0=new FileReader();
-r0.onload=function(e){var im=document.getElementById("addPhotoImg");im.src=e.target.result;document.getElementById("addPhotoThumb").style.display="block";};
-r0.readAsDataURL(files[0]);
-if(files.length>1)showToast("已选择 "+files.length+" 张照片");
+var loaded=0;
+files.forEach(function(f,fi){
+var r=new FileReader();
+r.onload=function(e){
+var img=new Image();
+img.onload=function(){
+var max=1024;var w=img.width,h=img.height;
+if(w>max||h>max){var s=Math.min(max/w,max/h);w=Math.round(w*s);h=Math.round(h*s);}
+var c=document.createElement("canvas");c.width=w;c.height=h;
+c.getContext("2d").drawImage(img,0,0,w,h);
+addPhotos.push(c.toDataURL("image/jpeg",0.8));
+loaded++;
+if(fi===0){var im=document.getElementById("addPhotoImg");im.src=addPhotos[0];document.getElementById("addPhotoThumb").style.display="block";}
+if(loaded===files.length&&files.length>1)showToast("已选 "+files.length+" 张，AI识别取第一张");
+};
+img.src=e.target.result;
+};
+r.readAsDataURL(f);
+});
 }
 function analyzeAddPhoto(){
 var apiKey=localStorage.getItem("ai_key")||"";
@@ -328,7 +344,7 @@ var btn=document.getElementById("addAnalyzeBtn");
 btn.disabled=true;btn.textContent="🌀 AI 识别中...";
 var prompt="识别这些图片中的所有食物。用中文回复，每行一个：食物名(分量) 热量kcal。只列食物。";
 var msgContent=[{type:"text",text:prompt}];
-addPhotos.forEach(function(p){msgContent.push({type:"image_url",image_url:{url:p}});});
+addPhotos.slice(0,1).forEach(function(p){msgContent.push({type:"image_url",image_url:{url:p}});});
 var xhr=new XMLHttpRequest();
 xhr.open("POST",AI_API_URL,true);
 xhr.setRequestHeader("Content-Type","application/json");
@@ -340,7 +356,8 @@ var data=JSON.parse(xhr.responseText);
 var aiText=(data.choices&&data.choices[0].message.content)||"";
 if(!aiText)throw new Error("empty");
 showAddResultFromAI(aiText);
-}catch(e){showToast("AI 识别失败，可手动输入食物");}};
+}catch(e){var em="";try{em=(JSON.parse(xhr.responseText).error||{}).message||"";}catch(_){}
+showToast("识别失败"+(em?"："+em:"，可手动输入"));}};
 xhr.onerror=xhr.ontimeout=function(){btn.disabled=false;btn.textContent="🔍 分析热量";showToast("AI 识别失败，可手动输入食物");};
 xhr.send(JSON.stringify({model:AI_MODEL,messages:[{role:"user",content:msgContent}],max_tokens:600}));
 }
