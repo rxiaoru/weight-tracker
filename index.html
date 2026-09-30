@@ -375,8 +375,22 @@ entry.innerHTML='<div class="date-pin">'+pinTxt+'</div><div class="page-card"><d
 journal.appendChild(entry);
 });
 }
-renderJournal();
 checkLogin();
+if(loginNick()){
+var cb2=cloudBase();
+fetch(cb2.url+"/rest/v1/health_records?user_key=eq."+encodeURIComponent(loginNick())+"&select=data",{headers:{apikey:cb2.key}})
+.then(function(r){return r.json();})
+.then(function(rows){
+if(rows&&rows.length&&Array.isArray(rows[0].data)){
+DATA_DAYS=rows[0].data;
+try{localStorage.setItem("health_days",JSON.stringify(DATA_DAYS));}catch(e){}
+}else{
+DATA_DAYS=[];
+try{localStorage.setItem("health_days","[]");}catch(e){}
+}
+renderJournal();
+}).catch(function(e){renderJournal();showToast("云端连接失败，显示本机缓存:"+e.message);});
+}else{renderJournal();}
 document.getElementById("journal").addEventListener("click",function(e){
 var t=e.target;
 if(t&&t.classList&&t.classList.contains("f-del"))delFood(t.dataset.d,t.dataset.t,parseInt(t.dataset.i,10));
@@ -457,7 +471,7 @@ try{localStorage.setItem("health_days","[]");}catch(e){}
 renderJournal();
 showToast("新账号开始记录吧 🌱");
 }
-}).catch(function(e){renderJournal();showToast("云端数据获取失败:"+e.message);});
+}).catch(function(e){DATA_DAYS=[];try{localStorage.setItem("health_days","[]");}catch(_e){}renderJournal();showToast("云端连接失败，请检查网络:"+e.message);});
 }
 function logout(){
 if(!confirm("退出登录？\n记录还安全地存在云端，下次登录同名即恢复"))return;
