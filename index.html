@@ -370,6 +370,12 @@ animation:flowGradient 60s ease infinite;}
 .mc-section .hero-card,.mc-section .weight-card,.mc-section .advice-card{background:transparent!important;border:none!important;box-shadow:none!important;border-radius:0!important;padding:0!important;margin:0!important;}
 .mc-section .macro-card{background:rgba(255,255,255,0.05);border-radius:var(--r-sm);}
 .mc-section .meal-card{background:rgba(255,255,255,0.04);border-radius:var(--r-sm);}
+
+.quick-actions{display:flex;gap:10px;padding:0 20px 16px;justify-content:center;}
+.qa-btn{padding:10rpx 28rpx;border-radius:20rpx;background:rgba(22,33,62,0.6);color:#EAEAEA;font-size:13px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.06);text-align:center;}
+.qa-btn:active{transform:scale(0.95);}
+.qa-btn.active{background:var(--primary);color:#fff;}
+
 </style>
 </head>
 <body>
@@ -494,16 +500,14 @@ animation:flowGradient 60s ease infinite;}
 </div>
 
 <!-- ===== Stats/Analysis View ===== -->
-<div class="view" id="viewStats">
-<div class="content">
+<div id="statsSection" style="display:none;padding:0 20px calc(var(--safe-b) + 100px);">
 <div class="sec-head" style="padding-top:8px;"><div class="sec-title">📊 近两天饮食分析</div></div>
 <div id="statsContent"><div class="stat-card"><div class="sc-head">📋 正在加载...</div></div></div>
 </div>
 </div>
 
 <!-- ===== Journal View ===== -->
-<div class="view" id="viewJournal">
-<div class="content">
+<div id="journalSection" style="display:none;padding:0 20px calc(var(--safe-b) + 100px);">
 <div class="sec-head" style="padding-top:8px;"><div class="sec-title">📖 我的日记</div><div class="sec-more" onclick="addEvent()">+ 记录</div></div>
 <div id="journalTimeline"><div class="journal-entry"><div class="je-date">2026-09-25 <span class="je-type travel">旅行</span></div><div class="je-title">去了景德镇玩3天</div><div class="je-desc">中秋假期去了景德镇，来回吃了泡面，中间3天吃了江西菜，喝了超级多的水和饮料。</div><div class="je-impact">体重从 ~70kg 涨到 73.8kg，胖了约 6斤</div></div></div>
 <div class="add-event-card" onclick="addEvent()" id="addEventBtn">
@@ -532,13 +536,13 @@ animation:flowGradient 60s ease infinite;}
 </div>
 </div>
 
+<div class="quick-actions">
+<view class="qa-btn" onclick="toggleSection('statsSection',this)"><text>📊 分析</text></view>
+<view class="qa-btn" onclick="toggleSection('journalSection',this)"><text>📖 日记</text></view>
+</div>
 <button class="fab" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
 
-<div class="tabbar">
-<button class="tab-item active" onclick="document.getElementById('viewHome').classList.add('active');document.getElementById('viewStats').classList.remove('active');document.getElementById('viewJournal').classList.remove('active');this.parentElement.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));this.classList.add('active');var f=document.querySelector('.fab');if(f)f.style.display='flex';"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>首页</span></button>
-<button class="tab-item" onclick="document.getElementById('viewHome').classList.remove('active');document.getElementById('viewStats').classList.add('active');document.getElementById('viewJournal').classList.remove('active');this.parentElement.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));this.classList.add('active');if(typeof renderStats==='function')renderStats();var f=document.querySelector('.fab');if(f)f.style.display='none';"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>分析</span></button>
-<button class="tab-item" onclick="document.getElementById('viewHome').classList.remove('active');document.getElementById('viewStats').classList.remove('active');document.getElementById('viewJournal').classList.add('active');this.parentElement.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));this.classList.add('active');if(typeof renderJournal==='function')renderJournal();var f=document.querySelector('.fab');if(f)f.style.display='none';"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>日记</span></button>
-</div>
+
 
 <div class="mo" id="mo">
 <div class="modal">
@@ -1064,6 +1068,17 @@ if(mcWeight)mcWeight.textContent=safeNum(D.weight.morning,0).toFixed(1);
 };
 renderDay();
 loadBg();
+
+function toggleSection(id,btn){
+var el=document.getElementById(id);
+if(!el)return;
+var isVisible=el.style.display!=="none";
+el.style.display=isVisible?"none":"block";
+if(!isVisible&&id==="statsSection")renderStats();
+if(!isVisible&&id==="journalSection")renderJournal();
+btn.classList.toggle("active",!isVisible);
+}
+
 
 </script>
 </body>
