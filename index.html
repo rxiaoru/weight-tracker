@@ -32,6 +32,7 @@ html[data-theme="kitty"] .foot::before{content:"🐱 ";}
 html[data-theme="peach"]{--bg:#FDF4EE;--card:#FFFDFA;--ink:#3D2E28;--ink2:#7E6A60;--ink3:#BCA69A;--line:#F2DFD2;--line-rgb:242,223,210;--accent:#E8836B;--accent-rgb:232,131,107;--sage:#B79AD1;--sage-rgb:183,154,209;--sage-l:#F5EFFA;--blue:#8FA8C8;--blue-rgb:143,168,200;--blue-l:#EEF3F9;--peach:#F4A883;--peach-l:#FDEFEA;--lemon:#D9A85C;--lemon-l:#FBF4E8;--rose:#D49AA6;--rose-l:#FAEFF1;}
 /* 换肤按钮 */
 .theme-btn{position:fixed;top:calc(var(--safe-t) + 12px);right:16px;width:40px;height:40px;border-radius:14px;background:var(--card);border:1px solid rgba(var(--line-rgb),0.8);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:70;font-size:18px;}
+.cloud-btn{position:fixed;top:calc(var(--safe-t) + 60px);right:16px;width:40px;height:40px;border-radius:14px;background:var(--card);border:1px solid rgba(var(--line-rgb),0.8);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:70;font-size:18px;}
 .theme-panel{position:fixed;top:calc(var(--safe-t) + 60px);right:16px;background:var(--card);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);border:1px solid rgba(var(--line-rgb),0.8);padding:8px;z-index:70;display:none;min-width:150px;}
 .theme-panel.show{display:block;}
 .theme-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;font-size:13px;color:var(--ink);cursor:pointer;font-weight:600;}
@@ -206,6 +207,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 </div>
 
 <button class="theme-btn" onclick="toggleThemePanel(event)">🎨</button>
+<button class="cloud-btn" onclick="openCloudModal()">☁️</button>
 <div class="theme-panel" id="themePanel">
 <div class="theme-item" data-t="salt" onclick="setTheme('salt')"><span class="theme-dot" style="background:linear-gradient(135deg,#3E8EC4,#E8F3EE);"></span>海盐蓝白</div>
 <div class="theme-item" data-t="warm" onclick="setTheme('warm')"><span class="theme-dot" style="background:linear-gradient(135deg,#E8734A,#FEFAEC);"></span>暖橘手账</div>
@@ -254,6 +256,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 <button class="ar-copy" onclick="copyMealText()">💬 复制给AI</button>
 </div>
 </div>
+</div>
+</div>
+<div class="mo" id="cloudMo">
+<div class="modal">
+<div class="modal-grab"></div>
+<div class="m-head"><div class="m-title">☁️ 云同步（Supabase）</div><button class="m-close" onclick="closeCloudModal()">✕</button></div>
+<div class="m-sec"><div class="m-label">Project URL</div><input type="text" class="m-input" id="sbUrlInput" placeholder="https://xxxx.supabase.co"></div>
+<div class="m-sec"><div class="m-label">Publishable Key</div><input type="password" class="m-input" id="sbKeyInput" placeholder="sb_publishable_..."></div>
+<div class="m-sec"><div class="m-label">用户码（同一码的多台手机共享数据）</div><input type="text" class="m-input" id="sbUkeyInput" placeholder="例如 rxr2026"></div>
+<button class="m-btn" onclick="saveCloudCfg()">💾 保存配置</button>
+<div style="display:flex;gap:10px;margin-top:10px;">
+<button class="ar-save" style="flex:1;margin:0;" onclick="pushCloud(false)">⬆️ 上传到云端</button>
+<button class="ar-copy" style="flex:1;margin:0;" onclick="pullCloud()">⬇️ 恢复云端数据</button>
+</div>
+<div id="cloudStatus" style="font-size:11px;margin-top:10px;text-align:center;color:var(--ink3);"></div>
+<div style="font-size:10px;color:var(--ink3);margin-top:6px;line-height:1.5;">需要表 health_records（user_key 主键 / data / updated_at）。保存配置后，每次记录会自动同步到云端。</div>
 </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -350,6 +368,70 @@ try{localStorage.setItem("cal_budget",String(v));}catch(e){}
 renderJournal();
 showToast("预算已更新："+v+" kcal");
 }
+function getCloudCfg(){
+var url="",key="",ukey="";
+try{url=(localStorage.getItem("sb_url")||"").replace(/\/+$/,"");key=localStorage.getItem("sb_key")||"";ukey=(localStorage.getItem("sb_ukey")||"").trim();}catch(e){}
+if(!url||!key||!ukey)return null;
+return {url:url,key:key,ukey:ukey};
+}
+function openCloudModal(){
+var c=getCloudCfg();
+document.getElementById("sbUrlInput").value=c?c.url:"";
+document.getElementById("sbKeyInput").value=c?c.key:"";
+document.getElementById("sbUkeyInput").value=c?c.ukey:"";
+document.getElementById("cloudStatus").textContent=c?"✅ 已配置，每次记录自动同步到云端":"未配置，填写后开启云同步";
+document.getElementById("cloudMo").classList.add("show");document.body.style.overflow="hidden";
+}
+function closeCloudModal(){document.getElementById("cloudMo").classList.remove("show");document.body.style.overflow="";}
+document.getElementById("cloudMo").addEventListener("click",function(e){if(e.target===e.currentTarget)closeCloudModal();});
+function saveCloudCfg(){
+var url=document.getElementById("sbUrlInput").value.trim().replace(/\/+$/,"");
+var key=document.getElementById("sbKeyInput").value.trim();
+var ukey=document.getElementById("sbUkeyInput").value.trim();
+if(!/^https:\/\/.+\.supabase\.(co|in)/.test(url)){showToast("URL 格式不对，应为 https://xxxx.supabase.co");return;}
+if(!key){showToast("请填写 Publishable Key");return;}
+if(!ukey){showToast("请填写用户码");return;}
+try{localStorage.setItem("sb_url",url);localStorage.setItem("sb_key",key);localStorage.setItem("sb_ukey",ukey);}catch(e){}
+document.getElementById("cloudStatus").textContent="✅ 已保存，云同步已开启";
+showToast("云同步配置已保存 ☁️");
+pushCloud(true);
+}
+function sbHeaders(c){
+return {"apikey":c.key,"Content-Type":"application/json"};
+}
+function pushCloud(silent){
+var c=getCloudCfg();
+if(!c){if(!silent)showToast("请先填写云同步配置");return Promise.resolve();}
+var st=document.getElementById("cloudStatus");
+if(!silent&&st)st.textContent="⏳ 正在上传...";
+return fetch(c.url+"/rest/v1/health_records",{method:"POST",headers:Object.assign(sbHeaders(c),{"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify([{user_key:c.ukey,data:DATA_DAYS,updated_at:new Date().toISOString()}])}).then(function(r){
+if(r.ok){if(!silent){if(st)st.textContent="✅ 已上传 "+DATA_DAYS.length+" 天记录";showToast("已上传到云端 ☁️");}}
+else{return r.text().then(function(t){var msg="HTTP "+r.status;if(!silent){try{msg=JSON.parse(t).message||msg;}catch(_e){}if(st)st.textContent="❌ 上传失败:"+msg;showToast("上传失败:"+msg);}});}
+}).catch(function(e){if(!silent){if(st)st.textContent="❌ 上传失败:"+e.message;showToast("上传失败:"+e.message);}});
+}
+function pullCloud(){
+var c=getCloudCfg();
+if(!c){showToast("请先填写云同步配置");return;}
+var st=document.getElementById("cloudStatus");
+if(st)st.textContent="⏳ 正在获取云端数据...";
+fetch(c.url+"/rest/v1/health_records?user_key=eq."+encodeURIComponent(c.ukey)+"&select=data,updated_at",{headers:sbHeaders(c)})
+.then(function(r){if(!r.ok)return r.text().then(function(t){var m="HTTP "+r.status;try{m=JSON.parse(t).message||m;}catch(_e){}throw new Error(m);});return r.json();})
+.then(function(rows){
+if(!rows||!rows.length){if(st)st.textContent="云端还没有数据（先在旧手机上点上传）";showToast("云端还没有数据");return;}
+var cloud=rows[0];var days=cloud.data;
+if(!Array.isArray(days)||!days.length){showToast("云端数据为空");return;}
+if(!confirm("云端数据 "+String(cloud.updated_at).slice(0,16).replace("T"," ")+"\n共 "+days.length+" 天记录\n\n覆盖本地 "+DATA_DAYS.length+" 天记录？")){if(st)st.textContent="已取消恢复";return;}
+DATA_DAYS=days;
+try{localStorage.setItem("health_days",JSON.stringify(DATA_DAYS));}catch(e){}
+renderJournal();
+if(st)st.textContent="✅ 已恢复 "+days.length+" 天记录";
+showToast("已从云端恢复 ✅");
+}).catch(function(e){if(st)st.textContent="❌ 恢复失败:"+e.message;showToast("恢复失败:"+e.message);});
+}
+function saveData(){
+try{localStorage.setItem("health_days",JSON.stringify(DATA_DAYS));}catch(e){}
+if(getCloudCfg())pushCloud(true);
+}
 function delFood(date,type,idx){
 var day=DATA_DAYS.find(function(d){return d.date===date;});
 if(!day)return;
@@ -361,6 +443,7 @@ if(meal.items.length===0){day.meals=day.meals.filter(function(m){return m!==meal
 else{meal.kcal=meal.items.reduce(function(s,i){return s+safeNum(i.kcal,0);},0);}
 day.summary.totalKcal=day.meals.reduce(function(s,m){return s+safeNum(m.kcal,0);},0);
 try{localStorage.setItem("health_days",JSON.stringify(DATA_DAYS));}catch(e){}
+if(getCloudCfg())pushCloud(true);
 renderJournal();
 showToast("已删除");
 }
@@ -517,6 +600,7 @@ if(!day){var wd=["周日","周一","周二","周三","周四","周五","周六"]
 DATA_DAYS.sort(function(a,b){return a.date<b.date?1:-1;});
 day.weight[w.slot]=w.value;
 try{localStorage.setItem("health_days",JSON.stringify(DATA_DAYS));}catch(e){}
+if(getCloudCfg())pushCloud(true);
 closeAddModal();showToast("已记录 "+w.value+"kg");
 setTimeout(function(){location.reload();},800);
 }
@@ -531,6 +615,7 @@ if(!existing){day.meals.push({type:addSelMeal,time:"",kcal:window._addResult.tot
 else{window._addResult.items.forEach(function(item){existing.items.push(item);});existing.kcal+=window._addResult.total;}
 day.summary.totalKcal=day.meals.reduce(function(s,m){return s+m.kcal;},0);
 try{localStorage.setItem("health_days",JSON.stringify(DATA_DAYS));}catch(e){}
+if(getCloudCfg())pushCloud(true);
 closeAddModal();showToast("已保存");
 setTimeout(function(){location.reload();},800);
 }
