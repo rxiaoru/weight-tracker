@@ -425,8 +425,17 @@ return d;
 });
 }
 function fetchCloud(url,opts){
-return fetch(url,opts).catch(function(e){
-return new Promise(function(res,rej){setTimeout(function(){fetch(url,opts).then(res,rej);},1200);});
+return new Promise(function(res,rej){
+function attempt(){
+fetch(url,opts).then(function(r){
+if((r.status===404||r.status>=500)&&(attempt.n||0)<1){attempt.n=1;setTimeout(attempt,1500);return;}
+res(r);
+},function(e){
+if((attempt.n||0)<1){attempt.n=1;setTimeout(attempt,1200);return;}
+rej(e);
+});
+}
+attempt();
 });
 }
 function loginNick(){try{return localStorage.getItem("login_user")||"";}catch(e){return"";}}
