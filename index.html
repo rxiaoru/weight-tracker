@@ -361,6 +361,32 @@ animation:flowGradient 40s ease infinite;}
 .ar-save{background:#3D8B6E;color:#fff;}
 .ar-copy{background:#f0f0f0;color:#666;border:1px solid #ddd;}
 </style>
+
+<style>
+.ai-btn{width:44px;height:44px;border-radius:16px;background:linear-gradient(135deg,#7C6FE8,#A78BFA);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 4px 14px rgba(124,111,232,0.3);font-size:18px;transition:all .2s;}
+.ai-btn:active{transform:scale(0.88);}
+.ai-panel{position:fixed;right:16px;bottom:calc(var(--safe-b,20px) + 84px);width:320px;max-width:calc(100vw - 32px);max-height:70vh;background:rgba(255,255,255,0.95);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:60;overflow-y:auto;display:none;border:1px solid rgba(0,0,0,0.05);animation:slideUp .3s cubic-bezier(.16,1,.3,1);}
+.ai-panel.show{display:block;}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.ai-panel-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 0;}
+.ai-panel-title{font-size:15px;font-weight:800;color:#1C1917;}
+.ai-panel-close{width:28px;height:28px;border-radius:50%;background:#f0f0f0;border:none;font-size:12px;color:#666;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.ai-panel-body{padding:14px 18px 18px;}
+.ai-sec{margin-bottom:16px;}
+.ai-sec:last-child{margin-bottom:0;}
+.ai-sec-title{font-size:11px;font-weight:800;letter-spacing:0.5px;color:#888;margin-bottom:8px;text-transform:uppercase;}
+.ai-good-item{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#0A6B4E;background:rgba(10,107,78,0.06);border-radius:12px;padding:5px 12px;margin:0 4px 6px 0;}
+.ai-tip-item{display:flex;gap:8px;padding:5px 0;font-size:12px;color:#444;line-height:1.6;}
+.ai-tip-item::before{content:"";width:4px;height:4px;border-radius:50%;background:#E8734A;margin-top:7px;flex-shrink:0;}
+.ai-overall{font-size:12px;font-weight:600;color:#1C1917;background:#f8f5f0;border-radius:12px;padding:10px 14px;line-height:1.6;margin-top:8px;}
+.ai-macro{display:flex;gap:8px;margin-bottom:12px;}
+.ai-macro-item{flex:1;text-align:center;background:#f8f5f0;border-radius:10px;padding:10px 4px;}
+.ai-macro-item .am-val{font-size:16px;font-weight:800;display:block;}
+.ai-macro-item .am-l{font-size:9px;color:#888;margin-top:2px;}
+.ai-macro-item.mp .am-val{color:#3D8B6E;}
+.ai-macro-item.mc .am-val{color:#E8734A;}
+.ai-macro-item.mf .am-val{color:#C47D6A;}
+</style>
 </head>
 <body>
 
@@ -555,7 +581,18 @@ animation:flowGradient 40s ease infinite;}
 <div class="toast" id="toast"></div>
 
 
+<div style="position:fixed;right:20px;bottom:calc(var(--safe-b,20px) + 84px);display:flex;flex-direction:column;gap:12px;z-index:50;">
+<button class="ai-btn" onclick="toggleAIAdvice()" title="AI建议">✦</button>
 <button class="fab" onclick="openAddModal()">+</button>
+</div>
+<div class="ai-panel" id="aiAdvicePanel">
+<div class="ai-panel-head">
+<div class="ai-panel-title">✦ AI 饮食建议</div>
+<button class="ai-panel-close" onclick="toggleAIAdvice()">✕</button>
+</div>
+<div class="ai-panel-body" id="aiAdviceBody"></div>
+</div>
+
 <div class="mo" id="addMo">
 <div class="modal">
 <div class="modal-grab" style="width:36px;height:4px;border-radius:2px;background:#ddd;margin:8px auto;"></div>
@@ -1132,6 +1169,59 @@ function copyMealText() {
   } else {
     navigator.clipboard.writeText(t).then(function() { showToast("已复制，去粘贴给AI"); });
   }
+}
+</script>
+
+<script>
+var aiVisible = false;
+
+function toggleAIAdvice(){
+  aiVisible = !aiVisible;
+  var panel = document.getElementById("aiAdvicePanel");
+  if(panel) panel.classList.toggle("show", aiVisible);
+  if(aiVisible) renderAIAdvice();
+}
+
+function renderAIAdvice(){
+  var day = DATA_DAYS[dayIdx] || DATA_DAYS[0];
+  var a = day.advice;
+  var s = day.summary;
+  var body = document.getElementById("aiAdviceBody");
+  if(!body) return;
+  
+  var html = "";
+  
+  // Macro summary
+  html += "<div class='ai-macro'>";
+  html += "<div class='ai-macro-item mp'><span class='am-val'>" + safeNum(s.protein,0) + "g</span><span class='am-l'>蛋白</span></div>";
+  html += "<div class='ai-macro-item mc'><span class='am-val'>" + safeNum(s.carbs,0) + "g</span><div class='am-l'>碳水</div></div>";
+  html += "<div class='ai-macro-item mf'><span class='am-val'>" + safeNum(s.fat,0) + "g</span><span class='am-l'>脂肪</span></div>";
+  html += "</div>";
+  
+  // Good items
+  if(a.good && a.good.length > 0){
+    html += "<div class='ai-sec'><div class='ai-sec-title'>✓ 做得好</div><div>";
+    a.good.forEach(function(g){
+      html += "<span class='ai-good-item'>✓ " + g + "</span>";
+    });
+    html += "</div></div>";
+  }
+  
+  // Tips
+  if(a.tips && a.tips.length > 0){
+    html += "<div class='ai-sec'><div class='ai-sec-title'>💡 注意</div>";
+    a.tips.forEach(function(t){
+      html += "<div class='ai-tip-item'>" + t + "</div>";
+    });
+    html += "</div>";
+  }
+  
+  // Overall
+  if(a.overall){
+    html += "<div class='ai-overall'>📌 " + a.overall + "</div>";
+  }
+  
+  body.innerHTML = html;
 }
 </script>
 </body>
