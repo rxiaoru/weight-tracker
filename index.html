@@ -348,6 +348,27 @@ animation:flowGradient 40s ease infinite;}
 
 /* Cleaner borders - no colored left borders */
 .stat-card,.stat-card.more,.stat-card.less,.stat-card.rec{border-left:1px solid rgba(255,255,255,0.35)!important;border-right:1px solid rgba(255,255,255,0.35)!important;}
+
+/* Unified single card */
+.main-card{background:rgba(255,255,255,0.4);border-radius:var(--r-lg);padding:0;position:relative;overflow:hidden;margin-bottom:20px;}
+.main-card .mc-head{padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.3);}
+.main-card .mc-date{font-size:17px;font-weight:800;color:#000000;letter-spacing:-0.3px;}
+.main-card .mc-week{font-size:11px;color:#333333;font-weight:500;margin-top:2px;}
+.main-card .mc-weight{text-align:right;display:flex;align-items:baseline;gap:3px;}
+.main-card .mc-w-num{font-size:26px;font-weight:800;color:#0F0D0B;letter-spacing:-1px;font-variant-numeric:tabular-nums;}
+.main-card .mc-w-unit{font-size:11px;color:#333333;font-weight:500;}
+.main-card .mc-body{padding:16px 20px 20px;}
+.mc-section{margin-bottom:18px;}
+.mc-section:last-child{margin-bottom:0;}
+.mc-sec-tag{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#333333;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.mc-sec-tag .st-dot{width:6px;height:6px;border-radius:50%;}
+.mc-sec-tag.t-weight .st-dot{background:#D40D5E;}
+.mc-sec-tag.t-meals .st-dot{background:#7B1FA2;}
+.mc-sec-tag.t-notes .st-dot{background:#0A6B4E;}
+/* Inner sections transparent - no separate cards */
+.mc-section .hero-card,.mc-section .weight-card,.mc-section .advice-card{background:transparent!important;border:none!important;box-shadow:none!important;border-radius:0!important;padding:0!important;margin:0!important;}
+.mc-section .macro-card{background:rgba(255,255,255,0.3);border-radius:var(--r-sm);}
+.mc-section .meal-card{background:rgba(255,255,255,0.25);border-radius:var(--r-sm);}
 </style>
 </head>
 <body>
@@ -372,6 +393,17 @@ animation:flowGradient 40s ease infinite;}
 </div>
 
 <div class="view active" id="viewHome"><div class="content" id="content">
+<!-- Single unified card -->
+<div class="main-card">
+<div class="mc-head">
+<div><div class="mc-date" id="mcDate">--</div><div class="mc-week" id="mcWeek">--</div></div>
+<div class="mc-weight"><span class="mc-w-num" id="mcWeight">--</span><span class="mc-w-unit">kg</span></div>
+</div>
+<div class="mc-body">
+
+<!-- Calories section -->
+<div class="mc-section">
+<div class="mc-sec-tag"><span class="st-dot" style="background:#FF69B4;"></span>CALORIES · 热量</div>
 
 <div class="hero pop">
 <div class="hero-card">
@@ -407,6 +439,9 @@ animation:flowGradient 40s ease infinite;}
 <div class="macro-card f"><div class="mc-icon f"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C7 2 3 7 3 13s4 9 9 9 9-3 9-9-4-11-9-11z"/><circle cx="12" cy="13" r="3"/></svg></div><div class="mc-val f" id="macroF">--</div><div class="mc-label">脂肪</div></div>
 </div>
 
+</div>
+<div class="mc-section">
+<div class="mc-sec-tag"><span class="st-dot" style="background:#D40D5E;"></span>WEIGHT · 体重</div>
 <div class="weight-card pop" style="animation-delay:.15s;">
 <div class="wc-top"><div class="wc-title" style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--ink2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22c4.5 0 8-3.5 8-8s-3.5-8-8-8-8 3.5-8 8 3.5 8 8 8z"/><path d="M12 14l3-3"/></svg> 体重记录</div><div class="wc-badge" id="wcBadge">--</div></div>
 <div class="wc-big"><span class="wc-num" id="wcNum">--</span><span class="wc-unit">kg</span></div>
@@ -420,6 +455,9 @@ animation:flowGradient 40s ease infinite;}
 <div id="mealList"></div>
 </div>
 
+</div>
+<div class="mc-section">
+<div class="mc-sec-tag"><span class="st-dot" style="background:#0A6B4E;"></span>NOTES · 建议</div>
 <div class="advice-card pop" style="animation-delay:.25s;">
 <div class="adv-head"><div class="adv-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></div><div class="adv-title">AI 小助手</div></div>
 <div class="adv-good" id="advGood"></div>
@@ -516,21 +554,14 @@ animation:flowGradient 40s ease infinite;}
 <div class="pu" onclick="document.getElementById('pi').click()">
 <div class="pu-icon" style="color:var(--primary);"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div>
 <div class="pu-text">拍照或从相册选择（可多张）</div>
-<div class="pu-sub">选照片后AI 自动识别热量</div>
+<div class="pu-sub">首次填入API Key，之后AI 自动识别</div>
 </div>
 <input type="file" id="pi" accept="image/*" multiple style="display:none" onchange="previewPhoto(this)">
 <img class="pp" id="pp">
 </div>
 <div class="m-sec" id="apiKeySec" style="display:none;">
-<div class="m-label">🔑 AI 服务商</div>
-<div class="meal-picker" id="providerPicker">
-<button class="mp active" data-provider="zai">智谱AI</button>
-<button class="mp" data-provider="deepseek">DeepSeek</button>
-<button class="mp" data-provider="openai">OpenAI</button>
-<button class="mp" data-provider="qwen">通义千问</button>
-</div>
-<div class="m-label" style="margin-top:12px;">🔑 API Key（仅存手机本地）</div>
-<input type="password" class="m-input" id="apiKeyInput" placeholder="sk-..." style="font-size:13px;">
+<div class="m-label">🔑 API Key（火山方舟，仅存手机本地）</div>
+<input type="password" class="m-input" id="apiKeyInput" placeholder="ark-..." style="font-size:13px;">
 <div style="font-size:10px;color:#333333;margin-top:6px;line-height:1.5;">Key 只保存在你的手机上，不会上传到任何服务器</div>
 </div>
 <button class="an-btn" id="ab" onclick="analyze()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>分析热量</button>
@@ -551,7 +582,7 @@ animation:flowGradient 40s ease infinite;}
 <script>
 // ===== 硬编码 API Key（无需手动输入）=====
 var AI_API_KEY="";
-var AI_PROVIDER="deepseek";
+var AI_PROVIDER="ark";
 
 // ===== Helpers =====
 function safeNum(v,fallback){fallback=fallback||0;var n=Number(v);return isNaN(n)||!isFinite(n)?fallback:n;}
@@ -781,7 +812,8 @@ document.getElementById("result").classList.remove("show");
 document.getElementById("ld").classList.remove("show");
 document.getElementById("ab").disabled=false;
 var keySec=document.getElementById("apiKeySec");
-if(keySec)keySec.style.display="none";
+var savedKey=localStorage.getItem("ai_key")||"";
+if(keySec)keySec.style.display=savedKey.indexOf("ark-")===0?"none":"block";
 document.body.style.overflow="hidden";
 }
 function closeModal(){document.getElementById("mo").classList.remove("show");document.body.style.overflow="";}
@@ -844,15 +876,15 @@ var prompt="识别这些图片中的所有食物。用中文回复，每行一�
 var msgContent=[{type:"text",text:prompt}];
 photos.forEach(function(p){msgContent.push({type:"image_url",image_url:{url:p}});});
 var apiUrl,model;
-var isArk=false;
-
+var isArk=provider==="ark";
+if(isArk){apiUrl="https://ark.cn-beijing.volces.com/api/coding/v1/messages";model="glm-5.3-flash";}
 else if(provider==="zai"){apiUrl="https://open.bigmodel.cn/api/paas/v4/chat/completions";model="glm-4v";}
 else if(provider==="qwen"){apiUrl="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";model="qwen-vl-plus";}
 else{apiUrl="https://api.openai.com/v1/chat/completions";model="gpt-4o-mini";}
 var xhr=new XMLHttpRequest();
 xhr.open("POST",apiUrl,true);
 xhr.setRequestHeader("Content-Type","application/json");
-
+if(isArk){xhr.setRequestHeader("x-api-key",apiKey);xhr.setRequestHeader("anthropic-version","2023-06-01");}
 else{xhr.setRequestHeader("Authorization","Bearer "+apiKey);}
 xhr.timeout=60000;
 xhr.onload=function(){
@@ -1017,6 +1049,18 @@ for(var i=0;i<tabs.length;i++)tabs[i].classList.remove("active");
 loadProfile();
 }
 
+// Update main card header in renderDay
+var _origRenderDay = renderDay;
+renderDay = function(){
+_origRenderDay();
+var D=DATA_DAYS[dayIdx];
+var mcDate=document.getElementById("mcDate");
+var mcWeek=document.getElementById("mcWeek");
+var mcWeight=document.getElementById("mcWeight");
+if(mcDate)mcDate.textContent=D.date;
+if(mcWeek)mcWeek.textContent=D.weekday+" · "+(dayEn[D.weekday]||"");
+if(mcWeight)mcWeight.textContent=safeNum(D.weight.morning,0).toFixed(1);
+};
 renderDay();
 loadBg();
 
