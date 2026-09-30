@@ -114,6 +114,82 @@ const TRACKER_DATA = {
   ]
 };
 
+
+// ===== Quick Add =====
+var addSelMeal="早餐";
+var addFoodDB={"米饭":{def:195},"面条":{def:330},"馒头":{def:110},"包子":{def:230},"饺子":{def:23},"面包":{def:80},"全麦面包":{def:75},"玉米":{def:120},"红薯":{def:150},"土豆":{def:130},"燕麦":{def:150},"鸡蛋":{def:75},"鸡胸肉":{def:133},"牛肉":{def:250},"猪肉":{def:200},"鱼肉":{def:150},"虾":{def:90},"虾仁":{def:90},"豆腐":{def:80},"牛奶":{def:130},"酸奶":{def:100},"豆浆":{def:60},"美式":{def:5},"咖啡":{def:5},"拿铁":{def:60},"苹果":{def:80},"香蕉":{def:90},"橙子":{def:70},"西红柿":{def:25},"黄瓜":{def:25},"西兰花":{def:35},"菠菜":{def:25},"白菜":{def:20},"生菜":{def:15},"青椒":{def:25},"豆芽":{def:20},"芹菜":{def:20},"茄子":{def:40},"冬瓜":{def:15},"南瓜":{def:40},"香菇":{def:30},"蘑菇":{def:25},"花生":{def:60},"饼干":{def:50},"蛋糕":{def:250},"巧克力":{def:150},"可乐":{def:100},"奶茶":{def:350},"果汁":{def:120},"披萨":{def:280},"汉堡":{def:500},"薯条":{def:300},"炒饭":{def:360},"炒面":{def:320},"粥":{def:90},"沙拉":{def:150},"山药":{def:80},"芋头":{def:100},"菱角":{def:50},"毛豆":{def:65},"豌豆":{def:55},"芦笋":{def:20},"辣条":{def:200},"冰淇淋":{def:200}};
+
+document.querySelectorAll("#addMealPicker .mp").forEach(function(b){
+b.addEventListener("click",function(){
+document.querySelectorAll("#addMealPicker .mp").forEach(function(x){x.classList.remove("active");});
+this.classList.add("active");
+addSelMeal=this.dataset.meal;
+});
+});
+
+function openAddModal(){
+document.getElementById("addMo").classList.add("show");
+document.getElementById("addResult").classList.remove("show");
+document.body.style.overflow="hidden";
+}
+function closeAddModal(){
+document.getElementById("addMo").classList.remove("show");
+document.body.style.overflow="";
+}
+document.getElementById("addMo").addEventListener("click",function(e){if(e.target===e.currentTarget)closeAddModal();});
+
+function analyzeAddFood(){
+var text=document.getElementById("addFoodInput").value.trim();
+if(!text){showToast("请输入食物");return;}
+var lines=text.split(/[，,、;；\n]/).filter(function(s){return s.trim();});
+var items=[],total=0;
+lines.forEach(function(line){
+line=line.trim();var matched=false;
+for(var key in addFoodDB){
+if(line.indexOf(key)>=0){
+var p=addFoodDB[key].def;
+var q=line.match(/(\d+(?:\.\d+)?)\s*(个|碗|杯|片|根|块|份|把|包)/);
+var h=line.match(/半\s*(个|碗|杯|片|根|块|份)/);
+if(q)p=Math.round(addFoodDB[key].def*parseFloat(q[1]));
+else if(h)p=Math.round(addFoodDB[key].def*0.5);
+items.push({name:key,detail:line,kcal:p});total+=p;matched=true;break;
+}}
+if(!matched){items.push({name:line,detail:"估算",kcal:80});total+=80;}
+});
+var html="";
+items.forEach(function(it){
+html+="<div class='ar-item'><span>"+it.name+" ("+it.detail+")</span><span class='v'>"+it.kcal+" kcal</span></div>";
+});
+html+="<div class='ar-total'><span>总计</span><span class='v'>"+total+" kcal</span></div>";
+document.getElementById("addResultItems").innerHTML=html;
+document.getElementById("addResultTotal").innerHTML="";
+document.getElementById("addResult").classList.add("show");
+window._addResult={items:items,total:total,meal:addSelMeal};
+}
+
+function saveMeal(){
+if(!window._addResult)return;
+var now=new Date();
+var today=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
+var day=DATA_DAYS.find(function(d){return d.date===today;});
+if(!day){day={date:today,weekday:"周三",weight:{morning:0,evening:null,baseline:70,target:70},diet:[],summary:{totalKcal:0,protein:0,carbs:0,fat:0},advice:{good:[],tips:[],overall:""}};DATA_DAYS.unshift(day);}
+var existing=day.diet.find(function(m){return m.meal===addSelMeal;});
+if(!existing){day.diet.push({type:addSelMeal,time:"",kcal:window._addResult.total,items:window._addResult.items});}
+else{window._addResult.items.forEach(function(item){existing.items.push(item);});existing.kcal+=window._addResult.total;}
+day.summary.totalKcal=day.diet.reduce(function(s,m){return s+m.kcal;},0);
+closeAddModal();
+renderDay();
+showToast("已保存");
+}
+
+function copyMealText(){
+if(!window._addResult)return;
+var now=new Date();
+var today=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
+var t="帮我记录("+today+")"+addSelMeal+"：\n"+window._addResult.items.map(function(i){return"• "+i.name+"("+i.detail+") ≈ "+i.kcal+" kcal";}).join("\n")+"\n总计约 "+window._addResult.total+" kcal";
+if(navigator.share){navigator.share({text:t}).catch(function(){navigator.clipboard.writeText(t);});}
+else{navigator.clipboard.writeText(t).then(function(){showToast("已复制");});}
+}
 </script>
 <style>
 :root {
@@ -438,6 +514,38 @@ body {
   z-index: 60; transition: width .1s linear;
   border-radius: 0 2px 2px 0;
 }
+
+/* FAB */
+.fab{position:fixed;right:20px;bottom:calc(var(--safe-b) + 20px);width:54px;height:54px;border-radius:18px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 6px 20px rgba(232,115,74,0.35);z-index:50;font-size:28px;font-weight:300;transition:transform .2s ease;}
+.fab:active{transform:scale(0.85) rotate(90deg);}
+/* Modal */
+.mo{position:fixed;inset:0;background:rgba(44,44,46,0.3);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;}
+.mo.show{opacity:1;pointer-events:auto;}
+.modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;max-width:430px;max-height:92vh;overflow-y:auto;padding:8px 20px calc(var(--safe-b) + 28px);transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);}
+.modal::-webkit-scrollbar{display:none;}
+.mo.show .modal{transform:translateY(0);}
+.modal-grab{width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 14px;}
+.m-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.m-title{font-size:19px;font-weight:800;color:var(--ink);}
+.m-close{width:34px;height:34px;border-radius:50%;background:var(--bg);border:none;color:var(--ink2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;}
+.m-sec{margin-bottom:20px;}
+.m-label{font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:8px;display:block;text-transform:uppercase;letter-spacing:1px;}
+.meal-picker{display:flex;gap:8px;}
+.mp{flex:1;padding:12px 4px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer;text-align:center;transition:all .2s;}
+.mp.active{border-color:var(--accent);color:var(--accent);background:rgba(232,115,74,0.08);}
+.m-input{width:100%;padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);font-size:15px;font-family:inherit;background:var(--card);color:var(--ink);outline:none;line-height:1.6;resize:vertical;}
+.m-input:focus{border-color:var(--accent);}
+.m-btn{width:100%;padding:16px;border-radius:16px;border:none;background:var(--accent);color:#fff;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(232,115,74,0.25);margin-top:8px;}
+.result{margin-top:16px;padding:18px;background:var(--bg);border-radius:16px;display:none;}
+.result.show{display:block;}
+.ar-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px;color:var(--ink2);}
+.ar-item .v{font-weight:700;color:var(--accent);}
+.ar-total{display:flex;justify-content:space-between;padding:12px 0 4px;font-size:15px;font-weight:800;color:var(--ink);}
+.ar-total .v{color:var(--accent);font-size:18px;}
+.ar-actions{display:flex;gap:10px;margin-top:14px;}
+.ar-actions button{flex:1;padding:13px;border-radius:14px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+.ar-save{background:var(--sage);color:#fff;}
+.ar-copy{background:var(--bg);color:var(--ink2);border:1px solid var(--line);}
 </style>
 </head>
 <body>
@@ -617,5 +725,31 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove("show"), 1500);
 }
 </script>
+
+<button class="fab" onclick="openAddModal()">+</button>
+<div class="mo" id="addMo">
+<div class="modal">
+<div class="modal-grab"></div>
+<div class="m-head"><div class="m-title">记录饮食</div><button class="m-close" onclick="closeAddModal()">✕</button></div>
+<div class="m-sec"><div class="m-label">餐次</div><div class="meal-picker" id="addMealPicker">
+<button class="mp active" data-meal="早餐">🌅 早餐</button>
+<button class="mp" data-meal="午餐">☀️ 午餐</button>
+<button class="mp" data-meal="晚餐">🌙 晚餐</button>
+<button class="mp" data-meal="加餐">🍰 加餐</button>
+</div></div>
+<div class="m-sec"><div class="m-label">吃了什么</div>
+<textarea class="m-input" id="addFoodInput" rows="3" placeholder="用逗号分隔，例如：米饭半碗，西兰花炒虾仁"></textarea>
+</div>
+<button class="m-btn" onclick="analyzeAddFood()">🔍 分析热量</button>
+<div class="result" id="addResult">
+<div id="addResultItems"></div>
+<div id="addResultTotal"></div>
+<div class="ar-actions">
+<button class="ar-save" onclick="saveMeal()">💾 保存</button>
+<button class="ar-copy" onclick="copyMealText()">💬 复制给AI</button>
+</div>
+</div>
+</div>
+</div>
 </body>
 </html>
